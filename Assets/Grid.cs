@@ -16,6 +16,7 @@ public class Grid : MonoBehaviour
 
     public float gap = 0.0f;
 
+    public bool realNeighbours = false;
     public float chanceAlive = 45f;
     public int deathLimit = 4;
     public int birthLimit = 4;
@@ -25,6 +26,9 @@ public class Grid : MonoBehaviour
 
     private int[,] tileSystem;
     private GameObject[,] hexPrefabs;
+
+    private int[] neighboursIndices_x = { 0, 1, 1, 1, 0, -1 };
+    private int[] neighboursIndices_y = { -1, -1, 0, 1, 1, 0 };
 
     Vector3 startPos;
 
@@ -110,20 +114,44 @@ public class Grid : MonoBehaviour
     {
         int count = 0;
 
-        for (int i = -1; i < 2; i++)
+        // Use square grid neighbours
+        if (!realNeighbours)
         {
-            for (int j = -1; j < 2; j++)
+            for (int i = -1; i < 2; i++)
             {
-                int neighbour_x = x + i;
-                int neighbour_y = y + j;
-
-                // Looking at ourselfs
-                if (i == 0 && j == 0)
+                for (int j = -1; j < 2; j++)
                 {
-                    // Do nothing
+                    int neighbour_x = x + i;
+                    int neighbour_y = y + j;
+
+                    // Looking at ourselfs
+                    if (i == 0 && j == 0)
+                    {
+                        // Do nothing
+                    }
+                    // Looking at Index outside the tilesystem
+                    else if (neighbour_x < 0 || neighbour_y < 0 || neighbour_x >= gridWidth || neighbour_y >= gridHeight)
+                    {
+                        count = count + 1;
+                    }
+                    // Looking at free neighbour
+                    else if (tileSystem[neighbour_x, neighbour_y] == 1 || tileSystem[neighbour_x, neighbour_y] == 0)
+                    {
+                        count = count + 1;
+                    }
                 }
+            }
+        }
+        // Use hexagonal grid neighbours
+        else
+        {
+            for (int i = 0; i < neighboursIndices_x.Length; i++)
+            {
+                int neighbour_x = x + neighboursIndices_x[i];
+                int neighbour_y = y + neighboursIndices_y[i];
+                
                 // Looking at Index outside the tilesystem
-                else if (neighbour_x < 0 || neighbour_y < 0 || neighbour_x >= gridWidth || neighbour_y >= gridHeight)
+                if (neighbour_x < 0 || neighbour_y < 0 || neighbour_x >= gridWidth || neighbour_y >= gridHeight)
                 {
                     count = count + 1;
                 }
@@ -134,7 +162,7 @@ public class Grid : MonoBehaviour
                 }
             }
         }
-
+        
         return count;
     }
 
@@ -189,13 +217,16 @@ public class Grid : MonoBehaviour
         GenerateTileSystem();
         tileSystem = DoSimulationStep();
 
+
         for (int y = 0; y < gridHeight; y++)
         {
+            string consoleLoggin = "";
             for (int x = 0; x < gridWidth; x++)
             {
+                consoleLoggin += "[ "+ x + " | " + y + " ]";
+
                 // TODO 
                 GameObject hex;
-
                 if (tileSystem[x, y] == 0)
                 {
                     hex = Instantiate(hexPrefabSpawn) as GameObject;
@@ -210,7 +241,6 @@ public class Grid : MonoBehaviour
                 }
 
                 hexPrefabs[x,y] = hex;
-                Debug.Log(hexPrefabs[x, y]);
 
                 Vector2 gridPos = new Vector2(x, y);
 
@@ -218,6 +248,7 @@ public class Grid : MonoBehaviour
                 hex.transform.parent = this.transform;
                 hex.name = "Hexagon" + x + "|" + y;
             }
+            Debug.Log(consoleLoggin);
         }
     }
 }

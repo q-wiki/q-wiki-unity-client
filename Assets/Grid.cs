@@ -21,10 +21,13 @@ public class Grid : MonoBehaviour
     public int deathLimit = 4;
     public int birthLimit = 4;
 
+    public bool generateHeightDiff = false;
+
     private float hexWidth = 1.732f;
     private float hexHeight = 2.0f;
 
     private int[,] tileSystem;
+    private int[,] tileHeights; 
     private GameObject[,] hexPrefabs;
 
     private int[] neighboursIndices_x = { 0, 1, 1, 1, 0, -1 };
@@ -36,6 +39,7 @@ public class Grid : MonoBehaviour
     {
         hexPrefabs = new GameObject[gridWidth, gridHeight];
         tileSystem = new int[gridWidth, gridHeight];
+        tileHeights = new int[gridWidth, gridHeight];
         if (spawnDistance < 0)
         {
             spawnDistance = 0;
@@ -67,13 +71,19 @@ public class Grid : MonoBehaviour
     Vector3 CalcWorldPos(Vector2 gridPos)
     {
         float offset = 0;
+        float y = tileHeights[(int)gridPos.x, (int)gridPos.y]; ;
         if (gridPos.y % 2 != 0)
             offset = hexWidth / 2;
 
         float x = startPos.x + gridPos.x * hexWidth + offset;
         float z = startPos.z - gridPos.y * hexHeight * 0.75f;
 
-        return new Vector3(x, 0, z);
+        if (generateHeightDiff)
+        {
+            generateRandomHeights();
+        }
+
+        return new Vector3(x, y, z);
     }
 
     bool IsSpawnTile(int x, int y)
@@ -212,11 +222,21 @@ public class Grid : MonoBehaviour
         return newTileSystem;
     }
 
+    void generateRandomHeights()
+    {
+        for (int y = 0; y < gridHeight; y++)
+        {
+            for (int x = 0; x < gridWidth; x++)
+            {
+                tileHeights[x, y] = Random.Range(0, 3);
+            }
+        }
+    }
+
     void CreateGrid()
     {
         GenerateTileSystem();
         tileSystem = DoSimulationStep();
-
 
         for (int y = 0; y < gridHeight; y++)
         {

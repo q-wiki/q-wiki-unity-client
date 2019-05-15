@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: bd940538965da67479e371a1b5e01e94
+timeCreated: 1512728602
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Patchwork Stitchlings
+  fontNames:
+  - Patchwork Stitchlings
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

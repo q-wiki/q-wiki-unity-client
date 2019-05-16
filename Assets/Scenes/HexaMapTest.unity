@@ -232,21 +232,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d2903ace44717f4f8d057176f8e55a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hexPrefab: {fileID: 2065541728535081302, guid: af1f06d079bd2b543b35831e0275e230,
+  hexPrefab: {fileID: 2677984350085775818, guid: 0e4f3ad920cda6f46b6ea5b0b4af56a1,
     type: 3}
-  hexPrefabFree: {fileID: 4124893685000664794, guid: d6700f54a9ee4004ba4c9a39876e3cba,
+  hexPrefabFree: {fileID: 3024205739872963661, guid: c3a5a8bf1f92cce488cc60cbf3cf88a8,
     type: 3}
-  hexPrefabOcc: {fileID: 9173426637124696962, guid: a4e85683ceae2c644aada376d5b18d4f,
+  hexPrefabOcc: {fileID: 1746178088861749414, guid: 869552cf8e1b5554fad9db9248053129,
     type: 3}
-  hexPrefabSpawn: {fileID: 8500846110078512418, guid: 8ab3f5b6b7ad48c42bcb9c16e8a2124c,
+  hexPrefabSpawn: {fileID: 5844315454276757609, guid: 408a487d6dc92d041a4ec7bc0991d16b,
     type: 3}
   gridWidth: 10
   gridHeight: 9
-  spawnDistance: 2
+  spawnDistance: 1
   gap: 0.25
-  chanceAlive: 50
+  realNeighbours: 1
+  chanceAlive: 75
   deathLimit: 4
-  birthLimit: 2
+  birthLimit: 1
+  generateHeightDiff: 0
 --- !u!4 &1468745918
 Transform:
   m_ObjectHideFlags: 0

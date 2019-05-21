@@ -26,17 +26,17 @@ public class MenuController : MonoBehaviour
 
         string sceneName = currentScene.name;
 
-        if (sceneName == "ui")
+        if (sceneName == "StartScene")
         {
-            Debug.Log("UI");
+            Debug.Log("StartScene");
             startPanel = GameObject.Find("StartPanel");
             settingsPanel = GameObject.Find("SettingsPanel");
             settingsPanel.SetActive(false);
 
         }
-        else if (sceneName == "NewGame")
+        else if (sceneName == "GameScene")
         {
-            Debug.Log("NewGame");
+            Debug.Log("GameScene");
             settingsPanel = GameObject.Find("SettingsPanelContainer");
             settingsPanel.SetActive(false);
 

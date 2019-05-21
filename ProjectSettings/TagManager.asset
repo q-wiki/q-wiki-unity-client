@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Minigame
+  - Canvas
   layers:
   - Default
   - TransparentFX

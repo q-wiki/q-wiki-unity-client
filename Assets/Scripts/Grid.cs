@@ -240,10 +240,8 @@ public class Grid : MonoBehaviour
 
         for (int y = 0; y < gridHeight; y++)
         {
-            string consoleLoggin = "";
             for (int x = 0; x < gridWidth; x++)
             {
-                consoleLoggin += "[ "+ x + " | " + y + " ]";
 
                 // TODO 
                 GameObject hex;
@@ -268,7 +266,6 @@ public class Grid : MonoBehaviour
                 hex.transform.parent = this.transform;
                 hex.name = "Hexagon" + x + "|" + y;
             }
-            Debug.Log(consoleLoggin);
         }
     }
 }

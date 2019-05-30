@@ -11,6 +11,7 @@ public class MenuController : MonoBehaviour
     public GameObject audioSource;
     public GameObject soundButtonIcon, notificationButtonIcon, vibrationButtonIcon;
     private GameObject startPanel, settingsPanel;
+    public GameObject miniGameCanvas, categoryCanvas;
     public Sprite soundOff, soundOn, notifiactionOff, notificationOn, vibrationOff, vibrationOn;
     bool soundToggle, notificationToggle, vibrationToggle, settingsToggle = true;
 
@@ -60,6 +61,13 @@ public class MenuController : MonoBehaviour
 
         SceneManager.LoadScene(sceneName);
     }
+
+    public void StartMiniGame()
+    {
+        miniGameCanvas.SetActive(true);
+        categoryCanvas.SetActive(false);
+    }
+
 
     public void ToggleSettingsGame()
     {

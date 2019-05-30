@@ -17,8 +17,8 @@ public class Category : MonoBehaviour
     }
     void Start()
     {
-       
-            
+
+
     }
 
     void reshuffle(string[] texts)
@@ -35,6 +35,7 @@ public class Category : MonoBehaviour
 
     public void ShowCategoryPanel()
     {
+        actionPanel.SetActive(false);
         categoryPanel.SetActive(true);
         reshuffle(categorys);
         /* Debug.Log("New Categorys ");

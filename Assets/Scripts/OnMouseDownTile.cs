@@ -1,15 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class OnMouseDownTile : MonoBehaviour
 {
 
     Renderer objectRenderer;
 
-    public GameObject actionPanelPrefab;
     public GameObject captureButton, attackButton, levelUpButton;
-   
+    public GameObject categoryCanvas, actionCanvas;
+
 
     void Start()
     {
@@ -30,12 +31,14 @@ public class OnMouseDownTile : MonoBehaviour
 
     void OnMouseDown()
     {
+        if (EventSystem.current.IsPointerOverGameObject()) return;
+
         if (objectRenderer.sharedMaterial.name == "Red")
         {
-            SetActiveAllChildren(actionPanelPrefab.GetComponent<Transform>(), true);
+            SetActiveAllChildren(actionCanvas.GetComponent<Transform>(), true);
             Debug.Log("Red");
             //Instantiate(actionPanelPrefab, GameObject.FindGameObjectWithTag("Canvas").transform);
-            actionPanelPrefab.SetActive(true);
+            actionCanvas.SetActive(true);
 
             if(captureButton.activeSelf && attackButton.activeSelf)
             {
@@ -45,9 +48,9 @@ public class OnMouseDownTile : MonoBehaviour
         }
         else if (objectRenderer.sharedMaterial.name == "Blue")
         {
-            SetActiveAllChildren(actionPanelPrefab.GetComponent<Transform>(), true);
+            SetActiveAllChildren(actionCanvas.GetComponent<Transform>(), true);
             Debug.Log("Blue");
-            actionPanelPrefab.SetActive(true);
+            actionCanvas.SetActive(true);
 
             if (captureButton.activeSelf && levelUpButton.activeSelf)
             {
@@ -57,10 +60,10 @@ public class OnMouseDownTile : MonoBehaviour
         }
         else if (objectRenderer.sharedMaterial.name == "White")
         {
-
-            SetActiveAllChildren(actionPanelPrefab.GetComponent<Transform>(), true);
+            categoryCanvas.SetActive(false);
+            SetActiveAllChildren(actionCanvas.GetComponent<Transform>(), true);
             Debug.Log("White");
-            actionPanelPrefab.SetActive(true);
+            actionCanvas.SetActive(true);
 
             if (attackButton.activeSelf && levelUpButton.activeSelf)
             {

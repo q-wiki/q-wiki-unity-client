@@ -37,14 +37,14 @@ public class CameraBehavior : MonoBehaviour
         if (Input.GetAxis("Mouse ScrollWheel") > 0 && transform.position.y >= heightLimitMin)
         {
             GetComponent<Transform>().position = new Vector3(transform.position.x, transform.position.y - yTranslocation, transform.position.z + zTranslocation);
-            transform.Rotate(-rotationDegree, 0, 0);
+            transform.Rotate(-rotationDegree / 2f, 0, 0);
         }
         else
 
         if (Input.GetAxis("Mouse ScrollWheel") < 0 && transform.position.y < heightLimitMax)
         {
             GetComponent<Transform>().position = new Vector3(transform.position.x, transform.position.y + yTranslocation, transform.position.z - zTranslocation);
-            transform.Rotate(rotationDegree, 0, 0);
+            transform.Rotate(rotationDegree / 2f, 0, 0);
         }
         else if (Input.GetAxis("Mouse ScrollWheel") < 0 && transform.position.y >= heightLimitMax)
         {

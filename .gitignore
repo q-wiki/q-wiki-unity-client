@@ -1,5 +1,12 @@
 # This .gitignore file should be placed at the root of your Unity project directory
 
+# Jetbrain Rider Cache
+.idea/
+Assets/Plugins/Editor/JetBrains*
+
+# Visual Studio Code
+.vscode/
+
 /[Ll]ibrary/
 /[Tt]emp/
 /[Oo]bj/

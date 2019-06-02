@@ -3,27 +3,40 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using WikidataGame.Models;
 
 public class MinigameMultipleChoice : MonoBehaviour
 {
+
+    public List<GameObject> choices;
+    
     public Sprite boxSprite;
     public Sprite checkSprite;
     public GameObject warningMessage;
-
     public GameObject sendButton;
 
     private GameObject checkedChoice;
+    private string _id;
+    private string _taskDescription;
+    private IList<string> _answerOptions;
 
-    // Start is called before the first frame update
-    void Start()
+    public void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions)
     {
         checkedChoice = null;
+        _id = miniGameId;
+        _taskDescription = taskDescription;
+        _answerOptions = answerOptions;
+        AssignChoices(_answerOptions);
+
     }
 
-    // Update is called once per frame
-    void Update()
+    private void AssignChoices(IList<string> answerOptions)
     {
-
+        for (var i = 0; i < choices.Count; i++)
+        {
+            var text = choices[i];
+            text.GetComponent<Text>().text = _answerOptions[i];
+        }
     }
 
     public void Process(GameObject selected)
@@ -57,8 +70,15 @@ public class MinigameMultipleChoice : MonoBehaviour
   
     }
 
-    public void Send()
+    public async void Send()
     {
+        
+        if (!Communicator.isConnected)
+        {
+            Debug.Log("You are not connected to any game");
+            return;
+        }
+
         if (checkedChoice == null)
         {
             sendButton.GetComponent<Button>().interactable = false;
@@ -73,7 +93,11 @@ public class MinigameMultipleChoice : MonoBehaviour
             String answer = checkedChoice.GetComponentInChildren<Text>().text;
             Debug.Log("SEND ANSWER TO BACKEND: " + answer);
 
-            //TODO: Send to backend
+            var result = await Communicator.AnswerMinigame(_id, new List<string> {answer});
+            // TODO: Show result to user ==> continue game
         }
     }
+
+
+  
 }

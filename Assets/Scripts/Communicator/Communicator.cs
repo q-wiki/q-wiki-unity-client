@@ -18,6 +18,14 @@ public class Communicator : MonoBehaviour
     private static AuthInfo _auth { get; set; }
     private static WikidataGameAPI _gameApi;
     private static GameInfo _gameInfo;
+    
+    /**
+     * 
+     */
+    async void Start()
+    {
+        await Connect();
+    }
 
     /**
      * Use this function to connect to the backend
@@ -39,10 +47,10 @@ public class Communicator : MonoBehaviour
     * Use this function to create a new minigame by providing a Tile object and the categoryId
     * Question: does this need to be async as well?
     */
-    public static MiniGame InitializeMinigame(Tile tile, String categoryId)
+    public static async Task<MiniGame> InitializeMinigame(String tileId, String categoryId)
     {
-        MiniGameInit init = new MiniGameInit(tile.Id, categoryId);
-        return _gameApi.InitalizeMinigame(_gameInfo.GameId, init);
+        MiniGameInit init = new MiniGameInit(tileId, categoryId);
+        return await _gameApi.InitalizeMinigameAsync(_gameInfo.GameId, init);
     }
 
 

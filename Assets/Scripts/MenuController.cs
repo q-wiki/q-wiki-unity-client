@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using WikidataGame.Models;
 
 public class MenuController : MonoBehaviour
 {
@@ -62,8 +63,17 @@ public class MenuController : MonoBehaviour
         SceneManager.LoadScene(sceneName);
     }
 
-    public void StartMiniGame()
+    public async void StartMiniGame()
     {
+        
+        Debug.Log("Getting random tile id");
+        var game = await Communicator.GetCurrentGameState();
+
+        Debug.Log("Trying to initialize minigame");
+        var miniGame = await Communicator.InitializeMinigame(game.Tiles[0][0].Id, "0");
+        // TODO: auf Grundlage von miniGame.Type entsprechendes Game öffnen 
+        MinigameMultipleChoice instance = miniGameCanvas.GetComponent<MinigameMultipleChoice>();
+        instance.Initialize(miniGame.Id, miniGame.TaskDescription, miniGame.AnswerOptions);
         miniGameCanvas.SetActive(true);
         categoryCanvas.SetActive(false);
     }

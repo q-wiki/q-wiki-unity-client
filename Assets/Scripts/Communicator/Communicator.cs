@@ -18,6 +18,7 @@ public class Communicator : MonoBehaviour
     private static AuthInfo _auth { get; set; }
     private static WikidataGameAPI _gameApi;
     private static GameInfo _gameInfo;
+    private static Game _game;
     
     /**
      * 
@@ -109,6 +110,8 @@ public class Communicator : MonoBehaviour
         Debug.Log(cts2);
         Debug.Log("trying to start game...");
         _gameInfo = await _gameApi.CreateNewGameAsync(cts2.Token);
+        _game = _gameApi.RetrieveGameState(_gameInfo.GameId);
+        Debug.Log(_game.Tiles[1][1].Difficulty);
     }
 
     /**

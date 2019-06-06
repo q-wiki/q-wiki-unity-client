@@ -1525,7 +1525,8 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 747.5, y: 224, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1682791523}
   m_Father: {fileID: 0}
   m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3299,6 +3300,62 @@ MonoBehaviour:
   m_Spacing: {x: 10, y: 21.6}
   m_Constraint: 2
   m_ConstraintCount: 4
+--- !u!1 &1682791522
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1682791523}
+  - component: {fileID: 1682791524}
+  m_Layer: 0
+  m_Name: Grid
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1682791523
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1682791522}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -834.5, y: -215.34433, z: 52.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 841558755}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1682791524
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1682791522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d2903ace44717f4f8d057176f8e55a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hexPrefab: {fileID: 0}
+  hexPrefabFree: {fileID: 0}
+  hexPrefabOcc: {fileID: 0}
+  hexPrefabSpawn: {fileID: 0}
+  gridWidth: 11
+  gridHeight: 11
+  spawnDistance: 1
+  gap: 0
+  realNeighbours: 0
+  chanceAlive: 45
+  deathLimit: 4
+  birthLimit: 4
+  generateHeightDiff: 0
 --- !u!1 &1695685624
 GameObject:
   m_ObjectHideFlags: 0
@@ -9373,6 +9430,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f7e88aff67314548bf8c7042fe574ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  choices: []
   boxSprite: {fileID: 21300000, guid: 1e0c4cb754ddec54e9d86cffe2ae034e, type: 3}
   checkSprite: {fileID: 21300000, guid: 057d64e35c75c22408b01eefa5437cf1, type: 3}
   warningMessage: {fileID: 9167687159710714836}

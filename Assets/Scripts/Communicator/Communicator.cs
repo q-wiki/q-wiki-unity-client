@@ -19,12 +19,15 @@ public class Communicator : MonoBehaviour
     private static WikidataGameAPI _gameApi;
     private static GameInfo _gameInfo;
     private static Game _game;
-    
+    private static Transform child;
+
     /**
      * 
      */
+
     async void Start()
     {
+        child = gameObject.transform.GetChild(0);
         await Connect();
     }
 
@@ -111,7 +114,9 @@ public class Communicator : MonoBehaviour
         Debug.Log("trying to start game...");
         _gameInfo = await _gameApi.CreateNewGameAsync(cts2.Token);
         _game = _gameApi.RetrieveGameState(_gameInfo.GameId);
-        Debug.Log(_game.Tiles[1][1].Difficulty);
+        child.GetComponent<GridController>().GenerateGrid(_game.Tiles);
+
+        // GameObject child = Component.gameObject.transform.GetChild(0);
     }
 
     /**

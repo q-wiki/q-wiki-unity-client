@@ -6,10 +6,9 @@ using WikidataGame.Models;
 
 public class GridController: MonoBehaviour
 {
-    public GameObject hexPrefabFree;
-    public GameObject hexPrefabOcc;
-    public GameObject hexPrefabSpawn;
-    public GameObject tilePrefab;
+    public GameObject[] hexPrefabFree;
+    public GameObject[] hexPrefabOcc;
+    public GameObject[] hexPrefabSpawn;
 
     public float gap = 0.0f;
 
@@ -43,19 +42,21 @@ public class GridController: MonoBehaviour
         {
             for (int x = 0; x< tileSystem.Count; x++)
             {
+                int randomIndexFree = Random.Range(0, hexPrefabFree.Length);
+                int randomIndexOcc= Random.Range(0, hexPrefabOcc.Length);
                 GameObject tile;
                 float height = 0;
         
                 if (tileSystem[x][z] != null)
                 {
 
-                    tile = Instantiate(hexPrefabFree) as GameObject;
+                    tile = Instantiate(hexPrefabFree[randomIndexFree]) as GameObject;
                     //tile = Instantiate(tilePrefab) as GameObject;
                     height = (float)tileSystem[x][z].Difficulty;
                 }
                 else
                 {
-                    tile = Instantiate(hexPrefabOcc) as GameObject;
+                    tile = Instantiate(hexPrefabOcc[randomIndexOcc]) as GameObject;
                 }
 
                 tileArray[x, z] = tile;                                                  
@@ -76,8 +77,8 @@ public class GridController: MonoBehaviour
         if (gridPos.z % 2 != 0)
             offset = hexWidth / 2;
 
-        float x = startPos.x + gridPos.x * hexWidth + offset;
-        float z = startPos.z - gridPos.z * hexHeight * 0.75f;
+        float z = startPos.x + gridPos.x * hexWidth + offset;
+        float x = startPos.z - gridPos.z * hexHeight * 0.75f;
         
         return new Vector3(x, y, z);
     }

@@ -18,14 +18,16 @@ public class Communicator : MonoBehaviour
     private static AuthInfo _auth { get; set; }
     private static WikidataGameAPI _gameApi;
     private static GameInfo _gameInfo;
-    
+
     /**
      * 
      */
-    async void Start()
-    {
-        await Connect();
-    }
+    /* async void Start()
+     {
+         await Connect();
+     }*/
+
+
 
     /**
      * Use this function to connect to the backend
@@ -36,10 +38,10 @@ public class Communicator : MonoBehaviour
     {
         await getToken();
         isConnected = true;
-        Debug.Log("isConnected: " + isConnected);
-        Debug.Log($"Bearer {_auth.Bearer}");
+       // Debug.Log("isConnected: " + isConnected);
+       // Debug.Log($"Bearer {_auth.Bearer}");
         await CreateGame(_auth);
-        Debug.Log($"Started game {_gameInfo.GameId}.");
+        Debug.Log($"Waiting for Opponent {_gameInfo.IsAwaitingOpponentToJoin}.");
     }
     
     
@@ -82,7 +84,7 @@ public class Communicator : MonoBehaviour
     private static async void DeleteGame()
     {
         await _gameApi.DeleteGameAsync(_gameInfo.GameId);
-        Debug.Log("Game " + _gameInfo.GameId + " successfully deleted.");
+        //Debug.Log("Game " + _gameInfo.GameId + " successfully deleted.");
     }
     
 
@@ -93,6 +95,8 @@ public class Communicator : MonoBehaviour
     {
         CancellationTokenSource cts3 = new CancellationTokenSource();
         var game = await _gameApi.RetrieveGameStateAsync(_gameInfo.GameId, cts3.Token);
+       // Debug.Log($"My player id is {game.Me.Id}.");
+       // Debug.Log($"My opponents id is {game.Opponent.Id}.");
         return game;
     }
 
@@ -103,11 +107,11 @@ public class Communicator : MonoBehaviour
     {
         //Create a new api client with the obtained bearer token for all other (authorized) requests
         _gameApi = new WikidataGameAPI(new Uri("https://wikidatagame.azurewebsites.net/"), new TokenCredentials(auth.Bearer));
-        Debug.Log(_gameApi);
+        //Debug.Log(_gameApi);
 
         CancellationTokenSource cts2 = new CancellationTokenSource();
-        Debug.Log(cts2);
-        Debug.Log("trying to start game...");
+        //Debug.Log(cts2);
+       // Debug.Log("trying to start game...");
         _gameInfo = await _gameApi.CreateNewGameAsync(cts2.Token);
     }
 

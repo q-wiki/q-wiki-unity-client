@@ -66,7 +66,7 @@ public class MenuController : MonoBehaviour
         else
         {
             var game = await Communicator.GetCurrentGameState();
-            Debug.Log($"Started game {game.Id}.");
+            //Debug.Log($"Started game {game.Id}.");
             //Debug.Log($"AwaitingOpponentToJoin {game.AwaitingOpponentToJoin}.");
 
             //game.AwaitingOpponentToJoin = awaitingOpponentToJoin;

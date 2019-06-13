@@ -19,6 +19,8 @@ public class MenuController : MonoBehaviour
     public Sprite soundOff, soundOn, notifiactionOff, notificationOn, vibrationOff, vibrationOn, opponentImage, myImage, newGameButtonGrey, newGameIconGrey;
     bool soundToggle, notificationToggle, vibrationToggle, settingsToggle = true;
     public bool awaitingOpponentToJoin = true;
+    private Transform child;
+    private static Game _game;
 
 
     async void Start()
@@ -45,9 +47,8 @@ public class MenuController : MonoBehaviour
             //Debug.Log("GameScene");
             settingsPanel = GameObject.Find("SettingsPanelContainer");
             settingsPanel.SetActive(false);
-
-            var game = await Communicator.GetCurrentGameState();
-            Debug.Log($"Started game {game.Id}.");
+            child = gameObject.transform.GetChild(0);
+            child.GetComponent<GridController>().GenerateGrid(_game.Tiles);
 
         }
 
@@ -58,23 +59,23 @@ public class MenuController : MonoBehaviour
         await Communicator.Connect();
 
 
-       if (!Communicator.isConnected)
+        if (!Communicator.isConnected)
         {
             Debug.Log("You are not connected to any game");
             return;
         }
         else
         {
-            var game = await Communicator.GetCurrentGameState();
+            _game = await Communicator.GetCurrentGameState();
             //Debug.Log($"Started game {game.Id}.");
             //Debug.Log($"AwaitingOpponentToJoin {game.AwaitingOpponentToJoin}.");
 
             //game.AwaitingOpponentToJoin = awaitingOpponentToJoin;
 
 
-            if (game.AwaitingOpponentToJoin ?? true)
+            if (_game.AwaitingOpponentToJoin ?? true)
             {
-                Debug.Log($"True: Waiting for Opponent {game.AwaitingOpponentToJoin}.");
+                Debug.Log($"True: Waiting for Opponent {_game.AwaitingOpponentToJoin}.");
                 newGameButton.GetComponentInChildren<Text>().text = "Searching for \nOpponent";
                 newGameButtonPlayImage.SetActive(false);
                 loadingDots.SetActive(true);
@@ -101,12 +102,12 @@ public class MenuController : MonoBehaviour
                 GameObject childImageInNewButton = newButton.transform.GetChild(1).gameObject;
 
                 //game.NextMovePlayerId = game.Opponent.Id; 
-                if (game.NextMovePlayerId == game.Me.Id)
+                if (_game.NextMovePlayerId == _game.Me.Id)
                 {
                     newButton.GetComponentInChildren<Text>().text = "Your Turn!";
                     childImageInNewButton.GetComponent<Image>().sprite = myImage;
                 }
-                else if (game.NextMovePlayerId == game.Opponent.Id)
+                else if (_game.NextMovePlayerId == _game.Opponent.Id)
                 {
                     newButton.GetComponentInChildren<Text>().text = "Waiting for \nOpponent...";
                     childImageInNewButton.GetComponent<Image>().sprite = opponentImage;
@@ -134,7 +135,6 @@ public class MenuController : MonoBehaviour
 
     public void ChangeToGameScene()
     {
-
         SceneManager.LoadScene("GameScene");
     }
 

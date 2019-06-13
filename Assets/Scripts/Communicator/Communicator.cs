@@ -18,13 +18,15 @@ public class Communicator : MonoBehaviour
     private static AuthInfo _auth { get; set; }
     private static WikidataGameAPI _gameApi;
     private static GameInfo _gameInfo;
+    private static Game _game;
 
-    /**
-     * 
-     */
+
+
     /* async void Start()
-     {
-         await Connect();
+      {
+          await Connect();
+
+
      }*/
 
 
@@ -113,6 +115,9 @@ public class Communicator : MonoBehaviour
         //Debug.Log(cts2);
        // Debug.Log("trying to start game...");
         _gameInfo = await _gameApi.CreateNewGameAsync(cts2.Token);
+        _game = _gameApi.RetrieveGameState(_gameInfo.GameId);
+
+        // GameObject child = Component.gameObject.transform.GetChild(0);
     }
 
     /**

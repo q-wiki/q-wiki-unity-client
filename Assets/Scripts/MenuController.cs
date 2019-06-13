@@ -47,6 +47,10 @@ public class MenuController : MonoBehaviour
             //Debug.Log("GameScene");
             settingsPanel = GameObject.Find("SettingsPanelContainer");
             settingsPanel.SetActive(false);
+
+            //await Communicator.Connect();
+            //_game = await Communicator.GetCurrentGameState();
+            //Debug.Log(_game.Tiles);
             child = gameObject.transform.GetChild(0);
             child.GetComponent<GridController>().GenerateGrid(_game.Tiles);
 

@@ -49,7 +49,7 @@ public class Communicator : MonoBehaviour
     * Use this function to create a new minigame by providing a Tile object and the categoryId
     * Question: does this need to be async as well?
     */
-    public static async Task<MiniGame> InitializeMinigame(String tileId, String categoryId)
+    public static async Task<MiniGame> InitializeMinigame(string tileId, string categoryId)
     {
         MiniGameInit init = new MiniGameInit(tileId, categoryId);
         return await _gameApi.InitalizeMinigameAsync(_gameInfo.GameId, init);
@@ -59,7 +59,7 @@ public class Communicator : MonoBehaviour
     /**
      * Use this function to get needed information about the minigame you just created
      */
-    public static async Task<MiniGame> RetrieveMinigameInfo(String minigameId)
+    public static async Task<MiniGame> RetrieveMinigameInfo(string minigameId)
     {
         CancellationTokenSource cts = new CancellationTokenSource();
         var miniGame = await _gameApi.RetrieveMinigameInfoAsync(_gameInfo.GameId, minigameId, cts.Token);
@@ -70,7 +70,7 @@ public class Communicator : MonoBehaviour
     * Use this function to POST answers for a minigame to the backend
     * you are getting a MiniGameResult back, which indicates if the answer was right or wrong
     */
-    public static async Task<MiniGameResult> AnswerMinigame(String minigameId, IList<string> answers)
+    public static async Task<MiniGameResult> AnswerMinigame(string minigameId, IList<string> answers)
     {
         CancellationTokenSource cts = new CancellationTokenSource();
         var result = await _gameApi.AnswerMinigameAsync(_gameInfo.GameId, minigameId, answers, cts.Token);

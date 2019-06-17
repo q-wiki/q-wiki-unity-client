@@ -9,6 +9,7 @@ public class MinigameMultipleChoice : MonoBehaviour
 {
 
     public List<GameObject> choices;
+    public GameObject description;
     
     public Sprite boxSprite;
     public Sprite checkSprite;
@@ -20,12 +21,18 @@ public class MinigameMultipleChoice : MonoBehaviour
     private string _taskDescription;
     private IList<string> _answerOptions;
 
-    public void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions)
+    public async void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions)
     {
+
+        // TODO: returns null / works anyway
+        var miniGame = await Communicator.RetrieveMinigameInfo(miniGameId);
+        
+
         checkedChoice = null;
         _id = miniGameId;
         _taskDescription = taskDescription;
         _answerOptions = answerOptions;
+        AssignDescription(_taskDescription);
         AssignChoices(_answerOptions);
 
     }
@@ -34,9 +41,14 @@ public class MinigameMultipleChoice : MonoBehaviour
     {
         for (var i = 0; i < choices.Count; i++)
         {
-            var text = choices[i];
-            text.GetComponent<Text>().text = _answerOptions[i];
+            var text = choices[i].gameObject.transform.Find("Text");
+            text.GetComponent<Text>().text = answerOptions[i];
         }
+    }
+
+    private void AssignDescription(string desc)
+    {
+        description.GetComponent<Text>().text = desc;
     }
 
     public void Process(GameObject selected)
@@ -94,6 +106,7 @@ public class MinigameMultipleChoice : MonoBehaviour
             Debug.Log("SEND ANSWER TO BACKEND: " + answer);
 
             var result = await Communicator.AnswerMinigame(_id, new List<string> {answer});
+            Debug.Log(result);
             // TODO: Show result to user ==> continue game
         }
     }
@@ -101,3 +114,4 @@ public class MinigameMultipleChoice : MonoBehaviour
 
   
 }
+

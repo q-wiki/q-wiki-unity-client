@@ -9373,7 +9373,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f7e88aff67314548bf8c7042fe574ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  choices: []
+  choices:
+  - {fileID: 9167687158886367123}
+  - {fileID: 9167687160502893012}
+  - {fileID: 9167687159858426316}
+  - {fileID: 9167687159701807684}
+  description: {fileID: 9167687160230066449}
   boxSprite: {fileID: 21300000, guid: 1e0c4cb754ddec54e9d86cffe2ae034e, type: 3}
   checkSprite: {fileID: 21300000, guid: 057d64e35c75c22408b01eefa5437cf1, type: 3}
   warningMessage: {fileID: 9167687159710714836}

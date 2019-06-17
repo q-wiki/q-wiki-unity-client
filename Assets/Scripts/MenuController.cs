@@ -18,7 +18,7 @@ public class MenuController : MonoBehaviour
     public Button newGameButton;
     public Sprite soundOff, soundOn, notifiactionOff, notificationOn, vibrationOff, vibrationOn, opponentImage, myImage, newGameButtonGrey, newGameIconGrey;
     bool soundToggle, notificationToggle, vibrationToggle, settingsToggle = true;
-    public bool awaitingOpponentToJoin = true;
+    public bool awaitingOpponentToJoin;
 
 
     async void Start()

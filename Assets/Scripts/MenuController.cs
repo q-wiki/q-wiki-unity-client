@@ -8,6 +8,7 @@ using WikidataGame.Models;
 
 public class MenuController : MonoBehaviour
 {
+    public GameObject _grid;
     public AudioClip clickSound;
     private AudioSource source { get { return GetComponent<AudioSource>(); } }
     public GameObject audioSource;
@@ -48,11 +49,10 @@ public class MenuController : MonoBehaviour
             settingsPanel = GameObject.Find("SettingsPanelContainer");
             settingsPanel.SetActive(false);
 
-            //await Communicator.Connect();
-            //_game = await Communicator.GetCurrentGameState();
-            //Debug.Log(_game.Tiles);
-            child = gameObject.transform.GetChild(0);
-            child.GetComponent<GridController>().GenerateGrid(_game.Tiles);
+            await Communicator.Connect();
+            _game = await Communicator.GetCurrentGameState();
+            Debug.Log(_game.Tiles);
+            _grid.GetComponent<GridController>().GenerateGrid(_game.Tiles);
 
         }
 

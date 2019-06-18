@@ -18,15 +18,13 @@ public class Communicator : MonoBehaviour
     private static AuthInfo _auth { get; set; }
     private static WikidataGameAPI _gameApi;
     private static GameInfo _gameInfo;
-    private static Game _game;
 
-
-
+    /**
+     * 
+     */
     /* async void Start()
-      {
-          await Connect();
-
-
+     {
+         await Connect();
      }*/
 
 
@@ -51,7 +49,7 @@ public class Communicator : MonoBehaviour
     * Use this function to create a new minigame by providing a Tile object and the categoryId
     * Question: does this need to be async as well?
     */
-    public static async Task<MiniGame> InitializeMinigame(String tileId, String categoryId)
+    public static async Task<MiniGame> InitializeMinigame(string tileId, string categoryId)
     {
         MiniGameInit init = new MiniGameInit(tileId, categoryId);
         return await _gameApi.InitalizeMinigameAsync(_gameInfo.GameId, init);
@@ -61,7 +59,7 @@ public class Communicator : MonoBehaviour
     /**
      * Use this function to get needed information about the minigame you just created
      */
-    public static async Task<MiniGame> RetrieveMinigameInfo(String minigameId)
+    public static async Task<MiniGame> RetrieveMinigameInfo(string minigameId)
     {
         CancellationTokenSource cts = new CancellationTokenSource();
         var miniGame = await _gameApi.RetrieveMinigameInfoAsync(_gameInfo.GameId, minigameId, cts.Token);
@@ -72,7 +70,7 @@ public class Communicator : MonoBehaviour
     * Use this function to POST answers for a minigame to the backend
     * you are getting a MiniGameResult back, which indicates if the answer was right or wrong
     */
-    public static async Task<MiniGameResult> AnswerMinigame(String minigameId, IList<string> answers)
+    public static async Task<MiniGameResult> AnswerMinigame(string minigameId, IList<string> answers)
     {
         CancellationTokenSource cts = new CancellationTokenSource();
         var result = await _gameApi.AnswerMinigameAsync(_gameInfo.GameId, minigameId, answers, cts.Token);
@@ -114,10 +112,7 @@ public class Communicator : MonoBehaviour
         CancellationTokenSource cts2 = new CancellationTokenSource();
         //Debug.Log(cts2);
        // Debug.Log("trying to start game...");
-        _gameInfo = await _gameApi.CreateNewGameAsync(cts2.Token);
-        _game = _gameApi.RetrieveGameState(_gameInfo.GameId);
-
-        // GameObject child = Component.gameObject.transform.GetChild(0);
+        _gameInfo = await _gameApi.CreateNewGameAsync(10, 10, 70, cts2.Token);
     }
 
     /**
@@ -129,7 +124,7 @@ public class Communicator : MonoBehaviour
         var apiClient = new WikidataGameAPI(new Uri("https://wikidatagame.azurewebsites.net/"), new TokenCredentials("auth"));
 
         CancellationTokenSource cts = new CancellationTokenSource(); // <-- Cancellation Token if you want to cancel the request, user quits, etc. [cts.Cancel()]
-        _auth = await apiClient.AuthenticateAsync("123", "test", cts.Token);
-
+       _auth = await apiClient.AuthenticateAsync(SystemInfo.deviceUniqueIdentifier, "test", cts.Token);
+       // _auth = await apiClient.AuthenticateAsync("123", "test", cts.Token);
     }
 }

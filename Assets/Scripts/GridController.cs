@@ -51,14 +51,21 @@ public class GridController: MonoBehaviour
                 {
 
                     tile = Instantiate(hexPrefabFree[randomIndexFree]) as GameObject;
-                    //tile = Instantiate(tilePrefab) as GameObject;
                     height = (float)tileSystem[x][z].Difficulty;
+                    tileArray[x, z] = tile;
+
+                    Vector3 gridPos = new Vector3(x, height, z);
+
+                    tile.transform.position = CalcWorldPos(gridPos);
+                    tile.transform.parent = this.transform;
+                    tile.name = "GridTile" + x + "|" + z;
                 }
+                /*
                 else
                 {
                     tile = Instantiate(hexPrefabOcc[randomIndexOcc]) as GameObject;
                 }
-
+                
                 tileArray[x, z] = tile;                                                  
 
                 Vector3 gridPos = new Vector3(x, height, z);
@@ -66,6 +73,7 @@ public class GridController: MonoBehaviour
                 tile.transform.position = CalcWorldPos(gridPos);
                 tile.transform.parent = this.transform;
                 tile.name = "GridTile" + x + "|" + z;
+                */
             }
         }
     }

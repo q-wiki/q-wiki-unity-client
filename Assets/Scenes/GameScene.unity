@@ -2638,6 +2638,12 @@ PrefabInstance:
       propertyPath: _grid
       value: 
       objectReference: {fileID: 1682791522}
+    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
+        type: 3}
+      propertyPath: notificationOff
+      value: 
+      objectReference: {fileID: 21300000, guid: 3b8792cf77854614586ca34c3291fba4,
+        type: 3}
     - target: {fileID: 4312400960762222761, guid: 21d8f64ae92bc924dabe21a5130318ef,
         type: 3}
       propertyPath: m_LocalPosition.x

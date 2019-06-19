@@ -3438,14 +3438,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d2903ace44717f4f8d057176f8e55a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hexPrefabFree:
+  hexPrefabFree0:
   - {fileID: 6464524774693378686, guid: caccbb20a70e8c34a9a246f19df07d05, type: 3}
+  hexPrefabFree1:
   - {fileID: 3375674366253318181, guid: 43f54b4ef5cbaa9448564f07bce0b411, type: 3}
+  hexPrefabFree2:
   - {fileID: 35586735185409242, guid: 0bc010393da14e746b0c2c31b2936760, type: 3}
-  hexPrefabOcc:
-  - {fileID: 1746178088861749414, guid: 869552cf8e1b5554fad9db9248053129, type: 3}
-  hexPrefabSpawn:
-  - {fileID: 5844315454276757609, guid: 408a487d6dc92d041a4ec7bc0991d16b, type: 3}
+  hexPrefabSpawn: {fileID: 5844315454276757609, guid: 408a487d6dc92d041a4ec7bc0991d16b,
+    type: 3}
+  addGap: 1
   gap: 0.18
 --- !u!1 &1695685624
 GameObject:

@@ -8,28 +8,61 @@ using WikidataGame.Models;
 
 public class MenuController : MonoBehaviour
 {
-    public GameObject _grid;
+    /**
+     * public fields
+     */
+    
+    public GameObject grid;
     public AudioClip clickSound;
-    private AudioSource source { get { return GetComponent<AudioSource>(); } }
     public GameObject audioSource;
-    public GameObject soundButtonIcon, notificationButtonIcon, vibrationButtonIcon;
-    private GameObject startPanel, settingsPanel;
-    public GameObject miniGameCanvas, categoryCanvas;
-    public GameObject newGameButtonPlayImage, loadingDots, buttonPrefab, menuGrid;
+    public GameObject soundButtonIcon;
+    public GameObject notificationButtonIcon;
+    public GameObject vibrationButtonIcon;
+    public GameObject miniGameCanvas;
+    public GameObject categoryCanvas;
+    public GameObject newGameButtonPlayImage;
+    public GameObject loadingDots;
+    public GameObject buttonPrefab;
+    public GameObject menuGrid;
     public Button newGameButton;
-    public Sprite soundOff, soundOn, notifiactionOff, notificationOn, vibrationOff, vibrationOn, opponentImage, myImage, newGameButtonGrey, newGameIconGrey;
-    bool soundToggle, notificationToggle, vibrationToggle, settingsToggle = true;
-    public bool awaitingOpponentToJoin = true;
-    private Transform child;
+    public Sprite soundOff;
+    public Sprite soundOn;
+    public Sprite notificationOff;
+    public Sprite notificationOn;
+    public Sprite vibrationOff;
+    public Sprite vibrationOn;
+    public Sprite opponentImage;
+    public Sprite myImage;
+    public Sprite newGameButtonGrey;
+    public Sprite newGameIconGrey;
+    public bool awaitingOpponentToJoin;
+
+    /**
+     * private fields
+     */
+    
     private static Game _game;
+    private GameObject _startPanel;
+    private GameObject _settingsPanel;
+    private bool _soundToggle;
+    private bool _notificationToggle;
+    private bool _vibrationToggle;
+    private bool _settingsToggle;
+    
+    private AudioSource Source => GetComponent<AudioSource>();
+
+    void Awake()
+    {
+        _settingsToggle = true;
+    }
 
 
     async void Start()
     {
         
         gameObject.AddComponent<AudioSource>();
-        source.clip = clickSound;
-        source.playOnAwake = false;
+        Source.clip = clickSound;
+        Source.playOnAwake = false;
 
         Scene currentScene = SceneManager.GetActiveScene();
 
@@ -38,21 +71,21 @@ public class MenuController : MonoBehaviour
         if (sceneName == "StartScene")
         {
             //Debug.Log("StartScene");
-            startPanel = GameObject.Find("StartPanel");
-            settingsPanel = GameObject.Find("SettingsPanel");
-            settingsPanel.SetActive(false);
+            _startPanel = GameObject.Find("StartPanel");
+            _settingsPanel = GameObject.Find("SettingsPanel");
+            _settingsPanel.SetActive(false);
 
         }
         else if (sceneName == "GameScene")
         {
             //Debug.Log("GameScene");
-            settingsPanel = GameObject.Find("SettingsPanelContainer");
-            settingsPanel.SetActive(false);
+            _settingsPanel = GameObject.Find("SettingsPanelContainer");
+            _settingsPanel.SetActive(false);
 
             await Communicator.Connect();
             _game = await Communicator.GetCurrentGameState();
             Debug.Log(_game.Tiles);
-            _grid.GetComponent<GridController>().GenerateGrid(_game.Tiles);
+            grid.GetComponent<GridController>().GenerateGrid(_game.Tiles);
 
         }
 
@@ -89,14 +122,13 @@ public class MenuController : MonoBehaviour
             else
             {
                 newGameButton.enabled = false;
-                //Debug.Log($"False: Waiting for Opponent {game.AwaitingOpponentToJoin}.");
+                Debug.Log($"False: Waiting for Opponent {_game.AwaitingOpponentToJoin}.");
                 newGameButton.GetComponent<Image>().sprite = newGameButtonGrey;
                 newGameButtonPlayImage.SetActive(true);
                 newGameButtonPlayImage.GetComponent<Image>().sprite = newGameIconGrey;
                 loadingDots.SetActive(false);
 
-                var newButtonContainer = Instantiate(buttonPrefab);
-                newButtonContainer.transform.SetParent(menuGrid.transform, false);
+                var newButtonContainer = Instantiate(buttonPrefab, menuGrid.transform, false);
                 Vector3 pos = newButtonContainer.transform.localPosition;
                 newButtonContainer.transform.localPosition = new Vector3(0, 0, 0);
 
@@ -132,7 +164,7 @@ public class MenuController : MonoBehaviour
 
     public void PlaySound()
     {
-        source.PlayOneShot(clickSound);
+        Source.PlayOneShot(clickSound);
     }
 
 
@@ -142,17 +174,21 @@ public class MenuController : MonoBehaviour
         SceneManager.LoadScene("GameScene");
     }
 
+   /**
+    * 
+    */ 
     public async void StartMiniGame()
     {
-        
-        Debug.Log("Getting random tile id");
+        // get current game state from backend
         var game = await Communicator.GetCurrentGameState();
 
         Debug.Log("Trying to initialize minigame");
         var miniGame = await Communicator.InitializeMinigame(game.Tiles[0][0].Id, "0");
+        
         // TODO: auf Grundlage von miniGame.Type entsprechendes Game öffnen 
         MinigameMultipleChoice instance = miniGameCanvas.GetComponent<MinigameMultipleChoice>();
         instance.Initialize(miniGame.Id, miniGame.TaskDescription, miniGame.AnswerOptions);
+        
         miniGameCanvas.SetActive(true);
         categoryCanvas.SetActive(false);
     }
@@ -160,15 +196,15 @@ public class MenuController : MonoBehaviour
 
     public void ToggleSettingsGame()
     {
-        settingsToggle = !settingsToggle;
+        _settingsToggle = !_settingsToggle;
 
-        if (settingsToggle)
+        if (_settingsToggle)
         {
-            settingsPanel.SetActive(false);
+            _settingsPanel.SetActive(false);
         }
         else
         {
-            settingsPanel.SetActive(true);
+            _settingsPanel.SetActive(true);
         }
     }
 
@@ -176,26 +212,26 @@ public class MenuController : MonoBehaviour
 
     public void ToggleSettingsStart()
     {
-        settingsToggle = !settingsToggle;
+        _settingsToggle = !_settingsToggle;
 
-        if (settingsToggle)
+        if (_settingsToggle)
         {
-            settingsPanel.SetActive(false);
-            startPanel.SetActive(true);
+            _settingsPanel.SetActive(false);
+            _startPanel.SetActive(true);
         }
         else
         {
-            settingsPanel.SetActive(true);
-            startPanel.SetActive(false);
+            _settingsPanel.SetActive(true);
+            _startPanel.SetActive(false);
         }
     }
 
 
     public void ToggleSound()
     {
-        soundToggle = !soundToggle;
+        _soundToggle = !_soundToggle;
 
-        if (soundToggle)
+        if (_soundToggle)
         {
             //audioSource.SetActive(false);
             AudioListener.volume = 0;
@@ -211,12 +247,12 @@ public class MenuController : MonoBehaviour
 
     public void ToggleNotification()
     {
-        notificationToggle = !notificationToggle;
+        _notificationToggle = !_notificationToggle;
 
-        if (notificationToggle)
+        if (_notificationToggle)
         {
             Debug.Log("Notification Off");
-            notificationButtonIcon.GetComponent<Image>().sprite = notifiactionOff;
+            notificationButtonIcon.GetComponent<Image>().sprite = notificationOff;
         }
         else
         {
@@ -227,9 +263,9 @@ public class MenuController : MonoBehaviour
 
     public void ToggleVibration()
     {
-        vibrationToggle = !vibrationToggle;
+        _vibrationToggle = !_vibrationToggle;
 
-        if (vibrationToggle)
+        if (_vibrationToggle)
         {
             Debug.Log("Vibration Off");
             vibrationButtonIcon.GetComponent<Image>().sprite = vibrationOff;

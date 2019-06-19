@@ -16,19 +16,14 @@ public class MinigameMultipleChoice : MonoBehaviour
     public GameObject warningMessage;
     public GameObject sendButton;
 
-    private GameObject checkedChoice;
+    private GameObject _checkedChoice;
     private string _id;
     private string _taskDescription;
     private IList<string> _answerOptions;
 
     public async void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions)
     {
-
-        // TODO: returns null / works anyway
-        var miniGame = await Communicator.RetrieveMinigameInfo(miniGameId);
-        
-
-        checkedChoice = null;
+        _checkedChoice = null;
         _id = miniGameId;
         _taskDescription = taskDescription;
         _answerOptions = answerOptions;
@@ -41,7 +36,7 @@ public class MinigameMultipleChoice : MonoBehaviour
     {
         for (var i = 0; i < choices.Count; i++)
         {
-            var text = choices[i].gameObject.transform.Find("Text");
+            var text = choices[i].transform.Find("Text");
             text.GetComponent<Text>().text = answerOptions[i];
         }
     }
@@ -54,20 +49,20 @@ public class MinigameMultipleChoice : MonoBehaviour
     public void Process(GameObject selected)
     {
 
-        if(checkedChoice == null)
+        if(_checkedChoice == null)
         {
             Select(selected);
-            checkedChoice = selected;
-        } else if(checkedChoice.Equals(selected))
+            _checkedChoice = selected;
+        } else if(_checkedChoice.Equals(selected))
         {
-            Deselect(checkedChoice);
-            checkedChoice = null;
+            Deselect(_checkedChoice);
+            _checkedChoice = null;
         }
         else
         {
-            Deselect(checkedChoice);
+            Deselect(_checkedChoice);
             Select(selected);
-            checkedChoice = selected;
+            _checkedChoice = selected;
         }
     }
 
@@ -91,10 +86,10 @@ public class MinigameMultipleChoice : MonoBehaviour
             return;
         }
 
-        if (checkedChoice == null)
+        if (_checkedChoice == null)
         {
             sendButton.GetComponent<Button>().interactable = false;
-            gameObject.transform.Find("Layout").GetComponent<CanvasGroup>().blocksRaycasts = false;
+            transform.Find("Layout").GetComponent<CanvasGroup>().blocksRaycasts = false;
             CanvasGroup canvasGroup = warningMessage.GetComponent<CanvasGroup>();
             canvasGroup.alpha = 1;
             canvasGroup.blocksRaycasts = true;
@@ -102,7 +97,7 @@ public class MinigameMultipleChoice : MonoBehaviour
         }
         else
         {
-            String answer = checkedChoice.GetComponentInChildren<Text>().text;
+            String answer = _checkedChoice.GetComponentInChildren<Text>().text;
             Debug.Log("SEND ANSWER TO BACKEND: " + answer);
 
             var result = await Communicator.AnswerMinigame(_id, new List<string> {answer});

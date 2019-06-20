@@ -36,6 +36,7 @@ public class MenuController : MonoBehaviour
     public Sprite newGameButtonGrey;
     public Sprite newGameIconGrey;
     public bool awaitingOpponentToJoin;
+    public Camera camera;
 
     /**
      * private fields
@@ -160,7 +161,10 @@ public class MenuController : MonoBehaviour
 
     }
 
-
+    public string PlayerId()
+    {
+        return _game.Me.Id;
+    }
 
     public void PlaySound()
     {
@@ -196,14 +200,17 @@ public class MenuController : MonoBehaviour
 
     public void ToggleSettingsGame()
     {
+       
         _settingsToggle = !_settingsToggle;
 
         if (_settingsToggle)
         {
+            camera.GetComponent<CameraBehavior>().enabled = true;
             _settingsPanel.SetActive(false);
         }
         else
         {
+            camera.GetComponent<CameraBehavior>().enabled = false;
             _settingsPanel.SetActive(true);
         }
     }

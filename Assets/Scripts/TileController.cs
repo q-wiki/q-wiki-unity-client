@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using WikidataGame;
 using WikidataGame.Models;
 
@@ -9,17 +10,92 @@ public class TileController : MonoBehaviour
 {
     public string id;
     public string ownerId;
+    public string myId;
 
     public int difficulty;
     public IList<WikidataGame.Models.Category> availableCategories;
     public WikidataGame.Models.Category chosenCategories;
 
-    void Start()
+    public GameObject grid;
+    private Game game;
+
+
+     void Start()
     {
+        myId = GameObject.Find("MenuController").GetComponent<MenuController>().PlayerId();
+        Debug.Log(myId);
+
     }
 
-    void Update()
+    private void SetActiveAllChildren(Transform transform, bool value)
     {
-        
+        foreach (Transform child in transform)
+        {
+            child.gameObject.SetActive(value);
+
+            SetActiveAllChildren(child, value);
+        }
     }
+
+    void OnMouseDown()
+        {
+        Debug.Log(ownerId);
+
+            if (EventSystem.current.IsPointerOverGameObject()) return;
+            /*foreach (WikidataGame.Models.Category cat in availableCategories)
+            {
+                Debug.Log(cat.Title);
+            }*/
+
+            if (ownerId == myId)
+            {
+                SetActiveAllChildren(grid.GetComponent<GridController>().actionCanvas.GetComponent<Transform>(), true);
+                Debug.Log("Red");
+            //Instantiate(actionPanelPrefab, GameObject.FindGameObjectWithTag("Canvas").transform);
+            grid.GetComponent<GridController>().actionCanvas.SetActive(true);
+
+                if (grid.GetComponent<GridController>().captureButton.activeSelf && grid.GetComponent<GridController>().attackButton.activeSelf)
+                {
+                grid.GetComponent<GridController>().captureButton.SetActive(false);
+                grid.GetComponent<GridController>().attackButton.SetActive(false);
+                }
+            }
+            else if (ownerId != myId && !string.IsNullOrEmpty(ownerId))
+            {
+                SetActiveAllChildren(grid.GetComponent<GridController>().actionCanvas.GetComponent<Transform>(), true);
+                Debug.Log("Blue");
+            grid.GetComponent<GridController>().actionCanvas.SetActive(true);
+
+                if (grid.GetComponent<GridController>().captureButton.activeSelf && grid.GetComponent<GridController>().levelUpButton.activeSelf)
+                {
+                grid.GetComponent<GridController>().captureButton.SetActive(false);
+                grid.GetComponent<GridController>().levelUpButton.SetActive(false);
+                }
+            }
+            else if (string.IsNullOrEmpty(ownerId))
+             {
+                 grid.GetComponent<GridController>().categoryCanvas.SetActive(false);
+
+
+                SetActiveAllChildren(grid.GetComponent<GridController>().actionCanvas.GetComponent<Transform>(), true);
+                 Debug.Log("Null");
+                grid.GetComponent<GridController>().actionCanvas.SetActive(true);
+
+                 if (grid.GetComponent<GridController>().attackButton.activeSelf && grid.GetComponent<GridController>().levelUpButton.activeSelf)
+                 {
+                grid.GetComponent<GridController>().attackButton.SetActive(false);
+                grid.GetComponent<GridController>().levelUpButton.SetActive(false);
+                 }
+             }
+             else
+             {
+                 Debug.Log("Invalid");
+             }
+
+        }
+        
+
+
+
 }
+

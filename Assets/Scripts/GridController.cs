@@ -12,6 +12,9 @@ public class GridController: MonoBehaviour
     public GameObject[] hexPrefabFree2;
     public GameObject hexPrefabSpawn;
 
+    public GameObject captureButton, attackButton, levelUpButton;
+    public GameObject categoryCanvas, actionCanvas;
+
     public bool addGap = true;
     public float gap = 0.0f;
 
@@ -83,12 +86,15 @@ public class GridController: MonoBehaviour
 
                     tile = Instantiate(hexPrefabFree[randomIndexFree]) as GameObject;
 
+
+                    tile.AddComponent<BoxCollider>();
                     tile.AddComponent<TileController>();
                     tile.GetComponent<TileController>().availableCategories = tileSystem[x][z].AvailableCategories;
                     tile.GetComponent<TileController>().id = tileSystem[x][z].Id;
-                    Debug.Log(tileSystem[x][z].OwnerId+ "Test"+ tileSystem[x][z].ChosenCategoryId);
+                    tile.GetComponent<TileController>().grid = gameObject;
 
 
+                   
                     float height = (float)tileSystem[x][z].Difficulty;
 
                     Vector3 gridPos = new Vector3(x, 0, z);

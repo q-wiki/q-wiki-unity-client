@@ -38,17 +38,26 @@ public class MenuController : MonoBehaviour
     public bool awaitingOpponentToJoin;
     public Camera camera;
 
+    public GameObject categoryPanel;
+    public GameObject actionPanel;
+
+    public IList<WikidataGame.Models.Category> availableCategories;
+
+
     /**
      * private fields
      */
-    
+
     private static Game _game;
     private GameObject _startPanel;
     private GameObject _settingsPanel;
+    public Button c1, c2, c3;
     private bool _soundToggle;
     private bool _notificationToggle;
     private bool _vibrationToggle;
     private bool _settingsToggle;
+
+    
     
     private AudioSource Source => GetComponent<AudioSource>();
 
@@ -171,6 +180,18 @@ public class MenuController : MonoBehaviour
         Source.PlayOneShot(clickSound);
     }
 
+    public void ToggleCameraBehaviour()
+    {
+        if (camera.GetComponent<CameraBehavior>().enabled)
+        {
+            camera.GetComponent<CameraBehavior>().enabled = false;
+        }
+        else
+        {
+            camera.GetComponent<CameraBehavior>().enabled = true;
+        }
+    }
+
 
 
     public void ChangeToGameScene()
@@ -198,6 +219,23 @@ public class MenuController : MonoBehaviour
     }
 
 
+    public void ShowCategoryPanel()
+    {
+        actionPanel.SetActive(false);
+        categoryPanel.SetActive(true);
+
+        /* Debug.Log("New Categorys ");
+         for (int t = 0; t < categorys.Length; t++)
+          {
+              Debug.Log(categorys[t]);
+          }*/
+
+        c1.GetComponentInChildren<Text>().text = availableCategories[0].Title;
+        c2.GetComponentInChildren<Text>().text = availableCategories[1].Title;
+        c3.GetComponentInChildren<Text>().text = availableCategories[2].Title;
+    }
+
+
     public void ToggleSettingsGame()
     {
        
@@ -205,12 +243,12 @@ public class MenuController : MonoBehaviour
 
         if (_settingsToggle)
         {
-            camera.GetComponent<CameraBehavior>().enabled = true;
+            ToggleCameraBehaviour();
             _settingsPanel.SetActive(false);
         }
         else
         {
-            camera.GetComponent<CameraBehavior>().enabled = false;
+            ToggleCameraBehaviour();
             _settingsPanel.SetActive(true);
         }
     }

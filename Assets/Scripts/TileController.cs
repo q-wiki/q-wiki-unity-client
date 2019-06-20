@@ -17,13 +17,16 @@ public class TileController : MonoBehaviour
     public WikidataGame.Models.Category chosenCategories;
 
     public GameObject grid;
+    public GameObject menuController;
     private Game game;
 
 
      void Start()
     {
-        myId = GameObject.Find("MenuController").GetComponent<MenuController>().PlayerId();
-        Debug.Log(myId);
+        menuController = GameObject.Find("MenuController");
+        myId = menuController.GetComponent<MenuController>().PlayerId();
+
+
 
     }
 
@@ -47,6 +50,7 @@ public class TileController : MonoBehaviour
                 Debug.Log(cat.Title);
             }*/
 
+            //Owned
             if (ownerId == myId)
             {
                 SetActiveAllChildren(grid.GetComponent<GridController>().actionCanvas.GetComponent<Transform>(), true);
@@ -60,6 +64,7 @@ public class TileController : MonoBehaviour
                 grid.GetComponent<GridController>().attackButton.SetActive(false);
                 }
             }
+            //Enemy
             else if (ownerId != myId && !string.IsNullOrEmpty(ownerId))
             {
                 SetActiveAllChildren(grid.GetComponent<GridController>().actionCanvas.GetComponent<Transform>(), true);
@@ -72,10 +77,12 @@ public class TileController : MonoBehaviour
                 grid.GetComponent<GridController>().levelUpButton.SetActive(false);
                 }
             }
+            //Empty
             else if (string.IsNullOrEmpty(ownerId))
              {
-                 grid.GetComponent<GridController>().categoryCanvas.SetActive(false);
-
+                menuController.GetComponent<MenuController>().availableCategories = availableCategories;
+                grid.GetComponent<GridController>().categoryCanvas.SetActive(false);
+                
 
                 SetActiveAllChildren(grid.GetComponent<GridController>().actionCanvas.GetComponent<Transform>(), true);
                  Debug.Log("Null");

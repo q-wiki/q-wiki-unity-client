@@ -4,8 +4,6 @@
 .idea/
 Assets/Plugins/Editor*
 Assets/Plugins/Editor/JetBrains*
-
-
 # Visual Studio Code
 .vscode/
 

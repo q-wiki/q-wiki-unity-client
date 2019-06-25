@@ -14,7 +14,7 @@ public class TileController : MonoBehaviour
 
     public int difficulty;
     public IList<WikidataGame.Models.Category> availableCategories;
-    public WikidataGame.Models.Category chosenCategories;
+    public WikidataGame.Models.Category chosenCategory;
 
     public GameObject grid;
     public GameObject menuController;
@@ -50,6 +50,8 @@ public class TileController : MonoBehaviour
                 Debug.Log(cat.Title);
             }*/
 
+            menuController.GetComponent<MenuController>().selectedTile = gameObject;
+
             //Owned
             if (ownerId == myId)
             {
@@ -80,9 +82,8 @@ public class TileController : MonoBehaviour
             //Empty
             else if (string.IsNullOrEmpty(ownerId))
              {
-                menuController.GetComponent<MenuController>().availableCategories = availableCategories;
                 grid.GetComponent<GridController>().categoryCanvas.SetActive(false);
-                
+
 
                 SetActiveAllChildren(grid.GetComponent<GridController>().actionCanvas.GetComponent<Transform>(), true);
                  Debug.Log("Null");
@@ -100,7 +101,7 @@ public class TileController : MonoBehaviour
              }
 
         }
-        
+
 
 
 

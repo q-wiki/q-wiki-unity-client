@@ -5,13 +5,14 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using WikidataGame;
 using WikidataGame.Models;
+using System.Threading.Tasks;
 
 public class MenuController : MonoBehaviour
 {
     /**
      * public fields
      */
-    
+
     public GameObject grid;
     public AudioClip clickSound;
     public GameObject audioSource;
@@ -41,7 +42,7 @@ public class MenuController : MonoBehaviour
     public GameObject categoryPanel;
     public GameObject actionPanel;
 
-    public IList<WikidataGame.Models.Category> availableCategories;
+    public GameObject selectedTile;
 
 
     /**
@@ -57,8 +58,8 @@ public class MenuController : MonoBehaviour
     private bool _vibrationToggle;
     private bool _settingsToggle;
 
-    
-    
+
+
     private AudioSource Source => GetComponent<AudioSource>();
 
     void Awake()
@@ -69,7 +70,7 @@ public class MenuController : MonoBehaviour
 
     async void Start()
     {
-        
+
         gameObject.AddComponent<AudioSource>();
         Source.clip = clickSound;
         Source.playOnAwake = false;
@@ -101,73 +102,60 @@ public class MenuController : MonoBehaviour
 
     }
 
+    public async void RefreshGameState()
+    {
+        // this is called whenever something happens (minigame finished, player made a turn...)
+        _game = await Communicator.GetCurrentGameState();
+        Debug.Log(_game.Tiles);
+        grid.GetComponent<GridController>().GenerateGrid(_game.Tiles);
+    }
+
     public async void Send()
     {
-        await Communicator.Connect();
+        // disable all buttons so we don't initialize multiple games
+        var startGameText = newGameButton.GetComponentInChildren<Text>().text;
+        newGameButton.GetComponentInChildren<Text>().text = "Searching for \nOpponent";
+        newGameButtonPlayImage.SetActive(false);
+        loadingDots.SetActive(true);
+        newGameButton.enabled = false;
 
+        // initialize server session
+        await Communicator.Connect();
 
         if (!Communicator.isConnected)
         {
             Debug.Log("You are not connected to any game");
+            // reset the interface so we can try initializing a game again
+            newGameButton.GetComponentInChildren<Text>().text = startGameText;
+            newGameButtonPlayImage.SetActive(true);
+            loadingDots.SetActive(false);
+            newGameButton.enabled = true;
             return;
         }
         else
         {
             _game = await Communicator.GetCurrentGameState();
-            //Debug.Log($"Started game {game.Id}.");
-            //Debug.Log($"AwaitingOpponentToJoin {game.AwaitingOpponentToJoin}.");
 
-            //game.AwaitingOpponentToJoin = awaitingOpponentToJoin;
-
-
-            if (_game.AwaitingOpponentToJoin ?? true)
+            // we'll be checking the game state until another player joins
+            while (_game.AwaitingOpponentToJoin ?? true)
             {
-                Debug.Log($"True: Waiting for Opponent {_game.AwaitingOpponentToJoin}.");
-                newGameButton.GetComponentInChildren<Text>().text = "Searching for \nOpponent";
-                newGameButtonPlayImage.SetActive(false);
-                loadingDots.SetActive(true);
-                newGameButton.enabled = false;
+                Debug.Log($"Waiting for Opponent.");
+
+                // wait for 5 seconds
+                await Task.Delay(5000);
+                _game = await Communicator.GetCurrentGameState();
             }
 
-            else
-            {
-                newGameButton.enabled = false;
-                Debug.Log($"False: Waiting for Opponent {_game.AwaitingOpponentToJoin}.");
-                newGameButton.GetComponent<Image>().sprite = newGameButtonGrey;
-                newGameButtonPlayImage.SetActive(true);
-                newGameButtonPlayImage.GetComponent<Image>().sprite = newGameIconGrey;
-                loadingDots.SetActive(false);
+            // another player joined :)
+            Debug.Log($"Found opponent, starting game.");
+            newGameButton.GetComponent<Image>().sprite = newGameButtonGrey;
+            newGameButtonPlayImage.SetActive(true);
+            newGameButtonPlayImage.GetComponent<Image>().sprite = newGameIconGrey;
+            loadingDots.SetActive(false);
 
-                var newButtonContainer = Instantiate(buttonPrefab, menuGrid.transform, false);
-                Vector3 pos = newButtonContainer.transform.localPosition;
-                newButtonContainer.transform.localPosition = new Vector3(0, 0, 0);
-
-
-                GameObject newButton = newButtonContainer.transform.GetChild(0).gameObject;
-                newButton.GetComponentInChildren<Button>().onClick.AddListener(() => ChangeToGameScene()); 
-                GameObject childImageInNewButton = newButton.transform.GetChild(1).gameObject;
-
-                //game.NextMovePlayerId = game.Opponent.Id; 
-                if (_game.NextMovePlayerId == _game.Me.Id)
-                {
-                    newButton.GetComponentInChildren<Text>().text = "Your Turn!";
-                    childImageInNewButton.GetComponent<Image>().sprite = myImage;
-                }
-                else if (_game.NextMovePlayerId == _game.Opponent.Id)
-                {
-                    newButton.GetComponentInChildren<Text>().text = "Waiting for \nOpponent...";
-                    childImageInNewButton.GetComponent<Image>().sprite = opponentImage;
-                    newButton.GetComponent<Button>().enabled = false;
-
-
-
-                }
-
-
-            }
-
+            // 🚀
+            ChangeToGameScene();
         }
-
     }
 
     public string PlayerId()
@@ -200,20 +188,20 @@ public class MenuController : MonoBehaviour
     }
 
    /**
-    * 
-    */ 
-    public async void StartMiniGame()
+    *
+    */
+    public async void StartMiniGame(string categoryId)
     {
-        // get current game state from backend
-        var game = await Communicator.GetCurrentGameState();
-
+        // TODO: Jump to minigame screen when minigame has been started; there can only be one minigame at once
         Debug.Log("Trying to initialize minigame");
-        var miniGame = await Communicator.InitializeMinigame(game.Tiles[0][0].Id, "0");
-        
-        // TODO: auf Grundlage von miniGame.Type entsprechendes Game öffnen 
+
+        var miniGame = await Communicator.InitializeMinigame(selectedTile.GetComponent<TileController>().id, categoryId);
+        Debug.Log($"Initialized minigame with id {miniGame.Id}");
+
+        // TODO: auf Grundlage von miniGame.Type entsprechendes Game öffnen
         MinigameMultipleChoice instance = miniGameCanvas.GetComponent<MinigameMultipleChoice>();
         instance.Initialize(miniGame.Id, miniGame.TaskDescription, miniGame.AnswerOptions);
-        
+
         miniGameCanvas.SetActive(true);
         categoryCanvas.SetActive(false);
     }
@@ -221,24 +209,44 @@ public class MenuController : MonoBehaviour
 
     public void ShowCategoryPanel()
     {
-        actionPanel.SetActive(false);
-        categoryPanel.SetActive(true);
+        var chosenCategory = selectedTile.GetComponent<TileController>().chosenCategory;
 
-        /* Debug.Log("New Categorys ");
-         for (int t = 0; t < categorys.Length; t++)
-          {
-              Debug.Log(categorys[t]);
-          }*/
+        if (chosenCategory != null)
+        {
+            // Someone captured this tile already
+            StartMiniGame(chosenCategory.Id);
+        }
+        else
+        {
+            // We're trying to capture it for the first time
+            actionPanel.SetActive(false);
+            categoryPanel.SetActive(true);
 
-        c1.GetComponentInChildren<Text>().text = availableCategories[0].Title;
-        c2.GetComponentInChildren<Text>().text = availableCategories[1].Title;
-        c3.GetComponentInChildren<Text>().text = availableCategories[2].Title;
+            var availableCategories = selectedTile.GetComponent<TileController>().availableCategories;
+
+            c1.GetComponentInChildren<Text>().text = availableCategories[0].Title;
+            c2.GetComponentInChildren<Text>().text = availableCategories[1].Title;
+            c3.GetComponentInChildren<Text>().text = availableCategories[2].Title;
+
+            c1.onClick.RemoveAllListeners();
+            c2.onClick.RemoveAllListeners();
+            c3.onClick.RemoveAllListeners();
+
+            c1.onClick.AddListener(() => { StartMiniGame(availableCategories[0].Id); });
+            c2.onClick.AddListener(() => { StartMiniGame(availableCategories[1].Id); });
+            c3.onClick.AddListener(() => { StartMiniGame(availableCategories[2].Id); });
+        }
     }
 
+    public void CloseCategoryAndActionPamnel()
+    {
+        categoryPanel.SetActive(false);
+        actionPanel.SetActive(false);
+    }
 
     public void ToggleSettingsGame()
     {
-       
+
         _settingsToggle = !_settingsToggle;
 
         if (_settingsToggle)

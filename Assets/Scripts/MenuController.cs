@@ -93,7 +93,6 @@ public class MenuController : MonoBehaviour
             _settingsPanel = GameObject.Find("SettingsPanelContainer");
             _settingsPanel.SetActive(false);
 
-            await Communicator.Connect();
             _game = await Communicator.GetCurrentGameState();
             Debug.Log(_game.Tiles);
             grid.GetComponent<GridController>().GenerateGrid(_game.Tiles);
@@ -120,9 +119,9 @@ public class MenuController : MonoBehaviour
         newGameButton.enabled = false;
 
         // initialize server session
-        await Communicator.Connect();
+        await Communicator.SetupApiConnection();
 
-        if (!Communicator.isConnected)
+        if (!Communicator.IsConnected())
         {
             Debug.Log("You are not connected to any game");
             // reset the interface so we can try initializing a game again
@@ -134,6 +133,7 @@ public class MenuController : MonoBehaviour
         }
         else
         {
+            await Communicator.CreateOrJoinGame();
             _game = await Communicator.GetCurrentGameState();
 
             // we'll be checking the game state until another player joins

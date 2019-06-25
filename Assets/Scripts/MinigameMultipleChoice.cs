@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using WikidataGame.Models;
@@ -99,13 +100,37 @@ public class MinigameMultipleChoice : MonoBehaviour
         }
         else
         {
+            Debug.Log("Handling minigame result");
             // hide minigame canvas and return to map
-            String answer = _checkedChoice.GetComponentInChildren<Text>().text;
-            // TODO: Result contains new game state
-            var result = await Communicator.AnswerMinigame(_id, new List<string> {answer});
-            // TODO: Show feedback on MinigameCanvas
+            var chosenAnswer = _checkedChoice.GetComponentInChildren<Text>();
 
-            Debug.Log("Got result");
+            // TODO: Result contains new game state
+            var result = await Communicator.AnswerMinigame(_id, new List<string> {chosenAnswer.text});
+
+            // Check result and display feedback to user
+            var correctAnswer = result.CorrectAnswer[0];
+            Debug.Log($"Chosen answer: {chosenAnswer.text}, Correct answer: {correctAnswer}");
+
+            var correctAnswerColor = new Color32(0x11, 0xA0, 0x4F, 0xFF);
+            if (correctAnswer == chosenAnswer.text)
+            {
+                // yay
+                chosenAnswer.color = correctAnswerColor;
+            }
+            else
+            {
+                // nay
+                chosenAnswer.color = Color.red;
+                foreach (var choice in choices)
+                {
+                    if (choice.GetComponent<Text>().text == correctAnswer)
+                    {
+                        choice.GetComponent<Text>().color = correctAnswerColor;
+                    }
+                }
+            }
+
+            await Task.Delay(5000);
             menuController.GetComponent<MenuController>().RefreshGameState();
             gameObject.SetActive(false);
         }

@@ -182,12 +182,12 @@ public class MenuController : MonoBehaviour
    /**
     *
     */
-    public async void StartMiniGame()
+    public async void StartMiniGame(string categoryId)
     {
         Debug.Log("Trying to initialize minigame");
 
         // TODO: Where is this method called? How do we know which tile is the correct one?
-        var miniGame = await Communicator.InitializeMinigame(_game.Tiles[0][0].Id, "0");
+        var miniGame = await Communicator.InitializeMinigame(selectedTile.GetComponent<TileController>().id, categoryId);
 
         // TODO: auf Grundlage von miniGame.Type entsprechendes Game öffnen
         MinigameMultipleChoice instance = miniGameCanvas.GetComponent<MinigameMultipleChoice>();
@@ -198,19 +198,35 @@ public class MenuController : MonoBehaviour
     }
 
 
-    // TODO: Remove because Unused?
     public void ShowCategoryPanel()
     {
-        actionPanel.SetActive(false);
-        categoryPanel.SetActive(true);
+        var chosenCategory = selectedTile.GetComponent<TileController>().chosenCategory;
 
-        var availableCategories = selectedTile.GetComponent<TileController>().availableCategories;
+        if (chosenCategory != null)
+        {
+            // Someone captured this tile already
+            StartMiniGame(chosenCategory.Id);
+        }
+        else
+        {
+            // We're trying to capture it for the first time
+            actionPanel.SetActive(false);
+            categoryPanel.SetActive(true);
 
-        c1.GetComponentInChildren<Text>().text = availableCategories[0].Title;
-        c2.GetComponentInChildren<Text>().text = availableCategories[1].Title;
-        c3.GetComponentInChildren<Text>().text = availableCategories[2].Title;
+            var availableCategories = selectedTile.GetComponent<TileController>().availableCategories;
 
-        // TODO: Attach click handlers to buttons
+            c1.GetComponentInChildren<Text>().text = availableCategories[0].Title;
+            c2.GetComponentInChildren<Text>().text = availableCategories[1].Title;
+            c3.GetComponentInChildren<Text>().text = availableCategories[2].Title;
+
+            c1.onClick.RemoveAllListeners();
+            c2.onClick.RemoveAllListeners();
+            c3.onClick.RemoveAllListeners();
+
+            c1.onClick.AddListener(() => { StartMiniGame(availableCategories[0].Id); });
+            c2.onClick.AddListener(() => { StartMiniGame(availableCategories[1].Id); });
+            c3.onClick.AddListener(() => { StartMiniGame(availableCategories[2].Id); });
+        }
     }
 
     public void CloseCategoryAndActionPamnel()

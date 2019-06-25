@@ -14,7 +14,7 @@ public class TileController : MonoBehaviour
 
     public int difficulty;
     public IList<WikidataGame.Models.Category> availableCategories;
-    public WikidataGame.Models.Category chosenCategories;
+    public WikidataGame.Models.Category chosenCategory;
 
     public GameObject grid;
     public GameObject menuController;

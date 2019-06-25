@@ -69,8 +69,13 @@ public class Communicator : MonoBehaviour
     public static async Task<Game> RestorePreviousGame()
     {
         var previousGameId = PlayerPrefs.GetString(CURRENT_GAME_ID);
-        _currentGameId = previousGameId;
-        return await GetCurrentGameState();
+        if (!string.IsNullOrEmpty(previousGameId))
+        {
+            _currentGameId = previousGameId;
+            return await GetCurrentGameState();
+        }
+
+        return null;
     }
 
    /**

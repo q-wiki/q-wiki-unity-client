@@ -102,6 +102,14 @@ public class MenuController : MonoBehaviour
 
     }
 
+    public async void RefreshGameState()
+    {
+        // this is called whenever something happens (minigame finished, player made a turn...)
+        _game = await Communicator.GetCurrentGameState();
+        Debug.Log(_game.Tiles);
+        grid.GetComponent<GridController>().GenerateGrid(_game.Tiles);
+    }
+
     public async void Send()
     {
         // disable all buttons so we don't initialize multiple games
@@ -184,10 +192,11 @@ public class MenuController : MonoBehaviour
     */
     public async void StartMiniGame(string categoryId)
     {
+        // TODO: Jump to minigame screen when minigame has been started; there can only be one minigame at once
         Debug.Log("Trying to initialize minigame");
 
-        // TODO: Where is this method called? How do we know which tile is the correct one?
         var miniGame = await Communicator.InitializeMinigame(selectedTile.GetComponent<TileController>().id, categoryId);
+        Debug.Log($"Initialized minigame with id {miniGame.Id}");
 
         // TODO: auf Grundlage von miniGame.Type entsprechendes Game öffnen
         MinigameMultipleChoice instance = miniGameCanvas.GetComponent<MinigameMultipleChoice>();

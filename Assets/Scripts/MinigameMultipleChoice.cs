@@ -8,9 +8,11 @@ using WikidataGame.Models;
 public class MinigameMultipleChoice : MonoBehaviour
 {
 
+    public GameObject menuController;
+
     public List<GameObject> choices;
     public GameObject description;
-    
+
     public Sprite boxSprite;
     public Sprite checkSprite;
     public GameObject warningMessage;
@@ -21,7 +23,7 @@ public class MinigameMultipleChoice : MonoBehaviour
     private string _taskDescription;
     private IList<string> _answerOptions;
 
-    public async void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions)
+    public void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions)
     {
         _checkedChoice = null;
         _id = miniGameId;
@@ -29,11 +31,11 @@ public class MinigameMultipleChoice : MonoBehaviour
         _answerOptions = answerOptions;
         AssignDescription(_taskDescription);
         AssignChoices(_answerOptions);
-
     }
 
     private void AssignChoices(IList<string> answerOptions)
     {
+        // TODO: Set correct answers
         for (var i = 0; i < choices.Count; i++)
         {
             var text = choices[i].transform.Find("Text");
@@ -43,6 +45,7 @@ public class MinigameMultipleChoice : MonoBehaviour
 
     private void AssignDescription(string desc)
     {
+        // TODO: Set correct description??
         description.GetComponent<Text>().text = desc;
     }
 
@@ -74,12 +77,12 @@ public class MinigameMultipleChoice : MonoBehaviour
     private void Deselect(GameObject g)
     {
         g.GetComponentInChildren<Image>().sprite = boxSprite;
-  
+
     }
 
     public async void Send()
     {
-        
+
         if (!Communicator.isConnected)
         {
             Debug.Log("You are not connected to any game");
@@ -93,19 +96,18 @@ public class MinigameMultipleChoice : MonoBehaviour
             CanvasGroup canvasGroup = warningMessage.GetComponent<CanvasGroup>();
             canvasGroup.alpha = 1;
             canvasGroup.blocksRaycasts = true;
-
         }
         else
         {
+            // hide minigame canvas and return to map
             String answer = _checkedChoice.GetComponentInChildren<Text>().text;
-            Debug.Log("SEND ANSWER TO BACKEND: " + answer);
-
+            // TODO: Result contains new game state
             var result = await Communicator.AnswerMinigame(_id, new List<string> {answer});
-            Debug.Log(result);
-            // TODO: Show result to user ==> continue game
+            // TODO: Show feedback on MinigameCanvas
+
+            Debug.Log("Got result");
+            menuController.GetComponent<MenuController>().RefreshGameState();
+            gameObject.SetActive(false);
         }
     }
-
-
-  
 }

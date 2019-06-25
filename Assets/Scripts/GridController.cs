@@ -20,7 +20,7 @@ public class GridController: MonoBehaviour
 
     private float hexWidth = 1.732f;
     private float hexHeight = 2.0f;
-    
+
     private GameObject[,] tileArray;
 
     private IList<IList<Tile>> tileSystem;
@@ -37,7 +37,7 @@ public class GridController: MonoBehaviour
         tileSystem = tiles;
         // Gameobject Tile array with right length and depth
         tileArray = new GameObject[tileSystem.Count, tileSystem[0].Count];
-       
+
         if (addGap)
         {
             AddGap();
@@ -47,18 +47,30 @@ public class GridController: MonoBehaviour
         CalcStartPos();
 
         CreateGrid();
-        
+
+    }
+
+    public void DestroyGrid ()
+    {
+        // TODO: This causes an error in the Reporter because of null references
+        for (int z = 0; z < tileSystem[0].Count; z++)
+        {
+            for (int x = 0; x < tileSystem.Count; x++)
+            {
+                Destroy(tileArray[x, z]);
+            }
+        }
     }
 
     void CreateGrid()
-    { 
+    {
         for (int z = 0; z<tileSystem[0].Count; z++)
         {
             for (int x = 0; x< tileSystem.Count; x++)
             {
-                
+
                 GameObject tile;
-        
+
                 if (tileSystem[x][z] != null)
                 {
                     // Choose random tile design for right level
@@ -94,7 +106,7 @@ public class GridController: MonoBehaviour
                     tile.GetComponent<TileController>().grid = gameObject;
 
 
-                   
+
                     float height = (float)tileSystem[x][z].Difficulty;
 
                     Vector3 gridPos = new Vector3(x, 0, z);
@@ -105,7 +117,7 @@ public class GridController: MonoBehaviour
 
                     tileArray[x, z] = tile;
                 }
-                                                
+
 
 
             }

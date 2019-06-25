@@ -1738,7 +1738,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5de54a7666ecfa44b04a65ff6ba1867, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _grid: {fileID: 0}
+  grid: {fileID: 0}
   clickSound: {fileID: 8300000, guid: 70e02441ad3cd8f488092b6a4933e446, type: 3}
   audioSource: {fileID: 1356137439}
   soundButtonIcon: {fileID: 770631810}
@@ -1754,7 +1754,7 @@ MonoBehaviour:
   newGameButton: {fileID: 488687848}
   soundOff: {fileID: 21300000, guid: 9e2dc28492c4b454186d1bbdff766143, type: 3}
   soundOn: {fileID: 21300000, guid: 8f9190f1a5ee6214383cc402858ee8f3, type: 3}
-  notifiactionOff: {fileID: 21300000, guid: 3b8792cf77854614586ca34c3291fba4, type: 3}
+  notificationOff: {fileID: 0}
   notificationOn: {fileID: 21300000, guid: 33f407bcea8f0c04f83b8c889fda8db9, type: 3}
   vibrationOff: {fileID: 21300000, guid: 3b8792cf77854614586ca34c3291fba4, type: 3}
   vibrationOn: {fileID: 21300000, guid: 33f407bcea8f0c04f83b8c889fda8db9, type: 3}
@@ -1763,6 +1763,13 @@ MonoBehaviour:
   newGameButtonGrey: {fileID: 21300000, guid: 27fa94e1860cd7349b7604d69dc1a4d9, type: 3}
   newGameIconGrey: {fileID: 21300000, guid: 681ec660053ba7648bc473dff53c8cfa, type: 3}
   awaitingOpponentToJoin: 0
+  camera: {fileID: 0}
+  categoryPanel: {fileID: 0}
+  actionPanel: {fileID: 0}
+  selectedTile: {fileID: 0}
+  c1: {fileID: 0}
+  c2: {fileID: 0}
+  c3: {fileID: 0}
 --- !u!4 &903923125
 Transform:
   m_ObjectHideFlags: 0

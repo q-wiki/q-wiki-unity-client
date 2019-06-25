@@ -5,13 +5,14 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using WikidataGame;
 using WikidataGame.Models;
+using System.Threading.Tasks;
 
 public class MenuController : MonoBehaviour
 {
     /**
      * public fields
      */
-    
+
     public GameObject grid;
     public AudioClip clickSound;
     public GameObject audioSource;
@@ -57,8 +58,8 @@ public class MenuController : MonoBehaviour
     private bool _vibrationToggle;
     private bool _settingsToggle;
 
-    
-    
+
+
     private AudioSource Source => GetComponent<AudioSource>();
 
     void Awake()
@@ -69,7 +70,7 @@ public class MenuController : MonoBehaviour
 
     async void Start()
     {
-        
+
         gameObject.AddComponent<AudioSource>();
         Source.clip = clickSound;
         Source.playOnAwake = false;
@@ -113,61 +114,55 @@ public class MenuController : MonoBehaviour
         }
         else
         {
+            newGameButton.enabled = false;
             _game = await Communicator.GetCurrentGameState();
             //Debug.Log($"Started game {game.Id}.");
             //Debug.Log($"AwaitingOpponentToJoin {game.AwaitingOpponentToJoin}.");
 
             //game.AwaitingOpponentToJoin = awaitingOpponentToJoin;
 
-
-            if (_game.AwaitingOpponentToJoin ?? true)
+            // we'll be checking the game state until another player joins
+            while (_game.AwaitingOpponentToJoin ?? true)
             {
-                Debug.Log($"True: Waiting for Opponent {_game.AwaitingOpponentToJoin}.");
+                Debug.Log($"Waiting for Opponent.");
                 newGameButton.GetComponentInChildren<Text>().text = "Searching for \nOpponent";
                 newGameButtonPlayImage.SetActive(false);
                 loadingDots.SetActive(true);
-                newGameButton.enabled = false;
+
+                // wait for 5 seconds
+                await Task.Delay(5000);
+                _game = await Communicator.GetCurrentGameState();
             }
 
-            else
+            // another player joined :)
+            Debug.Log($"Found opponent, starting game.");
+            newGameButton.GetComponent<Image>().sprite = newGameButtonGrey;
+            newGameButtonPlayImage.SetActive(true);
+            newGameButtonPlayImage.GetComponent<Image>().sprite = newGameIconGrey;
+            loadingDots.SetActive(false);
+
+            var newButtonContainer = Instantiate(buttonPrefab, menuGrid.transform, false);
+            Vector3 pos = newButtonContainer.transform.localPosition;
+            newButtonContainer.transform.localPosition = new Vector3(0, 0, 0);
+
+
+            GameObject newButton = newButtonContainer.transform.GetChild(0).gameObject;
+            newButton.GetComponentInChildren<Button>().onClick.AddListener(() => ChangeToGameScene());
+            GameObject childImageInNewButton = newButton.transform.GetChild(1).gameObject;
+
+            //game.NextMovePlayerId = game.Opponent.Id;
+            if (_game.NextMovePlayerId == _game.Me.Id)
             {
-                newGameButton.enabled = false;
-                Debug.Log($"False: Waiting for Opponent {_game.AwaitingOpponentToJoin}.");
-                newGameButton.GetComponent<Image>().sprite = newGameButtonGrey;
-                newGameButtonPlayImage.SetActive(true);
-                newGameButtonPlayImage.GetComponent<Image>().sprite = newGameIconGrey;
-                loadingDots.SetActive(false);
-
-                var newButtonContainer = Instantiate(buttonPrefab, menuGrid.transform, false);
-                Vector3 pos = newButtonContainer.transform.localPosition;
-                newButtonContainer.transform.localPosition = new Vector3(0, 0, 0);
-
-
-                GameObject newButton = newButtonContainer.transform.GetChild(0).gameObject;
-                newButton.GetComponentInChildren<Button>().onClick.AddListener(() => ChangeToGameScene()); 
-                GameObject childImageInNewButton = newButton.transform.GetChild(1).gameObject;
-
-                //game.NextMovePlayerId = game.Opponent.Id; 
-                if (_game.NextMovePlayerId == _game.Me.Id)
-                {
-                    newButton.GetComponentInChildren<Text>().text = "Your Turn!";
-                    childImageInNewButton.GetComponent<Image>().sprite = myImage;
-                }
-                else if (_game.NextMovePlayerId == _game.Opponent.Id)
-                {
-                    newButton.GetComponentInChildren<Text>().text = "Waiting for \nOpponent...";
-                    childImageInNewButton.GetComponent<Image>().sprite = opponentImage;
-                    newButton.GetComponent<Button>().enabled = false;
-
-
-
-                }
-
-
+                newButton.GetComponentInChildren<Text>().text = "Your Turn!";
+                childImageInNewButton.GetComponent<Image>().sprite = myImage;
             }
-
+            else if (_game.NextMovePlayerId == _game.Opponent.Id)
+            {
+                newButton.GetComponentInChildren<Text>().text = "Waiting for \nOpponent...";
+                childImageInNewButton.GetComponent<Image>().sprite = opponentImage;
+                newButton.GetComponent<Button>().enabled = false;
+            }
         }
-
     }
 
     public string PlayerId()
@@ -200,8 +195,8 @@ public class MenuController : MonoBehaviour
     }
 
    /**
-    * 
-    */ 
+    *
+    */
     public async void StartMiniGame()
     {
         // get current game state from backend
@@ -209,11 +204,11 @@ public class MenuController : MonoBehaviour
 
         Debug.Log("Trying to initialize minigame");
         var miniGame = await Communicator.InitializeMinigame(game.Tiles[0][0].Id, "0");
-        
-        // TODO: auf Grundlage von miniGame.Type entsprechendes Game öffnen 
+
+        // TODO: auf Grundlage von miniGame.Type entsprechendes Game öffnen
         MinigameMultipleChoice instance = miniGameCanvas.GetComponent<MinigameMultipleChoice>();
         instance.Initialize(miniGame.Id, miniGame.TaskDescription, miniGame.AnswerOptions);
-        
+
         miniGameCanvas.SetActive(true);
         categoryCanvas.SetActive(false);
     }
@@ -238,7 +233,7 @@ public class MenuController : MonoBehaviour
 
     public void ToggleSettingsGame()
     {
-       
+
         _settingsToggle = !_settingsToggle;
 
         if (_settingsToggle)

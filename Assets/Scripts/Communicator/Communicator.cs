@@ -13,14 +13,14 @@ public class Communicator : MonoBehaviour
      * all Functions and Variables are static at the moment,
      * so that you don't need to provide an instance for every GameObject you want to use the Communicator on
      */
-    
+
     public static bool isConnected;
     private static AuthInfo _auth { get; set; }
     private static WikidataGameAPI _gameApi;
     private static GameInfo _gameInfo;
 
     /**
-     * 
+     *
      */
     /* async void Start()
      {
@@ -36,15 +36,22 @@ public class Communicator : MonoBehaviour
      */
     public static async Task Connect()
     {
-        await getToken();
-        isConnected = true;
-       // Debug.Log("isConnected: " + isConnected);
-       // Debug.Log($"Bearer {_auth.Bearer}");
-        await CreateGame(_auth);
-        Debug.Log($"Waiting for Opponent {_gameInfo.IsAwaitingOpponentToJoin}.");
+        if (_gameInfo != null)
+        {
+            var game = await GetCurrentGameState();
+        }
+        else
+        {
+            await getToken();
+            isConnected = true;
+            // Debug.Log("isConnected: " + isConnected);
+            // Debug.Log($"Bearer {_auth.Bearer}");
+            await CreateGame(_auth);
+            Debug.Log($"Waiting for Opponent {_gameInfo.IsAwaitingOpponentToJoin}.");
+        }
     }
-    
-    
+
+
    /**
     * Use this function to create a new minigame by providing a Tile object and the categoryId
     * Question: does this need to be async as well?
@@ -65,7 +72,7 @@ public class Communicator : MonoBehaviour
         var miniGame = await _gameApi.RetrieveMinigameInfoAsync(_gameInfo.GameId, minigameId, cts.Token);
         return miniGame;
     }
-    
+
     /**
     * Use this function to POST answers for a minigame to the backend
     * you are getting a MiniGameResult back, which indicates if the answer was right or wrong
@@ -86,7 +93,7 @@ public class Communicator : MonoBehaviour
         await _gameApi.DeleteGameAsync(_gameInfo.GameId);
         //Debug.Log("Game " + _gameInfo.GameId + " successfully deleted.");
     }
-    
+
 
     /**
      * Use this function to get the game state of the current game

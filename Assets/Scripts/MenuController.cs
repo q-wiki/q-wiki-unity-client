@@ -104,30 +104,34 @@ public class MenuController : MonoBehaviour
 
     public async void Send()
     {
-        await Communicator.Connect();
+        // disable all buttons so we don't initialize multiple games
+        var startGameText = newGameButton.GetComponentInChildren<Text>().text;
+        newGameButton.GetComponentInChildren<Text>().text = "Searching for \nOpponent";
+        newGameButtonPlayImage.SetActive(false);
+        loadingDots.SetActive(true);
+        newGameButton.enabled = false;
 
+        // initialize server session
+        await Communicator.Connect();
 
         if (!Communicator.isConnected)
         {
             Debug.Log("You are not connected to any game");
+            // reset the interface so we can try initializing a game again
+            newGameButton.GetComponentInChildren<Text>().text = startGameText;
+            newGameButtonPlayImage.SetActive(true);
+            loadingDots.SetActive(false);
+            newGameButton.enabled = true;
             return;
         }
         else
         {
-            newGameButton.enabled = false;
             _game = await Communicator.GetCurrentGameState();
-            //Debug.Log($"Started game {game.Id}.");
-            //Debug.Log($"AwaitingOpponentToJoin {game.AwaitingOpponentToJoin}.");
-
-            //game.AwaitingOpponentToJoin = awaitingOpponentToJoin;
 
             // we'll be checking the game state until another player joins
             while (_game.AwaitingOpponentToJoin ?? true)
             {
                 Debug.Log($"Waiting for Opponent.");
-                newGameButton.GetComponentInChildren<Text>().text = "Searching for \nOpponent";
-                newGameButtonPlayImage.SetActive(false);
-                loadingDots.SetActive(true);
 
                 // wait for 5 seconds
                 await Task.Delay(5000);
@@ -141,27 +145,8 @@ public class MenuController : MonoBehaviour
             newGameButtonPlayImage.GetComponent<Image>().sprite = newGameIconGrey;
             loadingDots.SetActive(false);
 
-            var newButtonContainer = Instantiate(buttonPrefab, menuGrid.transform, false);
-            Vector3 pos = newButtonContainer.transform.localPosition;
-            newButtonContainer.transform.localPosition = new Vector3(0, 0, 0);
-
-
-            GameObject newButton = newButtonContainer.transform.GetChild(0).gameObject;
-            newButton.GetComponentInChildren<Button>().onClick.AddListener(() => ChangeToGameScene());
-            GameObject childImageInNewButton = newButton.transform.GetChild(1).gameObject;
-
-            //game.NextMovePlayerId = game.Opponent.Id;
-            if (_game.NextMovePlayerId == _game.Me.Id)
-            {
-                newButton.GetComponentInChildren<Text>().text = "Your Turn!";
-                childImageInNewButton.GetComponent<Image>().sprite = myImage;
-            }
-            else if (_game.NextMovePlayerId == _game.Opponent.Id)
-            {
-                newButton.GetComponentInChildren<Text>().text = "Waiting for \nOpponent...";
-                childImageInNewButton.GetComponent<Image>().sprite = opponentImage;
-                newButton.GetComponent<Button>().enabled = false;
-            }
+            // 🚀
+            ChangeToGameScene();
         }
     }
 

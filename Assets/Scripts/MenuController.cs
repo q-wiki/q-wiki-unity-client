@@ -70,22 +70,34 @@ public class MenuController : MonoBehaviour
 
     async void Start()
     {
-
         gameObject.AddComponent<AudioSource>();
         Source.clip = clickSound;
         Source.playOnAwake = false;
 
         Scene currentScene = SceneManager.GetActiveScene();
-
         string sceneName = currentScene.name;
 
         if (sceneName == "StartScene")
         {
-            //Debug.Log("StartScene");
-            _startPanel = GameObject.Find("StartPanel");
-            _settingsPanel = GameObject.Find("SettingsPanel");
-            _settingsPanel.SetActive(false);
-
+            // initialize server session and restore previous game if there is one
+            Debug.Log("Trying to restore previous game…");
+            await Communicator.SetupApiConnection();
+            var previousGame = await Communicator.RestorePreviousGame();
+            if (previousGame != null)
+            {
+                Debug.Log("Previous game restored successfully, changing to game scene");
+                _game = previousGame;
+                ChangeToGameScene();
+            }
+            else
+            {
+                Debug.Log("No previous game found, showing start scene");
+                // we don't have a running game, just show the normal start screen
+                //Debug.Log("StartScene");
+                _startPanel = GameObject.Find("StartPanel");
+                _settingsPanel = GameObject.Find("SettingsPanel");
+                _settingsPanel.SetActive(false);
+            }
         }
         else if (sceneName == "GameScene")
         {
@@ -96,9 +108,7 @@ public class MenuController : MonoBehaviour
             _game = await Communicator.GetCurrentGameState();
             Debug.Log(_game.Tiles);
             grid.GetComponent<GridController>().GenerateGrid(_game.Tiles);
-
         }
-
     }
 
     public async void RefreshGameState()
@@ -118,8 +128,6 @@ public class MenuController : MonoBehaviour
         loadingDots.SetActive(true);
         newGameButton.enabled = false;
 
-        // initialize server session
-        await Communicator.SetupApiConnection();
 
         if (!Communicator.IsConnected())
         {

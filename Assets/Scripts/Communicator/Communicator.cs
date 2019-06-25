@@ -19,9 +19,11 @@ public class Communicator : MonoBehaviour
 
     private const string SERVER_URL = "https://wikidatagame.azurewebsites.net/";
     private const string AUTH_TOKEN = "AUTH_TOKEN";
+    private const string CURRENT_GAME_ID = "CURRENT_GAME_ID";
+
     private static string _authToken { get; set; }
 
-    private static GameInfo _gameInfo;
+    private static string _currentGameId;
 
     public static bool IsConnected()
     {
@@ -59,7 +61,16 @@ public class Communicator : MonoBehaviour
 
     public static async Task CreateOrJoinGame()
     {
-        _gameInfo = await _gameApi.CreateNewGameAsync(10, 10, 70);
+        var gameInfo = await _gameApi.CreateNewGameAsync(10, 10, 70);
+        _currentGameId = gameInfo.GameId;
+        PlayerPrefs.SetString(CURRENT_GAME_ID, _currentGameId);
+    }
+
+    public static async Task<Game> RestorePreviousGame()
+    {
+        var previousGameId = PlayerPrefs.GetString(CURRENT_GAME_ID);
+        _currentGameId = previousGameId;
+        return await GetCurrentGameState();
     }
 
    /**
@@ -68,9 +79,9 @@ public class Communicator : MonoBehaviour
     */
     public static async Task<MiniGame> InitializeMinigame(string tileId, string categoryId)
     {
-        var game = await _gameApi.RetrieveGameStateAsync(_gameInfo.GameId);
+        var game = await _gameApi.RetrieveGameStateAsync(_currentGameId);
         MiniGameInit init = new MiniGameInit(tileId, categoryId);
-        return await _gameApi.InitalizeMinigameAsync(_gameInfo.GameId, init);
+        return await _gameApi.InitalizeMinigameAsync(_currentGameId, init);
     }
 
 
@@ -80,7 +91,7 @@ public class Communicator : MonoBehaviour
     public static async Task<MiniGame> RetrieveMinigameInfo(string minigameId)
     {
         CancellationTokenSource cts = new CancellationTokenSource();
-        var miniGame = await _gameApi.RetrieveMinigameInfoAsync(_gameInfo.GameId, minigameId, cts.Token);
+        var miniGame = await _gameApi.RetrieveMinigameInfoAsync(_currentGameId, minigameId, cts.Token);
         return miniGame;
     }
 
@@ -90,7 +101,7 @@ public class Communicator : MonoBehaviour
     */
     public static async Task<MiniGameResult> AnswerMinigame(string minigameId, IList<string> answers)
     {
-        var result = await _gameApi.AnswerMinigameAsync(_gameInfo.GameId, minigameId, answers);
+        var result = await _gameApi.AnswerMinigameAsync(_currentGameId, minigameId, answers);
         return result;
     }
 
@@ -98,10 +109,9 @@ public class Communicator : MonoBehaviour
      * Use this function to delete the current game
      * I made this private for now because I am not sure if a player should have the ability to delete a game on his/her own
      */
-    private static async void DeleteGame()
+    private static async void AbortCurrentGame()
     {
-        await _gameApi.DeleteGameAsync(_gameInfo.GameId);
-        //Debug.Log("Game " + _gameInfo.GameId + " successfully deleted.");
+        await _gameApi.DeleteGameAsync(_currentGameId);
     }
 
 
@@ -110,7 +120,6 @@ public class Communicator : MonoBehaviour
      */
     public static async Task<Game> GetCurrentGameState()
     {
-        return await _gameApi.RetrieveGameStateAsync(_gameInfo.GameId, new CancellationTokenSource().Token);
+        return await _gameApi.RetrieveGameStateAsync(_currentGameId);
     }
-
 }

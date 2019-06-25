@@ -42,7 +42,7 @@ public class MenuController : MonoBehaviour
     public GameObject categoryPanel;
     public GameObject actionPanel;
 
-    public IList<WikidataGame.Models.Category> availableCategories;
+    public GameObject selectedTile;
 
 
     /**
@@ -184,11 +184,10 @@ public class MenuController : MonoBehaviour
     */
     public async void StartMiniGame()
     {
-        // get current game state from backend
-        var game = await Communicator.GetCurrentGameState();
-
         Debug.Log("Trying to initialize minigame");
-        var miniGame = await Communicator.InitializeMinigame(game.Tiles[0][0].Id, "0");
+
+        // TODO: Where is this method called? How do we know which tile is the correct one?
+        var miniGame = await Communicator.InitializeMinigame(_game.Tiles[0][0].Id, "0");
 
         // TODO: auf Grundlage von miniGame.Type entsprechendes Game öffnen
         MinigameMultipleChoice instance = miniGameCanvas.GetComponent<MinigameMultipleChoice>();
@@ -199,22 +198,26 @@ public class MenuController : MonoBehaviour
     }
 
 
+    // TODO: Remove because Unused?
     public void ShowCategoryPanel()
     {
         actionPanel.SetActive(false);
         categoryPanel.SetActive(true);
 
-        /* Debug.Log("New Categorys ");
-         for (int t = 0; t < categorys.Length; t++)
-          {
-              Debug.Log(categorys[t]);
-          }*/
+        var availableCategories = selectedTile.GetComponent<TileController>().availableCategories;
 
         c1.GetComponentInChildren<Text>().text = availableCategories[0].Title;
         c2.GetComponentInChildren<Text>().text = availableCategories[1].Title;
         c3.GetComponentInChildren<Text>().text = availableCategories[2].Title;
+
+        // TODO: Attach click handlers to buttons
     }
 
+    public void CloseCategoryAndActionPamnel()
+    {
+        categoryPanel.SetActive(false);
+        actionPanel.SetActive(false);
+    }
 
     public void ToggleSettingsGame()
     {

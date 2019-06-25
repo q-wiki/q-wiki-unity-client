@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Rest;
@@ -56,9 +57,24 @@ public class Communicator : MonoBehaviour
     * Use this function to create a new minigame by providing a Tile object and the categoryId
     * Question: does this need to be async as well?
     */
-    public static async Task<MiniGame> InitializeMinigame(string tileId, string categoryId)
+    public static async Task<MiniGame> InitializeMinigame(string tileId, string category)
     {
-        MiniGameInit init = new MiniGameInit(tileId, categoryId);
+        // TODO: Use correct tile and category
+        // TODO: How do I know this is actually the correct index?
+        var categories = new string[] {
+            "Nature", "Culture", "Geography", "Space", "Natural Sciences", "Food",
+            "History", "Celebrities", "Entertainment", "Politics", "Sports"
+        };
+        var categoryId = categories
+            .Select((cat, index) => new {Key=cat, Value=$"#{index}"})
+            .ToDictionary(x => x.Key, x => x.Value);
+
+        var game = await _gameApi.RetrieveGameStateAsync(_gameInfo.GameId);
+
+        var randomRow = game.Tiles[UnityEngine.Random.Range(0, game.Tiles.Count())];
+        var randomTile = randomRow[UnityEngine.Random.Range(0, randomRow.Count())];
+        var randomCategory = randomTile.AvailableCategories[UnityEngine.Random.Range(0, randomTile.AvailableCategories.Count())];
+        MiniGameInit init = new MiniGameInit(randomTile.Id, categoryId[category]);
         return await _gameApi.InitalizeMinigameAsync(_gameInfo.GameId, init);
     }
 

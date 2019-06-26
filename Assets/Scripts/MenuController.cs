@@ -6,14 +6,14 @@ using UnityEngine.SceneManagement;
 using WikidataGame;
 using WikidataGame.Models;
 using System.Threading.Tasks;
+using Minigame;
 
 public class MenuController : MonoBehaviour
 {
     /**
      * public fields
      */
-
-    public GameObject grid;
+    
     public AudioClip clickSound;
     public GameObject audioSource;
     public GameObject soundButtonIcon;
@@ -57,13 +57,17 @@ public class MenuController : MonoBehaviour
     private bool _notificationToggle;
     private bool _vibrationToggle;
     private bool _settingsToggle;
-
-
-
     private AudioSource Source => GetComponent<AudioSource>();
+
+    /**
+     * static fields
+     */
+
+    public static MenuController instance;
 
     void Awake()
     {
+        instance = this;
         _settingsToggle = true;
     }
 
@@ -96,7 +100,7 @@ public class MenuController : MonoBehaviour
             await Communicator.Connect();
             _game = await Communicator.GetCurrentGameState();
             Debug.Log(_game.Tiles);
-            grid.GetComponent<GridController>().GenerateGrid(_game.Tiles);
+            GridController.instance.GenerateGrid(_game.Tiles);
 
         }
 
@@ -107,7 +111,7 @@ public class MenuController : MonoBehaviour
         // this is called whenever something happens (minigame finished, player made a turn...)
         _game = await Communicator.GetCurrentGameState();
         Debug.Log(_game.Tiles);
-        grid.GetComponent<GridController>().GenerateGrid(_game.Tiles);
+        GridController.instance.GenerateGrid(_game.Tiles);
     }
 
     public async void Send()
@@ -132,30 +136,28 @@ public class MenuController : MonoBehaviour
             newGameButton.enabled = true;
             return;
         }
-        else
+
+        _game = await Communicator.GetCurrentGameState();
+
+        // we'll be checking the game state until another player joins
+        while (_game.AwaitingOpponentToJoin ?? true)
         {
+            Debug.Log($"Waiting for Opponent.");
+
+            // wait for 5 seconds
+            await Task.Delay(5000);
             _game = await Communicator.GetCurrentGameState();
-
-            // we'll be checking the game state until another player joins
-            while (_game.AwaitingOpponentToJoin ?? true)
-            {
-                Debug.Log($"Waiting for Opponent.");
-
-                // wait for 5 seconds
-                await Task.Delay(5000);
-                _game = await Communicator.GetCurrentGameState();
-            }
-
-            // another player joined :)
-            Debug.Log($"Found opponent, starting game.");
-            newGameButton.GetComponent<Image>().sprite = newGameButtonGrey;
-            newGameButtonPlayImage.SetActive(true);
-            newGameButtonPlayImage.GetComponent<Image>().sprite = newGameIconGrey;
-            loadingDots.SetActive(false);
-
-            // 🚀
-            ChangeToGameScene();
         }
+
+        // another player joined :)
+        Debug.Log($"Found opponent, starting game.");
+        newGameButton.GetComponent<Image>().sprite = newGameButtonGrey;
+        newGameButtonPlayImage.SetActive(true);
+        newGameButtonPlayImage.GetComponent<Image>().sprite = newGameIconGrey;
+        loadingDots.SetActive(false);
+
+        // 🚀
+        ChangeToGameScene();
     }
 
     public string PlayerId()
@@ -197,10 +199,12 @@ public class MenuController : MonoBehaviour
 
         var miniGame = await Communicator.InitializeMinigame(selectedTile.GetComponent<TileController>().id, categoryId);
         Debug.Log($"Initialized minigame with id {miniGame.Id}");
+        
+        // switch(MiniGame.Type)
 
         // TODO: auf Grundlage von miniGame.Type entsprechendes Game öffnen
-        MinigameMultipleChoice instance = miniGameCanvas.GetComponent<MinigameMultipleChoice>();
-        instance.Initialize(miniGame.Id, miniGame.TaskDescription, miniGame.AnswerOptions);
+        MinigameMultipleChoice miniGameInstance = miniGameCanvas.GetComponent<MinigameMultipleChoice>();
+        miniGameInstance.Initialize(miniGame.Id, miniGame.TaskDescription, miniGame.AnswerOptions);
 
         miniGameCanvas.SetActive(true);
         categoryCanvas.SetActive(false);

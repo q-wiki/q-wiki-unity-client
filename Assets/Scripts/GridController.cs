@@ -7,28 +7,42 @@ using WikidataGame.Models;
 
 public class GridController: MonoBehaviour
 {
+    
+    /**
+     * public fields 
+     */
+    
     public GameObject[] hexPrefabFree0;
     public GameObject[] hexPrefabFree1;
     public GameObject[] hexPrefabFree2;
     public GameObject hexPrefabSpawn;
-
-    public GameObject captureButton, attackButton, levelUpButton;
-    public GameObject categoryCanvas, actionCanvas;
-
+    public GameObject captureButton;
+    public GameObject attackButton;
+    public GameObject levelUpButton;
+    public GameObject categoryCanvas;
+    public GameObject actionCanvas;
     public bool addGap = true;
-    public float gap = 0.0f;
+    public float gap;
 
+    /**
+     * private fields
+     */
+    
     private float hexWidth = 1.732f;
     private float hexHeight = 2.0f;
-
     private GameObject[,] tileArray;
-
     private IList<IList<Tile>> tileSystem;
+    private Vector3 startPos;
+    
+    /**
+     * static fields
+     */
 
-    Vector3 startPos;
+    public static GridController instance;
 
-    public void Start()
+    public void Awake()
     {
+        instance = this;
     }
 
     public void GenerateGrid(IList<IList<Tile>> tiles)

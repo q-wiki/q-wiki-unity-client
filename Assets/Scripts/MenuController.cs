@@ -19,7 +19,7 @@ public class MenuController : MonoBehaviour
     public GameObject soundButtonIcon;
     public GameObject notificationButtonIcon;
     public GameObject vibrationButtonIcon;
-    public GameObject miniGameCanvas;
+    public List<GameObject> miniGameCanvases;
     public GameObject categoryCanvas;
     public GameObject newGameButtonPlayImage;
     public GameObject loadingDots;
@@ -198,12 +198,16 @@ public class MenuController : MonoBehaviour
         Debug.Log("Trying to initialize minigame");
 
         var miniGame = await Communicator.InitializeMinigame(selectedTile.GetComponent<TileController>().id, categoryId);
-        Debug.Log($"Initialized minigame with id {miniGame.Id}");
-        
-        // switch(MiniGame.Type)
+        Debug.Log($"Initialized minigame with id {miniGame.Id} and type {miniGame.Type}");
 
-        // TODO: auf Grundlage von miniGame.Type entsprechendes Game öffnen
-        MinigameMultipleChoice miniGameInstance = miniGameCanvas.GetComponent<MinigameMultipleChoice>();
+        if (miniGame.Type == null)
+            return;
+        
+        // using IMinigame interface to get miniGame depending on given type
+        // 0: Sort, 1: Blurry (not implemented), 2: Multiple Choice
+        GameObject miniGameCanvas = miniGameCanvases[miniGame.Type.Value];
+        IMinigame miniGameInstance = miniGameCanvas.GetComponent<IMinigame>();
+        
         miniGameInstance.Initialize(miniGame.Id, miniGame.TaskDescription, miniGame.AnswerOptions);
 
         miniGameCanvas.SetActive(true);

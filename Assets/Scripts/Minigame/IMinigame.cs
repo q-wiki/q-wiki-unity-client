@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Minigame
 {
-    public interface Minigame
+    public interface IMinigame
     {
         void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions);
 

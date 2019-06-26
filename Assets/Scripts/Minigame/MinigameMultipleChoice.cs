@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Minigame
 {
-    public class MinigameMultipleChoice : MonoBehaviour, Minigame
+    public class MinigameMultipleChoice : MonoBehaviour, IMinigame
     {
 
         public List<GameObject> choices;
@@ -33,7 +33,6 @@ namespace Minigame
 
         private void AssignChoices(IList<string> answerOptions)
         {
-            // TODO: Set correct answers
             for (var i = 0; i < choices.Count; i++)
             {
                 var text = choices[i].transform.Find("Text");
@@ -43,7 +42,6 @@ namespace Minigame
 
         private void AssignDescription(string desc)
         {
-            // TODO: Set correct description??
             description.GetComponent<Text>().text = desc;
         }
 
@@ -120,13 +118,10 @@ namespace Minigame
                     chosenAnswer.color = Color.red;
                     foreach (var choice in choices)
                     {
-                        GameObject text = choice
-                            .transform
-                            .Find("Text")
-                            .gameObject;
-                        if (text.GetComponent<Text>().text == correctAnswer)
+                        Text text = choice.GetComponentInChildren<Text>();
+                        if (text.text == correctAnswer)
                         {
-                            text.GetComponent<Text>().color = correctAnswerColor;
+                            text.color = correctAnswerColor;
                         }
                     }
                 }

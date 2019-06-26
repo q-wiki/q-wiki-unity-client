@@ -123,9 +123,13 @@ public class MinigameMultipleChoice : MonoBehaviour
                 chosenAnswer.color = Color.red;
                 foreach (var choice in choices)
                 {
-                    if (choice.GetComponent<Text>().text == correctAnswer)
+                    GameObject text = choice
+                        .transform
+                        .Find("Text")
+                        .gameObject;
+                    if (text.GetComponent<Text>().text == correctAnswer)
                     {
-                        choice.GetComponent<Text>().color = correctAnswerColor;
+                        text.GetComponent<Text>().color = correctAnswerColor;
                     }
                 }
             }

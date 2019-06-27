@@ -13,7 +13,7 @@ public class MenuController : MonoBehaviour
     /**
      * public fields
      */
-
+    
     public AudioClip clickSound;
     public GameObject audioSource;
     public GameObject soundButtonIcon;
@@ -74,34 +74,22 @@ public class MenuController : MonoBehaviour
 
     async void Start()
     {
+
         gameObject.AddComponent<AudioSource>();
         Source.clip = clickSound;
         Source.playOnAwake = false;
 
         Scene currentScene = SceneManager.GetActiveScene();
+
         string sceneName = currentScene.name;
 
         if (sceneName == "StartScene")
         {
-            // initialize server session and restore previous game if there is one
-            Debug.Log("Trying to restore previous game…");
-            await Communicator.SetupApiConnection();
-            var previousGame = await Communicator.RestorePreviousGame();
-            if (previousGame != null)
-            {
-                Debug.Log("Previous game restored successfully, changing to game scene");
-                _game = previousGame;
-                ChangeToGameScene();
-            }
-            else
-            {
-                Debug.Log("No previous game found, showing start scene");
-                // we don't have a running game, just show the normal start screen
-                //Debug.Log("StartScene");
-                _startPanel = GameObject.Find("StartPanel");
-                _settingsPanel = GameObject.Find("SettingsPanel");
-                _settingsPanel.SetActive(false);
-            }
+            //Debug.Log("StartScene");
+            _startPanel = GameObject.Find("StartPanel");
+            _settingsPanel = GameObject.Find("SettingsPanel");
+            _settingsPanel.SetActive(false);
+
         }
         else if (sceneName == "GameScene")
         {
@@ -109,11 +97,13 @@ public class MenuController : MonoBehaviour
             _settingsPanel = GameObject.Find("SettingsPanelContainer");
             _settingsPanel.SetActive(false);
 
+            await Communicator.Connect();
             _game = await Communicator.GetCurrentGameState();
             Debug.Log(_game.Tiles);
             GridController.instance.GenerateGrid(_game.Tiles);
 
         }
+
     }
 
     public async void RefreshGameState()
@@ -133,8 +123,10 @@ public class MenuController : MonoBehaviour
         loadingDots.SetActive(true);
         newGameButton.enabled = false;
 
+        // initialize server session
+        await Communicator.Connect();
 
-        if (!Communicator.IsConnected())
+        if (!Communicator.isConnected)
         {
             Debug.Log("You are not connected to any game");
             // reset the interface so we can try initializing a game again
@@ -144,34 +136,28 @@ public class MenuController : MonoBehaviour
             newGameButton.enabled = true;
             return;
         }
-        else
+
+        _game = await Communicator.GetCurrentGameState();
+
+        // we'll be checking the game state until another player joins
+        while (_game.AwaitingOpponentToJoin ?? true)
         {
-            await Communicator.CreateOrJoinGame();
+            Debug.Log($"Waiting for Opponent.");
+
+            // wait for 5 seconds
+            await Task.Delay(5000);
             _game = await Communicator.GetCurrentGameState();
-
-
-            _game = await Communicator.GetCurrentGameState();
-
-            // we'll be checking the game state until another player joins
-            while (_game.AwaitingOpponentToJoin ?? true)
-            {
-                Debug.Log($"Waiting for Opponent.");
-
-                // wait for 5 seconds
-                await Task.Delay(5000);
-                _game = await Communicator.GetCurrentGameState();
-            }
-
-            // another player joined :)
-            Debug.Log($"Found opponent, starting game.");
-            newGameButton.GetComponent<Image>().sprite = newGameButtonGrey;
-            newGameButtonPlayImage.SetActive(true);
-            newGameButtonPlayImage.GetComponent<Image>().sprite = newGameIconGrey;
-            loadingDots.SetActive(false);
-
-            // 🚀
-            ChangeToGameScene();
         }
+
+        // another player joined :)
+        Debug.Log($"Found opponent, starting game.");
+        newGameButton.GetComponent<Image>().sprite = newGameButtonGrey;
+        newGameButtonPlayImage.SetActive(true);
+        newGameButtonPlayImage.GetComponent<Image>().sprite = newGameIconGrey;
+        loadingDots.SetActive(false);
+
+        // 🚀
+        ChangeToGameScene();
     }
 
     public string PlayerId()
@@ -216,12 +202,12 @@ public class MenuController : MonoBehaviour
 
         if (miniGame.Type == null)
             return;
-
+        
         // using IMinigame interface to get miniGame depending on given type
         // 0: Sort, 1: Blurry (not implemented), 2: Multiple Choice
         GameObject miniGameCanvas = miniGameCanvases[miniGame.Type.Value];
         IMinigame miniGameInstance = miniGameCanvas.GetComponent<IMinigame>();
-
+        
         miniGameInstance.Initialize(miniGame.Id, miniGame.TaskDescription, miniGame.AnswerOptions);
 
         miniGameCanvas.SetActive(true);

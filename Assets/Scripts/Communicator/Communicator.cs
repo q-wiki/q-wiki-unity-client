@@ -15,68 +15,43 @@ public class Communicator : MonoBehaviour
      * so that you don't need to provide an instance for every GameObject you want to use the Communicator on
      */
 
+    public static bool isConnected;
+    private static AuthInfo _auth { get; set; }
     private static WikidataGameAPI _gameApi;
-
-    private const string SERVER_URL = "https://wikidatagame.azurewebsites.net/";
-    private const string AUTH_TOKEN = "AUTH_TOKEN";
-    private const string CURRENT_GAME_ID = "CURRENT_GAME_ID";
-
-    private static string _authToken { get; set; }
-
-    private static string _currentGameId;
-
-    public static bool IsConnected()
-    {
-        return _gameApi != null;
-    }
+    private static GameInfo _gameInfo;
 
     /**
-     * This function checks whether we have an auth token and restores it; if
-     * not, it will request a new token from the server.
      *
-     * This means: Before you do anything else, call this method. :)
      */
-    public static async Task SetupApiConnection()
+    /* async void Start()
+     {
+         await Connect();
+     }*/
+
+
+
+    /**
+     * Use this function to connect to the backend
+     * var _isConnected is a good indicator to check if the connection was successfully built
+     * Use it like this when player hits the "Start new game"-Button: await Communicator.Connect();
+     */
+    public static async Task Connect()
     {
-        // have we already set up the api connection?
-        if (_gameApi != null) return;
-
-        // do we have an auth token that's saved?
-        Debug.Log("Trying to restore previously saved auth token…");
-        var authToken = PlayerPrefs.GetString(AUTH_TOKEN);
-
-        if (string.IsNullOrEmpty(authToken)) {
-            Debug.Log("No auth token in PlayerPrefs, fetching new token from server");
-            var apiClient = new WikidataGameAPI(new Uri(SERVER_URL), new TokenCredentials("auth"));
-            // CancellationTokenSource cts = new CancellationTokenSource(); // <-- Cancellation Token if you want to cancel the request, user quits, etc. [cts.Cancel()]
-            var pushUrl = ""; // <-- empty push url means it will be ignored
-            var authResponse = await apiClient.AuthenticateAsync(SystemInfo.deviceUniqueIdentifier, pushUrl);
-            authToken = authResponse.Bearer;
-            PlayerPrefs.SetString(AUTH_TOKEN, authToken);
-        }
-
-        // this _gameApi can now be used by all other methods
-        _gameApi = new WikidataGameAPI(new Uri(SERVER_URL), new TokenCredentials(authToken));
-    }
-
-    public static async Task CreateOrJoinGame()
-    {
-        var gameInfo = await _gameApi.CreateNewGameAsync(10, 10, 70);
-        _currentGameId = gameInfo.GameId;
-        PlayerPrefs.SetString(CURRENT_GAME_ID, _currentGameId);
-    }
-
-    public static async Task<Game> RestorePreviousGame()
-    {
-        var previousGameId = PlayerPrefs.GetString(CURRENT_GAME_ID);
-        if (!string.IsNullOrEmpty(previousGameId))
+        if (_gameInfo != null)
         {
-            _currentGameId = previousGameId;
-            return await GetCurrentGameState();
+            var game = await GetCurrentGameState();
         }
-
-        return null;
+        else
+        {
+            await getToken();
+            isConnected = true;
+            // Debug.Log("isConnected: " + isConnected);
+            // Debug.Log($"Bearer {_auth.Bearer}");
+            await CreateGame(_auth);
+            Debug.Log($"Waiting for Opponent {_gameInfo.IsAwaitingOpponentToJoin}.");
+        }
     }
+
 
    /**
     * Use this function to create a new minigame by providing a Tile object and the categoryId
@@ -84,9 +59,9 @@ public class Communicator : MonoBehaviour
     */
     public static async Task<MiniGame> InitializeMinigame(string tileId, string categoryId)
     {
-        var game = await _gameApi.RetrieveGameStateAsync(_currentGameId);
+        var game = await _gameApi.RetrieveGameStateAsync(_gameInfo.GameId);
         MiniGameInit init = new MiniGameInit(tileId, categoryId);
-        return await _gameApi.InitalizeMinigameAsync(_currentGameId, init);
+        return await _gameApi.InitalizeMinigameAsync(_gameInfo.GameId, init);
     }
 
 
@@ -96,7 +71,7 @@ public class Communicator : MonoBehaviour
     public static async Task<MiniGame> RetrieveMinigameInfo(string minigameId)
     {
         CancellationTokenSource cts = new CancellationTokenSource();
-        var miniGame = await _gameApi.RetrieveMinigameInfoAsync(_currentGameId, minigameId, cts.Token);
+        var miniGame = await _gameApi.RetrieveMinigameInfoAsync(_gameInfo.GameId, minigameId, cts.Token);
         return miniGame;
     }
 
@@ -106,7 +81,8 @@ public class Communicator : MonoBehaviour
     */
     public static async Task<MiniGameResult> AnswerMinigame(string minigameId, IList<string> answers)
     {
-        var result = await _gameApi.AnswerMinigameAsync(_currentGameId, minigameId, answers);
+        CancellationTokenSource cts = new CancellationTokenSource();
+        var result = await _gameApi.AnswerMinigameAsync(_gameInfo.GameId, minigameId, answers, cts.Token);
         return result;
     }
 
@@ -114,9 +90,10 @@ public class Communicator : MonoBehaviour
      * Use this function to delete the current game
      * I made this private for now because I am not sure if a player should have the ability to delete a game on his/her own
      */
-    private static async void AbortCurrentGame()
+    private static async void DeleteGame()
     {
-        await _gameApi.DeleteGameAsync(_currentGameId);
+        await _gameApi.DeleteGameAsync(_gameInfo.GameId);
+        //Debug.Log("Game " + _gameInfo.GameId + " successfully deleted.");
     }
 
 
@@ -125,6 +102,38 @@ public class Communicator : MonoBehaviour
      */
     public static async Task<Game> GetCurrentGameState()
     {
-        return await _gameApi.RetrieveGameStateAsync(_currentGameId);
+        CancellationTokenSource cts3 = new CancellationTokenSource();
+        var game = await _gameApi.RetrieveGameStateAsync(_gameInfo.GameId, cts3.Token);
+       // Debug.Log($"My player id is {game.Me.Id}.");
+       // Debug.Log($"My opponents id is {game.Opponent.Id}.");
+        return game;
+    }
+
+    /**
+     * This function is used by the Connect()-function to create a new game
+     */
+    private static async Task CreateGame(AuthInfo auth)
+    {
+        //Create a new api client with the obtained bearer token for all other (authorized) requests
+        _gameApi = new WikidataGameAPI(new Uri("https://wikidatagame.azurewebsites.net/"), new TokenCredentials(auth.Bearer));
+        //Debug.Log(_gameApi);
+
+        CancellationTokenSource cts2 = new CancellationTokenSource();
+        //Debug.Log(cts2);
+       // Debug.Log("trying to start game...");
+        _gameInfo = await _gameApi.CreateNewGameAsync(10, 10, 70, cts2.Token);
+    }
+
+    /**
+     * This function is used by the Connect()-function to generate a Bearer token
+     */
+    private static async Task getToken()
+    {
+        //Authentication
+        var apiClient = new WikidataGameAPI(new Uri("https://wikidatagame.azurewebsites.net/"), new TokenCredentials("auth"));
+
+        CancellationTokenSource cts = new CancellationTokenSource(); // <-- Cancellation Token if you want to cancel the request, user quits, etc. [cts.Cancel()]
+       _auth = await apiClient.AuthenticateAsync(SystemInfo.deviceUniqueIdentifier, "test", cts.Token);
+       // _auth = await apiClient.AuthenticateAsync("123", "test", cts.Token);
     }
 }

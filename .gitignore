@@ -1,5 +1,9 @@
 # This .gitignore file should be placed at the root of your Unity project directory
 
+# ignore android build artefacts
+*.aab
+*.apk
+
 # build info
 Assets/StreamingAssets/build_info.txt
 

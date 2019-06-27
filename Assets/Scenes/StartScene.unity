@@ -1474,7 +1474,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 4.3542653e-10}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -1738,13 +1738,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5de54a7666ecfa44b04a65ff6ba1867, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  grid: {fileID: 0}
   clickSound: {fileID: 8300000, guid: 70e02441ad3cd8f488092b6a4933e446, type: 3}
   audioSource: {fileID: 1356137439}
   soundButtonIcon: {fileID: 770631810}
   notificationButtonIcon: {fileID: 411779981}
   vibrationButtonIcon: {fileID: 458196103}
-  miniGameCanvas: {fileID: 0}
+  miniGameCanvases: []
   categoryCanvas: {fileID: 0}
   newGameButtonPlayImage: {fileID: 2078860720}
   loadingDots: {fileID: 1989982043}

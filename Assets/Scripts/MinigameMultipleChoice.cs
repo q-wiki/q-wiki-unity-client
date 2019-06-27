@@ -83,13 +83,6 @@ public class MinigameMultipleChoice : MonoBehaviour
 
     public async void Send()
     {
-
-        if (!Communicator.isConnected)
-        {
-            Debug.Log("You are not connected to any game");
-            return;
-        }
-
         if (_checkedChoice == null)
         {
             sendButton.GetComponent<Button>().interactable = false;
@@ -123,9 +116,13 @@ public class MinigameMultipleChoice : MonoBehaviour
                 chosenAnswer.color = Color.red;
                 foreach (var choice in choices)
                 {
-                    if (choice.GetComponent<Text>().text == correctAnswer)
+                    GameObject text = choice
+                        .transform
+                        .Find("Text")
+                        .gameObject;
+                    if (text.GetComponent<Text>().text == correctAnswer)
                     {
-                        choice.GetComponent<Text>().color = correctAnswerColor;
+                        text.GetComponent<Text>().color = correctAnswerColor;
                     }
                 }
             }

@@ -4,6 +4,9 @@
 *.aab
 *.apk
 
+# build info
+Assets/StreamingAssets/build_info.txt
+
 # Jetbrain Rider Cache
 .idea/
 Assets/Plugins/Editor*

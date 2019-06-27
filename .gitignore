@@ -1,5 +1,8 @@
 # This .gitignore file should be placed at the root of your Unity project directory
 
+# build info
+Assets/StreamingAssets/build_info.txt
+
 # Jetbrain Rider Cache
 .idea/
 Assets/Plugins/Editor*

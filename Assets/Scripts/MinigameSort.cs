@@ -8,6 +8,7 @@ public class MinigameSort : MonoBehaviour
     public List<GameObject> sources;
     public List<GameObject> targets;
     public GameObject property;
+    public GameObject closePanel;
 
     // TODO: generate class for answers // setting through backend  // get-request
     private HashSet<string> answers;

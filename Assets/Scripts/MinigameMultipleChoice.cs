@@ -18,6 +18,7 @@ public class MinigameMultipleChoice : MonoBehaviour
     public Sprite checkSprite;
     public GameObject warningMessage;
     public GameObject sendButton;
+    public GameObject closePanel;
 
     private GameObject _checkedChoice;
     private string _id;
@@ -81,6 +82,12 @@ public class MinigameMultipleChoice : MonoBehaviour
 
     }
 
+    public void CloseMultipileChoicePanel()
+    {
+        menuController.GetComponent<MenuController>().RefreshGameState();
+        gameObject.SetActive(false);
+    }
+
     public async void Send()
     {
         if (_checkedChoice == null)
@@ -127,9 +134,8 @@ public class MinigameMultipleChoice : MonoBehaviour
                 }
             }
 
-            await Task.Delay(5000);
-            menuController.GetComponent<MenuController>().RefreshGameState();
-            gameObject.SetActive(false);
+            await Task.Delay(3000);
+            closePanel.SetActive(true);
         }
     }
 }

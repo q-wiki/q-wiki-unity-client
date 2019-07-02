@@ -41,6 +41,7 @@ public class Communicator : MonoBehaviour
         // have we already set up the api connection?
         if (_gameApi != null) return;
 
+
         // do we have an auth token that's saved?
         Debug.Log("Trying to restore previously saved auth token…");
         var authToken = PlayerPrefs.GetString(AUTH_TOKEN);
@@ -55,6 +56,8 @@ public class Communicator : MonoBehaviour
             PlayerPrefs.SetString(AUTH_TOKEN, authToken);
         }
 
+        Debug.Log($"Auth token: {authToken}");
+
         // this _gameApi can now be used by all other methods
         _gameApi = new WikidataGameAPI(new Uri(SERVER_URL), new TokenCredentials(authToken));
     }
@@ -63,6 +66,7 @@ public class Communicator : MonoBehaviour
     {
         var gameInfo = await _gameApi.CreateNewGameAsync(10, 10, 70);
         _currentGameId = gameInfo.GameId;
+        Debug.Log($"Initialized new game with id: {_currentGameId}");
         PlayerPrefs.SetString(CURRENT_GAME_ID, _currentGameId);
     }
 
@@ -72,6 +76,7 @@ public class Communicator : MonoBehaviour
         if (!string.IsNullOrEmpty(previousGameId))
         {
             _currentGameId = previousGameId;
+            Debug.Log($"Restored previous game with ID: {_currentGameId}");
             return await GetCurrentGameState();
         }
 

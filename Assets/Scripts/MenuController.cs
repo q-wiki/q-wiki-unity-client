@@ -18,7 +18,6 @@ public class MenuController : MonoBehaviour
     public GameObject audioSource;
     public GameObject soundButtonIcon;
     public GameObject notificationButtonIcon;
-    public GameObject vibrationButtonIcon;
     public GameObject miniGameCanvas;
     public GameObject categoryCanvas;
     public GameObject newGameButtonPlayImage;
@@ -39,10 +38,14 @@ public class MenuController : MonoBehaviour
     public bool awaitingOpponentToJoin;
     public Camera camera;
 
+
     public GameObject categoryPanel;
     public GameObject actionPanel;
 
     public GameObject selectedTile;
+
+    public GameObject settingsPanel;
+    public GameObject confirmationPanel;
 
 
     /**
@@ -194,10 +197,15 @@ public class MenuController : MonoBehaviour
     {
         SceneManager.LoadScene("GameScene");
     }
+    public void ChangeToStartScene()
+    {
+        SceneManager.LoadScene("StartScene");
+    }
 
-   /**
-    *
-    */
+
+    /**
+     *
+     */
     public async void StartMiniGame(string categoryId)
     {
         // TODO: Jump to minigame screen when minigame has been started; there can only be one minigame at once
@@ -261,11 +269,13 @@ public class MenuController : MonoBehaviour
         {
             ToggleCameraBehaviour();
             _settingsPanel.SetActive(false);
+            confirmationPanel.SetActive(false);
         }
         else
         {
             ToggleCameraBehaviour();
             _settingsPanel.SetActive(true);
+            settingsPanel.SetActive(true);
         }
     }
 
@@ -322,20 +332,23 @@ public class MenuController : MonoBehaviour
         }
     }
 
-    public void ToggleVibration()
+    public void HandleAbortGamePanel()
     {
-        _vibrationToggle = !_vibrationToggle;
+        settingsPanel.SetActive(false);
+        confirmationPanel.SetActive(true);
+    }
 
-        if (_vibrationToggle)
-        {
-            Debug.Log("Vibration Off");
-            vibrationButtonIcon.GetComponent<Image>().sprite = vibrationOff;
-        }
-        else
-        {
-            Debug.Log("Vibration On");
-            vibrationButtonIcon.GetComponent<Image>().sprite = vibrationOn;
-        }
+    public async void LeaveGame()
+    {
+        await Communicator.AbortCurrentGame();
+        await Task.Delay(2000);
+        ChangeToStartScene();
+    }
+
+    public void StayInGame()
+    {
+        settingsPanel.SetActive(true);
+        confirmationPanel.SetActive(false);
     }
 
     public void ToggleCreditsPanel()

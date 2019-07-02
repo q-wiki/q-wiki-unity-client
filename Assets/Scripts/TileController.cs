@@ -43,14 +43,14 @@ public class TileController : MonoBehaviour
     void OnMouseDown()
         {
         Debug.Log(ownerId);
+        if (EventSystem.current.IsPointerOverGameObject()) return;
 
-            if (EventSystem.current.IsPointerOverGameObject()) return;
-            /*foreach (WikidataGame.Models.Category cat in availableCategories)
-            {
-                Debug.Log(cat.Title);
-            }*/
+        /*foreach (WikidataGame.Models.Category cat in availableCategories)
+        {
+            Debug.Log(cat.Title);
+        }*/
 
-            menuController.GetComponent<MenuController>().selectedTile = gameObject;
+        menuController.GetComponent<MenuController>().selectedTile = gameObject;
 
             //Owned
             if (ownerId == myId)
@@ -86,7 +86,7 @@ public class TileController : MonoBehaviour
 
 
                 SetActiveAllChildren(grid.GetComponent<GridController>().actionCanvas.GetComponent<Transform>(), true);
-                 Debug.Log("Null");
+                 //Debug.Log("Null");
                 grid.GetComponent<GridController>().actionCanvas.SetActive(true);
 
                  if (grid.GetComponent<GridController>().attackButton.activeSelf && grid.GetComponent<GridController>().levelUpButton.activeSelf)

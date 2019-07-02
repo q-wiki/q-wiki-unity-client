@@ -83,13 +83,6 @@ public class MinigameMultipleChoice : MonoBehaviour
 
     public async void Send()
     {
-
-        if (!Communicator.isConnected)
-        {
-            Debug.Log("You are not connected to any game");
-            return;
-        }
-
         if (_checkedChoice == null)
         {
             sendButton.GetComponent<Button>().interactable = false;

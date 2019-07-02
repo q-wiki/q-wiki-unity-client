@@ -89,9 +89,10 @@ public class Communicator : MonoBehaviour
     */
     public static async Task<MiniGame> InitializeMinigame(string tileId, string categoryId)
     {
-        var game = await _gameApi.RetrieveGameStateAsync(_currentGameId);
         MiniGameInit init = new MiniGameInit(tileId, categoryId);
-        return await _gameApi.InitalizeMinigameAsync(_currentGameId, init);
+        var _minigame = await _gameApi.InitalizeMinigameAsync(_currentGameId, init);
+        Debug.Log($"Started minigame with id {_minigame.Id} on tile {tileId} with category {categoryId}");
+        return _minigame;
     }
 
 

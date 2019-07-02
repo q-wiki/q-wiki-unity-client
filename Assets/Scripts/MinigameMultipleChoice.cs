@@ -86,6 +86,7 @@ public class MinigameMultipleChoice : MonoBehaviour
     {
         menuController.GetComponent<MenuController>().RefreshGameState();
         gameObject.SetActive(false);
+        closePanel.SetActive(false);
     }
 
     public async void Send()
@@ -134,7 +135,6 @@ public class MinigameMultipleChoice : MonoBehaviour
                 }
             }
 
-            await Task.Delay(3000);
             closePanel.SetActive(true);
         }
     }

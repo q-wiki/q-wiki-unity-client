@@ -11,7 +11,7 @@ namespace Minigame
         /**
          * public fields
          */
-        
+
         public List<GameObject> choices;
         public GameObject description;
         public Sprite boxSprite;
@@ -20,11 +20,11 @@ namespace Minigame
         /**
          * private fields
          */
-        
+
         private string _id;
         private string _taskDescription;
         private IList<string> _answerOptions;
-        
+
         public void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions)
         {
             _id = miniGameId;
@@ -33,7 +33,7 @@ namespace Minigame
             AssignDescription(_taskDescription);
             AssignChoices(_answerOptions);
         }
-        
+
         private void AssignChoices(IList<string> answerOptions)
         {
             for (var i = 0; i < choices.Count; i++)
@@ -42,7 +42,7 @@ namespace Minigame
                 text.GetComponent<Text>().text = answerOptions[i];
             }
         }
-        
+
         private void AssignDescription(string desc)
         {
             description.GetComponent<Text>().text = desc;
@@ -50,12 +50,12 @@ namespace Minigame
 
         public async void Send()
         {
-            if (!Communicator.isConnected)
+            if (!Communicator.IsConnected())
             {
                 Debug.Log("You are not connected to any game");
                 return;
             }
-            
+
             Debug.Log("Handling minigame result");
             List<string> answers = new List<string>();
             foreach (var choice in choices)
@@ -72,7 +72,7 @@ namespace Minigame
             Debug.Log($"Chosen answer: {answers}, Correct answer: {correctAnswer}");
 
             var correctAnswerColor = new Color32(0x11, 0xA0, 0x4F, 0xFF);
-            
+
             if (answers.SequenceEqual(correctAnswer))
             {
                 // sequence is correct
@@ -95,7 +95,7 @@ namespace Minigame
             await Task.Delay(5000);
             MenuController.instance.RefreshGameState();
             gameObject.SetActive(false);
-            
+
         }
     }
 }

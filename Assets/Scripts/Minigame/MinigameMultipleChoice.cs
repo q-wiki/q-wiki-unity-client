@@ -79,7 +79,7 @@ namespace Minigame
         public async void Send()
         {
 
-            if (!Communicator.isConnected)
+            if (!Communicator.IsConnected())
             {
                 Debug.Log("You are not connected to any game");
                 return;

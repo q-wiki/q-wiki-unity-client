@@ -119,7 +119,7 @@ public class Communicator : MonoBehaviour
      * Use this function to delete the current game
      * I made this private for now because I am not sure if a player should have the ability to delete a game on his/her own
      */
-    public static async Task AbortCurrentGame()
+    private static async void AbortCurrentGame()
     {
         PlayerPrefs.DeleteKey(CURRENT_GAME_ID);
         await _gameApi.DeleteGameAsync(_currentGameId);

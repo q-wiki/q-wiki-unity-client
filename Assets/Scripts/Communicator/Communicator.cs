@@ -121,6 +121,7 @@ public class Communicator : MonoBehaviour
      */
     public static async Task AbortCurrentGame()
     {
+        PlayerPrefs.DeleteKey(CURRENT_GAME_ID);
         await _gameApi.DeleteGameAsync(_currentGameId);
     }
 

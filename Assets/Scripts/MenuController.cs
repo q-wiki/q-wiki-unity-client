@@ -19,7 +19,6 @@ public class MenuController : MonoBehaviour
     public GameObject audioSource;
     public GameObject soundButtonIcon;
     public GameObject notificationButtonIcon;
-    public GameObject vibrationButtonIcon;
     public GameObject[] miniGameCanvases;
     public GameObject categoryCanvas;
     public GameObject newGameButtonPlayImage;
@@ -31,8 +30,6 @@ public class MenuController : MonoBehaviour
     public Sprite soundOn;
     public Sprite notificationOff;
     public Sprite notificationOn;
-    public Sprite vibrationOff;
-    public Sprite vibrationOn;
     public Sprite opponentImage;
     public Sprite myImage;
     public Sprite newGameButtonGrey;
@@ -56,7 +53,6 @@ public class MenuController : MonoBehaviour
     public Button c1, c2, c3;
     private bool _soundToggle;
     private bool _notificationToggle;
-    private bool _vibrationToggle;
     private bool _settingsToggle;
 
     private AudioSource Source => GetComponent<AudioSource>();
@@ -331,22 +327,6 @@ public class MenuController : MonoBehaviour
         {
             Debug.Log("Notification On");
             notificationButtonIcon.GetComponent<Image>().sprite = notificationOn;
-        }
-    }
-
-    public void ToggleVibration()
-    {
-        _vibrationToggle = !_vibrationToggle;
-
-        if (_vibrationToggle)
-        {
-            Debug.Log("Vibration Off");
-            vibrationButtonIcon.GetComponent<Image>().sprite = vibrationOff;
-        }
-        else
-        {
-            Debug.Log("Vibration On");
-            vibrationButtonIcon.GetComponent<Image>().sprite = vibrationOn;
         }
     }
 

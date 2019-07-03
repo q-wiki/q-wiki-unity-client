@@ -2,11 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Minigame;
 using UnityEngine;
 using UnityEngine.UI;
 using WikidataGame.Models;
 
-public class MinigameMultipleChoice : MonoBehaviour
+public class MinigameMultipleChoice : MonoBehaviour, IMinigame
 {
 
     public GameObject menuController;
@@ -26,12 +27,27 @@ public class MinigameMultipleChoice : MonoBehaviour
 
     public void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions)
     {
+        Reset();
+        
         _checkedChoice = null;
         _id = miniGameId;
         _taskDescription = taskDescription;
         _answerOptions = answerOptions;
         AssignDescription(_taskDescription);
         AssignChoices(_answerOptions);
+    }
+    
+    
+    /**
+     * function to reset text colors and sprites before showing the game to user
+     */
+    private void Reset()
+    {
+        foreach (var item in choices)
+        {
+            item.GetComponentInChildren<Text>().color = Color.black;
+            item.GetComponentInChildren<Image>().sprite = boxSprite;
+        }
     }
 
     private void AssignChoices(IList<string> answerOptions)

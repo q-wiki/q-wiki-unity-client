@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Resources;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
@@ -23,12 +25,27 @@ namespace Minigame
 
         public void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions)
         {
+            
+            Reset();
+            
             _checkedChoice = null;
             _id = miniGameId;
             _taskDescription = taskDescription;
             _answerOptions = answerOptions;
             AssignDescription(_taskDescription);
             AssignChoices(_answerOptions);
+        }
+
+        /**
+         * function to reset text colors and sprites before showing the game to user
+         */
+        private void Reset()
+        {
+            foreach (var item in choices)
+            {
+                item.GetComponentInChildren<Text>().color = Color.black;
+                item.GetComponentInChildren<Image>().sprite = boxSprite;
+            }
         }
 
         private void AssignChoices(IList<string> answerOptions)

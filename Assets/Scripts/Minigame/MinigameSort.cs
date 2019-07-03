@@ -27,11 +27,25 @@ namespace Minigame
 
         public void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions)
         {
+
+            Reset();
+            
             _id = miniGameId;
             _taskDescription = taskDescription;
             _answerOptions = answerOptions;
             AssignDescription(_taskDescription);
             AssignChoices(_answerOptions);
+        }
+        
+        /**
+       * function to reset text colors before showing the game to user
+       */
+        private void Reset()
+        {
+            foreach (var item in choices)
+            {
+                item.GetComponentInChildren<Text>().color = Color.black;
+            }
         }
 
         private void AssignChoices(IList<string> answerOptions)

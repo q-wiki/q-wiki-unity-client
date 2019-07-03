@@ -25,6 +25,14 @@ public class Communicator : MonoBehaviour
 
     private static string _currentGameId;
 
+    /**
+     * activate this when needed
+     */
+    public void Awake()
+    {
+       // PlayerPrefs.DeleteAll();
+    }
+
     public static bool IsConnected()
     {
         return _gameApi != null;

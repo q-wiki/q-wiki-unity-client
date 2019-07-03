@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Minigame
   - Canvas
+  - LoadingIndicator
   layers:
   - Default
   - TransparentFX

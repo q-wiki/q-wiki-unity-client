@@ -76,7 +76,7 @@ public class MenuController : MonoBehaviour
             blockActionPanel.alpha = 1;
             blockActionPanel.blocksRaycasts = true;
 
-            await Task.Delay(5000);
+            await Task.Delay(10000);
             _game = await Communicator.GetCurrentGameState();
             
             if (_game == null)

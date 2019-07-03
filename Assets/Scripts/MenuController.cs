@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 using WikidataGame;
 using WikidataGame.Models;
 using System.Threading.Tasks;
+using Minigame;
 
 public class MenuController : MonoBehaviour
 {
@@ -19,7 +20,7 @@ public class MenuController : MonoBehaviour
     public GameObject soundButtonIcon;
     public GameObject notificationButtonIcon;
     public GameObject vibrationButtonIcon;
-    public GameObject miniGameCanvas;
+    public GameObject[] miniGameCanvases;
     public GameObject categoryCanvas;
     public GameObject newGameButtonPlayImage;
     public GameObject loadingDots;
@@ -57,8 +58,6 @@ public class MenuController : MonoBehaviour
     private bool _notificationToggle;
     private bool _vibrationToggle;
     private bool _settingsToggle;
-
-
 
     private AudioSource Source => GetComponent<AudioSource>();
 
@@ -103,7 +102,7 @@ public class MenuController : MonoBehaviour
         {
             //Debug.Log("GameScene");
             _settingsPanel = GameObject.Find("SettingsPanelContainer");
-            _settingsPanel.SetActive(false);
+            _settingsPanel?.SetActive(false);
 
             _game = await Communicator.GetCurrentGameState();
             Debug.Log(_game.Tiles);
@@ -116,6 +115,7 @@ public class MenuController : MonoBehaviour
         // this is called whenever something happens (minigame finished, player made a turn...)
         _game = await Communicator.GetCurrentGameState();
         Debug.Log(_game.Tiles);
+        // TODO: there needs to be an UpdateGrid(_game.Tiles)-method in GridController so that it is not redrawn every time 
         grid.GetComponent<GridController>().GenerateGrid(_game.Tiles);
     }
 
@@ -200,15 +200,27 @@ public class MenuController : MonoBehaviour
     */
     public async void StartMiniGame(string categoryId)
     {
-        // TODO: Jump to minigame screen when minigame has been started; there can only be one minigame at once
         Debug.Log("Trying to initialize minigame");
 
         var miniGame = await Communicator.InitializeMinigame(selectedTile.GetComponent<TileController>().id, categoryId);
-        Debug.Log($"Initialized minigame with id {miniGame.Id}");
+        Debug.Log($"Initialized minigame with id {miniGame.Id} and type {miniGame.Type}");
 
-        // TODO: auf Grundlage von miniGame.Type entsprechendes Game öffnen
-        MinigameMultipleChoice instance = miniGameCanvas.GetComponent<MinigameMultipleChoice>();
-        instance.Initialize(miniGame.Id, miniGame.TaskDescription, miniGame.AnswerOptions);
+        if (miniGame.Type == null)
+            return;
+
+        // using IMinigame interface to get miniGame depending on given type
+        // 0: Sort, 1: Blurry (not implemented), 2: Multiple Choice
+        GameObject miniGameCanvas = miniGameCanvases[miniGame.Type.Value];
+        IMinigame miniGameInstance = miniGameCanvas.GetComponent<IMinigame>();
+
+        /**
+         * extended logging to check for string length issues
+         */
+        
+        Debug.Log($"miniGame.task: {miniGame.TaskDescription}");
+        foreach(var answer in miniGame.AnswerOptions) Debug.Log($"answerOption: {answer}");
+        
+        miniGameInstance.Initialize(miniGame.Id, miniGame.TaskDescription, miniGame.AnswerOptions);
 
         miniGameCanvas.SetActive(true);
         categoryCanvas.SetActive(false);

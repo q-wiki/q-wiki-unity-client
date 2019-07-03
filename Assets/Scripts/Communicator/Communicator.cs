@@ -25,6 +25,15 @@ public class Communicator : MonoBehaviour
 
     private static string _currentGameId;
 
+    /**
+     * use this function to delete all player preferences before starting the game
+     * for testing purposes only
+     */
+    public void Awake()
+    {
+        PlayerPrefs.DeleteAll();
+    }
+
     public static bool IsConnected()
     {
         return _gameApi != null;

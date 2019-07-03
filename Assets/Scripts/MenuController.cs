@@ -39,8 +39,12 @@ public class MenuController : MonoBehaviour
 
     public GameObject categoryPanel;
     public GameObject actionPanel;
+    public GameObject settingsPanel;
+    public GameObject confirmationPanel;
+    public GameObject settingsPanelGame;
 
     public GameObject selectedTile;
+
 
 
     /**
@@ -97,8 +101,8 @@ public class MenuController : MonoBehaviour
         else if (sceneName == "GameScene")
         {
             //Debug.Log("GameScene");
-            _settingsPanel = GameObject.Find("SettingsPanelContainer");
-            _settingsPanel?.SetActive(false);
+            _settingsPanel = settingsPanelGame;
+            _settingsPanel.SetActive(false);
 
             _game = await Communicator.GetCurrentGameState();
             Debug.Log(_game.Tiles);
@@ -185,15 +189,16 @@ public class MenuController : MonoBehaviour
     }
 
 
-
     public void ChangeToGameScene()
     {
         SceneManager.LoadScene("GameScene");
     }
 
-   /**
-    *
-    */
+    public void ChangeToStartScene()
+    {
+        SceneManager.LoadScene("StartScene");
+    }
+
     public async void StartMiniGame(string categoryId)
     {
         Debug.Log("Trying to initialize minigame");
@@ -333,5 +338,28 @@ public class MenuController : MonoBehaviour
     public void ToggleCreditsPanel()
     {
         Debug.Log("Credits");
+    }
+
+    public void HandleAbortGamePanel()
+    {
+        settingsPanel.SetActive(false);
+        confirmationPanel.SetActive(true);
+    }
+
+    public async void LeaveGame()
+    {
+        await Communicator.AbortCurrentGame();
+        //await Task.Delay(2000);
+        ChangeToStartScene();
+    }
+
+    public void StayInGame()
+    {
+        settingsPanel.SetActive(true);
+        confirmationPanel.SetActive(false);
+        _settingsPanel.SetActive(false);
+        _settingsToggle = !_settingsToggle;
+        //settingsPanel.SetActive(true);
+        //confirmationPanel.SetActive(false);
     }
 }

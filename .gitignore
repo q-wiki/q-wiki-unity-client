@@ -5,13 +5,6 @@
 *.apk
 *.symbols.zip
 
-# build info
-Assets/StreamingAssets/build_info.txt
-
-# Jetbrain Rider Cache
-.idea/
-Assets/Plugins/Editor*
-Assets/Plugins/Editor/JetBrains*
 # Visual Studio Code
 .vscode/
 
@@ -129,3 +122,12 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# build info
+[Aa]ssets/StreamingAssets/build_info.txt
+
+# Jetbrain Rider Cache
+.idea/
+[Aa]ssets/Plugins/Editor*
+[Aa]ssets/Plugins/Editor/JetBrains*
+[Aa]ssets/Plugins/Editor.meta*

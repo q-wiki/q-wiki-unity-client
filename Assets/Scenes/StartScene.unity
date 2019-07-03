@@ -1586,7 +1586,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 0}
-  clickSound: {fileID: 8300000, guid: 70e02441ad3cd8f488092b6a4933e446, type: 3}
   audioSource: {fileID: 1356137439}
   soundButtonIcon: {fileID: 770631810}
   notificationButtonIcon: {fileID: 411779981}
@@ -1610,6 +1609,9 @@ MonoBehaviour:
   camera: {fileID: 0}
   categoryPanel: {fileID: 0}
   actionPanel: {fileID: 0}
+  settingsPanel: {fileID: 0}
+  confirmationPanel: {fileID: 0}
+  settingsPanelGame: {fileID: 0}
   selectedTile: {fileID: 0}
   c1: {fileID: 0}
   c2: {fileID: 0}
@@ -1965,7 +1967,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1335742355
 RectTransform:
   m_ObjectHideFlags: 0

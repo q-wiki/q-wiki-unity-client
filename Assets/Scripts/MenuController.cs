@@ -15,7 +15,6 @@ public class MenuController : MonoBehaviour
      */
 
     public GameObject grid;
-    public AudioClip clickSound;
     public GameObject audioSource;
     public GameObject soundButtonIcon;
     public GameObject notificationButtonIcon;
@@ -42,6 +41,8 @@ public class MenuController : MonoBehaviour
     public GameObject settingsPanel;
     public GameObject confirmationPanel;
     public GameObject settingsPanelGame;
+    public GameObject settingsPanelStart;
+    public GameObject startPanelStart;
 
     public GameObject selectedTile;
 
@@ -70,8 +71,6 @@ public class MenuController : MonoBehaviour
     async void Start()
     {
         gameObject.AddComponent<AudioSource>();
-        Source.clip = clickSound;
-        Source.playOnAwake = false;
 
         Scene currentScene = SceneManager.GetActiveScene();
         string sceneName = currentScene.name;
@@ -93,8 +92,8 @@ public class MenuController : MonoBehaviour
                 Debug.Log("No previous game found, showing start scene");
                 // we don't have a running game, just show the normal start screen
                 //Debug.Log("StartScene");
-                _startPanel = GameObject.Find("StartPanel");
-                _settingsPanel = GameObject.Find("SettingsPanel");
+                _startPanel = startPanelStart;
+                _settingsPanel = settingsPanelStart;
                 _settingsPanel.SetActive(false);
             }
         }
@@ -169,11 +168,6 @@ public class MenuController : MonoBehaviour
     public string PlayerId()
     {
         return _game.Me.Id;
-    }
-
-    public void PlaySound()
-    {
-        Source.PlayOneShot(clickSound);
     }
 
     public void ToggleCameraBehaviour()
@@ -355,6 +349,7 @@ public class MenuController : MonoBehaviour
 
     public void StayInGame()
     {
+        ToggleCameraBehaviour();
         settingsPanel.SetActive(true);
         confirmationPanel.SetActive(false);
         _settingsPanel.SetActive(false);

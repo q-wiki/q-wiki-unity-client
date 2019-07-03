@@ -3,6 +3,7 @@
 # ignore android build artefacts
 *.aab
 *.apk
+*.symbols.zip
 
 # Jetbrain Rider Cache
 .idea/

@@ -3,6 +3,7 @@
 # ignore android build artefacts
 *.aab
 *.apk
+*.symbols.zip
 
 # build info
 Assets/StreamingAssets/build_info.txt

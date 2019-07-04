@@ -52,6 +52,9 @@ public class MenuController : MonoBehaviour
     
     public GameObject selectedTile;
 
+    public GameObject gameOverCanvas;
+    public Text gameOverText;
+
 
     /**
      * private fields
@@ -80,6 +83,10 @@ public class MenuController : MonoBehaviour
         if(_isWaitingState && !_isHandling)
         {
             HandleWaitingState();
+        }
+        else if ()
+        {
+
         }
     }
 
@@ -179,6 +186,8 @@ public class MenuController : MonoBehaviour
 
         _isHandling = false;
     }
+
+
 
     public async void RefreshGameState()
     {

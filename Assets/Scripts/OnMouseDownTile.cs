@@ -1,8 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+[Obsolete("OnMouseDownTile is deprecated, please use TileController instead.")]
 public class OnMouseDownTile : MonoBehaviour
 {
 

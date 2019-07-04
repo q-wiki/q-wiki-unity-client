@@ -22,9 +22,9 @@ public class TileController : MonoBehaviour
         myId = menuController.GetComponent<MenuController>().PlayerId();
     }
 
-    private void SetActiveAllChildren(Transform transform, bool value)
+    private void SetActiveAllChildren(Transform other, bool value)
     {
-        foreach (Transform child in transform)
+        foreach (Transform child in other)
         {
             child.gameObject.SetActive(value);
             SetActiveAllChildren(child, value);
@@ -35,10 +35,6 @@ public class TileController : MonoBehaviour
     {
         Debug.Log(ownerId);
         if (EventSystem.current.IsPointerOverGameObject()) return;
-        /*foreach (WikidataGame.Models.Category cat in availableCategories)
-        {
-            Debug.Log(cat.Title);
-        }*/
         menuController.GetComponent<MenuController>().selectedTile = gameObject;
         GridController gridController = grid.GetComponent<GridController>();
 
@@ -48,7 +44,7 @@ public class TileController : MonoBehaviour
         
         if (ownerId == myId)
         {
-            SetActiveAllChildren(gridController.actionCanvas.GetComponent<Transform>(), true);
+            SetActiveAllChildren(gridController.actionCanvas.transform, true);
             Debug.Log("Red");
             //Instantiate(actionPanelPrefab, GameObject.FindGameObjectWithTag("Canvas").transform);
             gridController.actionCanvas.SetActive(true);
@@ -65,7 +61,7 @@ public class TileController : MonoBehaviour
          */
         else if (ownerId != myId && !string.IsNullOrEmpty(ownerId))
         {
-            SetActiveAllChildren(gridController.actionCanvas.GetComponent<Transform>(), true);
+            SetActiveAllChildren(gridController.actionCanvas.transform, true);
             Debug.Log("Blue");
             gridController.actionCanvas.SetActive(true);
             if (gridController.captureButton.activeSelf &&

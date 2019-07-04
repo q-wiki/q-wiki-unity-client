@@ -27,10 +27,6 @@ public class GridController: MonoBehaviour
 
     Vector3 startPos;
 
-    public void Start()
-    {
-    }
-
     public void GenerateGrid(IList<IList<Tile>> tiles)
     {
         
@@ -106,23 +102,20 @@ public class GridController: MonoBehaviour
                         hexPrefabFree = hexPrefabFree0;
                     }
 
-                    tile = Instantiate(hexPrefabFree[randomIndexFree]) as GameObject;
+                    tile = Instantiate(hexPrefabFree[randomIndexFree], transform, true) as GameObject;
 
 
                     tile.AddComponent<BoxCollider>();
-                    tile.AddComponent<TileController>();
-                    tile.GetComponent<TileController>().availableCategories = tileSystem[x][z].AvailableCategories;
-                    tile.GetComponent<TileController>().id = tileSystem[x][z].Id;
-                    tile.GetComponent<TileController>().grid = gameObject;
-
-
+                    TileController tileController = tile.AddComponent<TileController>();
+                    tileController.availableCategories = tileSystem[x][z].AvailableCategories;
+                    tileController.id = tileSystem[x][z].Id;
+                    tileController.grid = gameObject;
 
                     float height = (float)tileSystem[x][z].Difficulty;
 
                     Vector3 gridPos = new Vector3(x, 0, z);
 
                     tile.transform.position = CalcWorldPos(gridPos);
-                    tile.transform.parent = this.transform;
                     tile.name = "GridTile" + x + "|" + z;
 
                     tileArray[x, z] = tile;

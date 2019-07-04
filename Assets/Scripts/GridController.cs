@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using WikidataGame;
 using WikidataGame.Models;
@@ -110,14 +111,38 @@ public class GridController: MonoBehaviour
 
 
                     tile.AddComponent<BoxCollider>();
-                    tile.AddComponent<TileController>();
-                    tile.GetComponent<TileController>().availableCategories = tileSystem[x][z].AvailableCategories;
-                    tile.GetComponent<TileController>().id = tileSystem[x][z].Id;
-                    tile.GetComponent<TileController>().grid = gameObject;
+                    
+                    /**
+                     * instantiate TileController and set values accordingly
+                     */
+                    
+                    TileController tileController = tile.AddComponent<TileController>();
+                    tileController.id = tileSystem[x][z].Id;
+                    tileController.ownerId = tileSystem[x][z].OwnerId;
+                    tileController.availableCategories = tileSystem[x][z].AvailableCategories;
+                    tileController.chosenCategoryId = tileSystem[x][z].ChosenCategoryId;
+                    tileController.difficulty = tileSystem[x][z].Difficulty ?? 0;
+                    tileController.grid = gameObject;
+                    
+                    
+                    /**
+                     * testing colors
+                     */
 
-
-
-                    float height = (float)tileSystem[x][z].Difficulty;
+                    string ownerId = tileController.ownerId;
+                    string playerId = MenuController.Instance.PlayerId();
+                    if (ownerId != null)
+                    {
+                        Color color = MenuController.Instance.PlayerId() == ownerId ? Color.green : Color.red;
+                        MaterialPropertyBlock props = new MaterialPropertyBlock();
+                        props.SetColor("_Color", color);
+                        foreach (var r in tile.GetComponentsInChildren<Renderer>()) 
+                        {
+                            r.SetPropertyBlock(props);
+                        } 
+                    }
+                    
+                    // float height = (float)tileSystem[x][z].Difficulty;
 
                     Vector3 gridPos = new Vector3(x, 0, z);
 

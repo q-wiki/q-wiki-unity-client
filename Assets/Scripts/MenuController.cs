@@ -71,6 +71,8 @@ public class MenuController : MonoBehaviour
 
     private AudioSource Source => GetComponent<AudioSource>();
 
+    public static MenuController Instance;
+
     /**
      * update method listens for changes in the game state when it's currently not your turn
      */
@@ -85,6 +87,7 @@ public class MenuController : MonoBehaviour
 
     void Awake()
     {
+        Instance = this;
         _settingsToggle = true;
     }
 
@@ -323,12 +326,12 @@ public class MenuController : MonoBehaviour
 
     public void ShowCategoryPanel()
     {
-        var chosenCategory = selectedTile.GetComponent<TileController>().chosenCategory;
+        var chosenCategoryId = selectedTile.GetComponent<TileController>().chosenCategoryId;
 
-        if (chosenCategory != null)
+        if (!String.IsNullOrEmpty(chosenCategoryId))
         {
             // Someone captured this tile already
-            StartMiniGame(chosenCategory.Id);
+            StartMiniGame(chosenCategoryId);
         }
         else
         {

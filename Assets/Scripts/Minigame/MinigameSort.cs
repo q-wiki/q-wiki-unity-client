@@ -118,6 +118,7 @@ namespace Minigame
         public void Close()
         {
             menuController.GetComponent<MenuController>().RefreshGameState();
+            menuController.ToggleCameraBehaviour();
             gameObject.SetActive(false);
             ClosePanel.SetActive(false);
         }

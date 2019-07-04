@@ -44,7 +44,12 @@ public class MenuController : MonoBehaviour
 
     public GameObject categoryPanel;
     public GameObject actionPanel;
-
+    public GameObject settingsPanel;
+    public GameObject confirmationPanel;
+    public GameObject settingsPanelGame;
+    public GameObject settingsPanelStart;
+    public GameObject startPanelStart;
+    
     public GameObject selectedTile;
 
 
@@ -124,11 +129,9 @@ public class MenuController : MonoBehaviour
             {
                 Debug.Log("No previous game found, showing start scene");
                 // we don't have a running game, just show the normal start screen
-                //Debug.Log("StartScene");
-                _startPanel = GameObject.Find("StartPanel");
-                _settingsPanel = GameObject.Find("SettingsPanel");
-                _settingsPanel.SetActive(false);
-                
+                _startPanel = startPanelStart;
+                _settingsPanel = settingsPanelStart;
+
                 /**
                  * delete action point indicator from player prefs to prevent inconsistencies
                  */
@@ -138,9 +141,7 @@ public class MenuController : MonoBehaviour
         }
         else if (sceneName == "GameScene")
         {
-            //Debug.Log("GameScene");
-            _settingsPanel = GameObject.Find("SettingsPanelContainer");
-            _settingsPanel?.SetActive(false);
+            _settingsPanel = settingsPanelGame;
 
             _game = await Communicator.GetCurrentGameState();
 
@@ -300,6 +301,7 @@ public class MenuController : MonoBehaviour
         
         miniGameInstance.Initialize(miniGame.Id, miniGame.TaskDescription, miniGame.AnswerOptions);
 
+        ToggleCameraBehaviour();
         ActionPointHandler.Instance.Hide();
         miniGameCanvas.SetActive(true);
         categoryCanvas.SetActive(false);
@@ -413,24 +415,40 @@ public class MenuController : MonoBehaviour
         }
     }
 
-    public void ToggleVibration()
-    {
-        _vibrationToggle = !_vibrationToggle;
-
-        if (_vibrationToggle)
-        {
-            Debug.Log("Vibration Off");
-            vibrationButtonIcon.GetComponent<Image>().sprite = vibrationOff;
-        }
-        else
-        {
-            Debug.Log("Vibration On");
-            vibrationButtonIcon.GetComponent<Image>().sprite = vibrationOn;
-        }
-    }
-
     public void ToggleCreditsPanel()
     {
         Debug.Log("Credits");
     }
+    
+    #region cancellationPanel
+    
+    public void HandleAbortGamePanel()
+    {
+        settingsPanel.SetActive(false);
+        confirmationPanel.SetActive(true);
+    }
+    
+    public async void LeaveGame()
+    {
+        Debug.Log($"Trying to delete game");
+        await Communicator.AbortCurrentGame();
+        Debug.Log($"Game deleted");
+        ChangeToStartScene();
+    }
+
+    public void StayInGame()
+    {
+        ToggleCameraBehaviour();
+        settingsPanel.SetActive(true);
+        confirmationPanel.SetActive(false);
+        _settingsPanel.SetActive(false);
+        _settingsToggle = !_settingsToggle;
+    }
+    
+    public void ChangeToStartScene()
+    {
+        SceneManager.LoadScene("StartScene");
+    }
+    
+    #endregion
 }

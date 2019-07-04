@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,6 +27,7 @@ public class MenuController : MonoBehaviour
     public GameObject loadingDots;
     public GameObject buttonPrefab;
     public GameObject menuGrid;
+    public CanvasGroup blockActionPanel;
     public Button newGameButton;
     public Sprite soundOff;
     public Sprite soundOn;
@@ -58,8 +60,38 @@ public class MenuController : MonoBehaviour
     private bool _notificationToggle;
     private bool _vibrationToggle;
     private bool _settingsToggle;
+    private bool _isWaitingState;
 
     private AudioSource Source => GetComponent<AudioSource>();
+
+    /**
+     * update method listens for changes in the game state when it's currently not your turn
+     */
+
+    public async void Update()
+    {
+        while (_isWaitingState)
+        {
+            // make blockActionPanel visible and prevent user from selecting anything in the game
+            blockActionPanel.alpha = 1;
+            blockActionPanel.blocksRaycasts = true;
+
+            await Task.Delay(10000);
+            _game = await Communicator.GetCurrentGameState();
+            
+            if (_game == null)
+                throw new Exception("There is no game");
+
+            if (_game.NextMovePlayerId == _game.Me.Id)
+            {
+                blockActionPanel.alpha = 0;
+                blockActionPanel.blocksRaycasts = false;
+                _isWaitingState = false;
+                RefreshGameState();
+                break;
+            }
+        }
+    }
 
     void Awake()
     {
@@ -84,7 +116,7 @@ public class MenuController : MonoBehaviour
             var previousGame = await Communicator.RestorePreviousGame();
             if (previousGame != null)
             {
-                Debug.Log("Previous game restored successfully, changing to game scene");
+                Debug.Log($"Previous game {previousGame.Id} restored successfully, changing to game scene");
                 _game = previousGame;
                 ChangeToGameScene();
             }
@@ -96,6 +128,12 @@ public class MenuController : MonoBehaviour
                 _startPanel = GameObject.Find("StartPanel");
                 _settingsPanel = GameObject.Find("SettingsPanel");
                 _settingsPanel.SetActive(false);
+                
+                /**
+                 * delete action point indicator from player prefs to prevent inconsistencies
+                 */
+
+                PlayerPrefs.DeleteKey("REMAINING_ACTION_POINTS");
             }
         }
         else if (sceneName == "GameScene")
@@ -105,8 +143,26 @@ public class MenuController : MonoBehaviour
             _settingsPanel?.SetActive(false);
 
             _game = await Communicator.GetCurrentGameState();
-            Debug.Log(_game.Tiles);
+
+            /**
+             * generate grid by reading tiles from game object
+             */
             grid.GetComponent<GridController>().GenerateGrid(_game.Tiles);
+            
+            /**
+             * if current player is not me, go to loop / block interaction
+             */
+
+            if(_game.NextMovePlayerId != _game.Me.Id)
+            {
+                _isWaitingState = true;
+                return;
+            }
+            
+            /**
+             * show action point indicator in UI
+             */
+            ActionPointHandler.Instance.Show();
         }
     }
 
@@ -114,9 +170,31 @@ public class MenuController : MonoBehaviour
     {
         // this is called whenever something happens (minigame finished, player made a turn...)
         _game = await Communicator.GetCurrentGameState();
-        Debug.Log(_game.Tiles);
-        // TODO: there needs to be an UpdateGrid(_game.Tiles)-method in GridController so that it is not redrawn every time 
+                
+        /**
+         * TODO:there needs to be an UpdateGrid(_game.Tiles)-method in GridController so that it is not redrawn every time
+         * currently the 'old' grid is destroyed so the new grid gets to be drawn safely
+         * but it starts to drift further apart because of the addGap-function in GridController
+         */
+        foreach (Transform child in grid.transform) Destroy(child.gameObject);
         grid.GetComponent<GridController>().GenerateGrid(_game.Tiles);
+        
+        
+        /**
+         * simple function to update action points in game controller
+         */
+
+        ActionPointHandler.Instance.UpdateState(_game.Me.Id, _game.NextMovePlayerId);
+        
+        /**
+         * if current player is not me, go to loop / block interaction
+         */
+
+        if(_game.NextMovePlayerId != _game.Me.Id)
+        {
+            _isWaitingState = true;
+        }
+
     }
 
     public async void Send()
@@ -222,6 +300,7 @@ public class MenuController : MonoBehaviour
         
         miniGameInstance.Initialize(miniGame.Id, miniGame.TaskDescription, miniGame.AnswerOptions);
 
+        ActionPointHandler.Instance.Hide();
         miniGameCanvas.SetActive(true);
         categoryCanvas.SetActive(false);
     }

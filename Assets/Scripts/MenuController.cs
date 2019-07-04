@@ -67,6 +67,8 @@ public class MenuController : MonoBehaviour
     private bool _settingsToggle;
     private bool _isWaitingState;
 
+    private bool _isHandling;
+
     private AudioSource Source => GetComponent<AudioSource>();
 
     /**
@@ -75,26 +77,9 @@ public class MenuController : MonoBehaviour
 
     public async void Update()
     {
-        while (_isWaitingState)
+        if(_isWaitingState && !_isHandling)
         {
-            // make blockActionPanel visible and prevent user from selecting anything in the game
-            blockActionPanel.alpha = 1;
-            blockActionPanel.blocksRaycasts = true;
-
-            await Task.Delay(10000);
-            _game = await Communicator.GetCurrentGameState();
-            
-            if (_game == null)
-                throw new Exception("There is no game");
-
-            if (_game.NextMovePlayerId == _game.Me.Id)
-            {
-                blockActionPanel.alpha = 0;
-                blockActionPanel.blocksRaycasts = false;
-                _isWaitingState = false;
-                RefreshGameState();
-                break;
-            }
+            HandleWaitingState();
         }
     }
 
@@ -165,6 +150,34 @@ public class MenuController : MonoBehaviour
              */
             ActionPointHandler.Instance.Show();
         }
+    }
+
+    private async void HandleWaitingState()
+    {
+
+        _isHandling = true;
+        
+        // make blockActionPanel visible and prevent user from selecting anything in the game
+        blockActionPanel.alpha = 1;
+        blockActionPanel.blocksRaycasts = true;
+
+        Debug.Log("Wait for 10 seconds");
+        await Task.Delay(10000);
+            
+        _game = await Communicator.GetCurrentGameState();
+            
+        if (_game == null)
+            throw new Exception("There is no game");
+
+        if (_game.NextMovePlayerId == _game.Me.Id)
+        {
+            blockActionPanel.alpha = 0;
+            blockActionPanel.blocksRaycasts = false;
+            _isWaitingState = false;
+            RefreshGameState();
+        }
+
+        _isHandling = false;
     }
 
     public async void RefreshGameState()

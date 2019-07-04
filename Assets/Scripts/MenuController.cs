@@ -174,13 +174,13 @@ public class MenuController : MonoBehaviour
             blockActionPanel.alpha = 0;
             blockActionPanel.blocksRaycasts = false;
             _isWaitingState = false;
-            RefreshGameState();
+            RefreshGameState(true);
         }
 
         _isHandling = false;
     }
 
-    public async void RefreshGameState()
+    public async void RefreshGameState(bool isNewTurn)
     {
         // this is called whenever something happens (minigame finished, player made a turn...)
         _game = await Communicator.GetCurrentGameState();
@@ -198,7 +198,7 @@ public class MenuController : MonoBehaviour
          * simple function to update action points in game controller
          */
 
-        ActionPointHandler.Instance.UpdateState(_game.Me.Id, _game.NextMovePlayerId);
+        ActionPointHandler.Instance.UpdateState(_game.Me.Id, _game.NextMovePlayerId, isNewTurn);
         
         /**
          * if current player is not me, go to loop / block interaction

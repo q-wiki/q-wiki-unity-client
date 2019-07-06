@@ -9,6 +9,7 @@ using WikidataGame.Models;
 public class GridController: MonoBehaviour
 {
     public GameObject[] baseTiles;
+    public GameObject[] categoryObjects;
     public GameObject hexPrefabSpawn;
 
     public GameObject captureButton, attackButton, levelUpButton;
@@ -89,6 +90,22 @@ public class GridController: MonoBehaviour
                     tile.GetComponent<TileController>().id = tileSystem[x][z].Id;
                     tile.GetComponent<TileController>().ownerId = tileSystem[x][z].OwnerId;
                     tile.GetComponent<TileController>().grid = gameObject;
+                    if(tileSystem[x][z].ChosenCategoryId != null)
+                    //if(true)
+                    {
+                        GameObject categoryPlaceholder = tile.transform.FindChild("TileAssetsL0").FindChild("CategoryPlaceholder").gameObject;
+                        GameObject categoryItem;
+                        foreach (GameObject cat in categoryObjects)
+                        {
+                            if (cat.name == tileSystem[x][z].ChosenCategoryId)
+                            //if(cat.name == "History")
+                            {
+                                categoryItem = Instantiate(cat) as GameObject;
+                                categoryItem.transform.parent = categoryPlaceholder.transform;
+                                tile.transform.position=new Vector3(0, 0, 0);
+                            }
+                        }
+                    }
 
                     if (tileSystem[x][z].Difficulty > 0)
                     {

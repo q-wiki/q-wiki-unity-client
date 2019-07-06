@@ -91,6 +91,7 @@ public class GridController: MonoBehaviour
                     
                     tileController.difficulty = tileSystem[x][z].Difficulty ?? 0;
                     tileController.availableCategories = tileSystem[x][z].AvailableCategories;
+                    tileController.chosenCategoryId = tileSystem[x][z].ChosenCategoryId;
                     tileController.id = tileSystem[x][z].Id;
                     tileController.ownerId = tileSystem[x][z].OwnerId;
                     tileController.grid = gameObject;
@@ -107,7 +108,7 @@ public class GridController: MonoBehaviour
                         {
                             
                             // TODO: chosenCategoryId ist eine ID und kein Name - müssen schauen, nach was genau wir überprüfen wollen
-                            if (cat.name == "Geography")
+                            if (cat.name == tileSystem[x][z].ChosenCategoryId)
                             {
                                 var categoryItem = Instantiate(cat, categoryPlaceholder.transform, true);
                                 tile.transform.position = new Vector3(0, 0, 0);

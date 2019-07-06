@@ -71,6 +71,9 @@ public class MenuController : MonoBehaviour
     private bool _isWaitingState;
 
     private bool _isHandling;
+    private bool _isHandlinggGameOverState;
+
+    private bool _isCheckingGameOverState;
 
     private AudioSource Source => GetComponent<AudioSource>();
 
@@ -78,86 +81,96 @@ public class MenuController : MonoBehaviour
      * update method listens for changes in the game state when it's currently not your turn
      */
 
-    public async void Update()
+    public void Update()
     {
-        if(_isWaitingState && !_isHandling)
+        if (_isWaitingState && !_isHandling)
         {
             HandleWaitingState();
         }
-        else if ()
-        {
 
+        if(!_isHandlinggGameOverState && _isCheckingGameOverState == true)
+        {
+            HandleGameOverState();
         }
     }
 
     void Awake()
-    {
-        _settingsToggle = true;
-    }
+        {
+            _settingsToggle = true;
+        }
 
 
     async void Start()
-    {
-        gameObject.AddComponent<AudioSource>();
-        Source.clip = clickSound;
-        Source.playOnAwake = false;
-
-        Scene currentScene = SceneManager.GetActiveScene();
-        string sceneName = currentScene.name;
-
-        if (sceneName == "StartScene")
         {
-            // initialize server session and restore previous game if there is one
-            Debug.Log("Trying to restore previous game…");
-            await Communicator.SetupApiConnection();
-            var previousGame = await Communicator.RestorePreviousGame();
-            if (previousGame != null)
-            {
-                Debug.Log($"Previous game {previousGame.Id} restored successfully, changing to game scene");
-                _game = previousGame;
-                ChangeToGameScene();
-            }
-            else
-            {
-                Debug.Log("No previous game found, showing start scene");
-                // we don't have a running game, just show the normal start screen
-                _startPanel = startPanelStart;
-                _settingsPanel = settingsPanelStart;
 
-                /**
-                 * delete action point indicator from player prefs to prevent inconsistencies
-                 */
+            gameObject.AddComponent<AudioSource>();
+            Source.clip = clickSound;
+            Source.playOnAwake = false;
 
-                PlayerPrefs.DeleteKey("REMAINING_ACTION_POINTS");
+            Scene currentScene = SceneManager.GetActiveScene();
+            string sceneName = currentScene.name;
+
+            if (sceneName == "StartScene")
+            {
+                // initialize server session and restore previous game if there is one
+                Debug.Log("Trying to restore previous game…");
+                await Communicator.SetupApiConnection();
+                var previousGame = await Communicator.RestorePreviousGame();
+                if (previousGame != null)
+                {
+                    Debug.Log($"Previous game {previousGame.Id} restored successfully, changing to game scene");
+                    _game = previousGame;
+                    ChangeToGameScene();
+                }
+                else
+                {
+                    Debug.Log("No previous game found, showing start scene");
+                    // we don't have a running game, just show the normal start screen
+                    _startPanel = startPanelStart;
+                    _settingsPanel = settingsPanelStart;
+
+                    /**
+                     * delete action point indicator from player prefs to prevent inconsistencies
+                     */
+                    PlayerPrefs.DeleteKey("REMAINING_ACTION_POINTS");
+                }
             }
-        }
-        else if (sceneName == "GameScene")
-        {
+            else if (sceneName == "GameScene")
+            {
+
+
             _settingsPanel = settingsPanelGame;
 
-            _game = await Communicator.GetCurrentGameState();
+                _game = await Communicator.GetCurrentGameState();
+
+            /* when in gamescene, check game over state */
+
+            _isCheckingGameOverState = true;
+
+           //Debug.Log(_game.WinningPlayerIds[0]);
 
             /**
              * generate grid by reading tiles from game object
              */
             grid.GetComponent<GridController>().GenerateGrid(_game.Tiles);
-            
-            /**
-             * if current player is not me, go to loop / block interaction
-             */
 
-            if(_game.NextMovePlayerId != _game.Me.Id)
-            {
-                _isWaitingState = true;
-                return;
+                /**
+                 * if current player is not me, go to loop / block interaction
+                 */
+
+                if (_game.NextMovePlayerId != _game.Me.Id)
+                {
+                    _isWaitingState = true;
+                    return;
+                }
+
+                /**
+                 * show action point indicator in UI
+                 */
+                ActionPointHandler.Instance.Show();
             }
-            
-            /**
-             * show action point indicator in UI
-             */
-            ActionPointHandler.Instance.Show();
         }
-    }
+    
 
     private async void HandleWaitingState()
     {
@@ -185,6 +198,43 @@ public class MenuController : MonoBehaviour
         }
 
         _isHandling = false;
+    }
+
+    private async void HandleGameOverState()
+    {
+        _isHandlinggGameOverState = true;
+        Debug.Log("_isCheckingGameOverState " + _isCheckingGameOverState);
+
+        await Task.Delay(5000);
+
+   
+        if ((_game.WinningPlayerIds != null && _game.WinningPlayerIds.Count > 0))
+        {
+            Debug.Log("Checking State!");
+
+            gameOverCanvas.SetActive(true);
+
+            if (_game.WinningPlayerIds.Count == 1 && _game.WinningPlayerIds.Contains(_game.Me.Id)){
+                gameOverText.text = "You won! Congratulations!";
+                Debug.Log("You won!");
+            }
+            else if (_game.WinningPlayerIds.Count == 1 && _game.WinningPlayerIds.Contains(_game.Opponent.Id))
+            {
+                gameOverText.text = "You Lost! \nTry again!";
+                Debug.Log("You Lost! Try again!");
+            }
+            else if (_game.WinningPlayerIds.Count == 2 && _game.WinningPlayerIds.Contains(_game.Opponent.Id) && _game.WinningPlayerIds.Contains(_game.Me.Id))
+            {
+
+                gameOverText.text = "Draw! \nTry again!";
+                Debug.Log("Draw!");
+            }
+
+        }
+
+        //gameOverCanvas.SetActive(false);
+        _isHandlinggGameOverState = false;
+      
     }
 
 
@@ -289,16 +339,16 @@ public class MenuController : MonoBehaviour
         }
     }
 
-
+    public void ChangeToStartScene()
+    {
+        SceneManager.LoadScene("StartScene");
+    }
 
     public void ChangeToGameScene()
     {
         SceneManager.LoadScene("GameScene");
     }
 
-   /**
-    *
-    */
     public async void StartMiniGame(string categoryId)
     {
         Debug.Log("Trying to initialize minigame");
@@ -384,7 +434,13 @@ public class MenuController : MonoBehaviour
         }
     }
 
-
+    public void Close()
+    {
+        Debug.Log("Close");
+        _isCheckingGameOverState = false;
+        //await Task.Delay(3000);
+        gameOverCanvas.SetActive(false);
+        ChangeToStartScene();    }
 
     public void ToggleSettingsStart()
     {
@@ -466,11 +522,6 @@ public class MenuController : MonoBehaviour
         _settingsPanel.SetActive(false);
         _settingsToggle = !_settingsToggle;
     }
-    
-    public void ChangeToStartScene()
-    {
-        SceneManager.LoadScene("StartScene");
-    }
-    
+     
     #endregion
 }

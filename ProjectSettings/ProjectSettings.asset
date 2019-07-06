@@ -161,7 +161,7 @@ PlayerSettings:
   applicationIdentifier:
     Android: com.wikidatagame.team
   buildNumber: {}
-  AndroidBundleVersionCode: 1
+  AndroidBundleVersionCode: 4
   AndroidMinSdkVersion: 23
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1

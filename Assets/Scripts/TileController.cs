@@ -10,32 +10,23 @@ public class TileController : MonoBehaviour
 {
     public string id;
     public string ownerId;
-    public string myId;
-
     public int difficulty;
-    public IList<WikidataGame.Models.Category> availableCategories;
-    public WikidataGame.Models.Category chosenCategory;
-
+    public IList<Category> availableCategories;
+    public string chosenCategoryId;
     public GameObject grid;
-    public GameObject menuController;
+    public Material[] tileMaterials;
+    
     private Game game;
 
-    public Material[] tileMaterials;
+    private MenuController menuController => GameObject.Find("MenuController").GetComponent<MenuController>();
 
     void Start()
     {
-        menuController = GameObject.Find("MenuController");
-        myId = menuController.GetComponent<MenuController>().PlayerId();
+        string myId = menuController.PlayerId();
         if (ownerId == myId)
-        {
             gameObject.transform.GetChild(0).GetChild(1).GetComponent<MeshRenderer>().material = tileMaterials[0];
-
-
-        }
         else if (ownerId != myId && ownerId != null)
-        {
             gameObject.transform.GetChild(0).GetChild(1).GetComponent<MeshRenderer>().material = tileMaterials[1];
-        }
     }
 
     public void LevelUp()
@@ -57,75 +48,65 @@ public class TileController : MonoBehaviour
         foreach (Transform child in transform)
         {
             child.gameObject.SetActive(value);
-
             SetActiveAllChildren(child, value);
         }
     }
 
     void OnMouseDown()
+    {
+        if (EventSystem.current.IsPointerOverGameObject())
+            return;
+
+        menuController.selectedTile = gameObject;
+
+        string myId = menuController.PlayerId();
+
+        var gridController = grid.GetComponent<GridController>();
+
+        //Owned
+        if (ownerId == myId)
         {
-        Debug.Log(ownerId);
-
-            if (EventSystem.current.IsPointerOverGameObject()) return;
-            /*foreach (WikidataGame.Models.Category cat in availableCategories)
-            {
-                Debug.Log(cat.Title);
-            }*/
-
-            menuController.GetComponent<MenuController>().selectedTile = gameObject;
-
-            //Owned
-            if (ownerId == myId)
-            {
-                SetActiveAllChildren(grid.GetComponent<GridController>().actionCanvas.GetComponent<Transform>(), true);
-                Debug.Log("Red");
+            SetActiveAllChildren(gridController.actionCanvas.GetComponent<Transform>(), true);
+            Debug.Log("Red");
             //Instantiate(actionPanelPrefab, GameObject.FindGameObjectWithTag("Canvas").transform);
-            grid.GetComponent<GridController>().actionCanvas.SetActive(true);
-
-                if (grid.GetComponent<GridController>().captureButton.activeSelf && grid.GetComponent<GridController>().attackButton.activeSelf)
-                {
-                grid.GetComponent<GridController>().captureButton.SetActive(false);
-                grid.GetComponent<GridController>().attackButton.SetActive(false);
-                }
-            }
-            //Enemy
-            else if (ownerId != myId && !string.IsNullOrEmpty(ownerId))
+            gridController.actionCanvas.SetActive(true);
+            if (gridController.captureButton.activeSelf &&
+                gridController.attackButton.activeSelf)
             {
-                SetActiveAllChildren(grid.GetComponent<GridController>().actionCanvas.GetComponent<Transform>(), true);
-                Debug.Log("Blue");
-            grid.GetComponent<GridController>().actionCanvas.SetActive(true);
-
-                if (grid.GetComponent<GridController>().captureButton.activeSelf && grid.GetComponent<GridController>().levelUpButton.activeSelf)
-                {
-                grid.GetComponent<GridController>().captureButton.SetActive(false);
-                grid.GetComponent<GridController>().levelUpButton.SetActive(false);
-                }
+                gridController.captureButton.SetActive(false);
+                gridController.attackButton.SetActive(false);
             }
-            //Empty
-            else if (string.IsNullOrEmpty(ownerId))
-             {
-                grid.GetComponent<GridController>().categoryCanvas.SetActive(false);
-
-
-                SetActiveAllChildren(grid.GetComponent<GridController>().actionCanvas.GetComponent<Transform>(), true);
-                 Debug.Log("Null");
-                grid.GetComponent<GridController>().actionCanvas.SetActive(true);
-
-                 if (grid.GetComponent<GridController>().attackButton.activeSelf && grid.GetComponent<GridController>().levelUpButton.activeSelf)
-                 {
-                grid.GetComponent<GridController>().attackButton.SetActive(false);
-                grid.GetComponent<GridController>().levelUpButton.SetActive(false);
-                 }
-             }
-             else
-             {
-                 Debug.Log("Invalid");
-             }
-
         }
-
-
-
-
+        //Enemy
+        else if (ownerId != myId && !string.IsNullOrEmpty(ownerId))
+        {
+            SetActiveAllChildren(gridController.actionCanvas.GetComponent<Transform>(), true);
+            Debug.Log("Blue");
+            gridController.actionCanvas.SetActive(true);
+            if (gridController.captureButton.activeSelf &&
+                gridController.levelUpButton.activeSelf)
+            {
+                gridController.captureButton.SetActive(false);
+                gridController.levelUpButton.SetActive(false);
+            }
+        }
+        //Empty
+        else if (string.IsNullOrEmpty(ownerId))
+        {
+            gridController.categoryCanvas.SetActive(false);
+            SetActiveAllChildren(gridController.actionCanvas.GetComponent<Transform>(), true);
+            Debug.Log("Null");
+            gridController.actionCanvas.SetActive(true);
+            if (gridController.attackButton.activeSelf &&
+                gridController.levelUpButton.activeSelf)
+            {
+                gridController.attackButton.SetActive(false);
+                gridController.levelUpButton.SetActive(false);
+            }
+        }
+        else
+        {
+            throw new Exception("Tile should not be like this");
+        }
+    }
 }
-

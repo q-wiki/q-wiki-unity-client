@@ -59,6 +59,17 @@ public class ActionPointHandler : MonoBehaviour
 	}
 
 	/**
+	 * when a new turn begins,
+	 * reset all action points in UI and the PlayerPrefs
+	 */
+	private void ResetActionPoints()
+	{
+		foreach(var actionPoint in actionPoints) actionPoint.SetActive(true);
+		_remainingActionPoints = 3;
+		PlayerPrefs.SetInt(REMAINING_ACTION_POINTS, _remainingActionPoints);
+	}
+
+	/**
 	 * when starting, try to reset action points by looking them up in the player prefs
 	 * currently limited to one game at a time, not sure how script behaves if otherwise
 	 */
@@ -100,9 +111,15 @@ public class ActionPointHandler : MonoBehaviour
 	 * it is only called after a minigame on this client side is finished
 	 * resetting the state has to be handled elsewhere (not sure where)
 	 */
-	public void UpdateState(string myId, string otherId)
+	public void UpdateState(string myId, string otherId, bool isNewTurn)
 	{
-		RemoveActionPoint();
+		if(!isNewTurn) 
+			RemoveActionPoint();
+		else
+		{
+			ResetActionPoints();
+		}
+		
 		Debug.Log($"myID:{myId} // otherId: {otherId}");
 		Debug.Log($"actionPoints Remaining:{_remainingActionPoints}");
 		if (myId != otherId)

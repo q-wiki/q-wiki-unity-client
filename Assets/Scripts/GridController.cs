@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using UnityEditor;
 using UnityEngine;
 using WikidataGame;
 using WikidataGame.Models;
@@ -13,7 +14,7 @@ public class GridController: MonoBehaviour
 
     public GameObject captureButton, attackButton, levelUpButton;
     public GameObject categoryCanvas, actionCanvas;
-   
+
 
     public bool addGap = true;
     public float gap = 0.0f;
@@ -29,16 +30,16 @@ public class GridController: MonoBehaviour
 
     public void GenerateGrid(IList<IList<Tile>> tiles)
     {
-        
+
         /**
          * because the grid is currently rebuilt from scratch after each action,
          * hexWidth and hexHeight need to be set to default so the tiles do not
          * grow further apart
          */
-        
+
         hexWidth = 1.732f;
         hexHeight = 2.0f;
-        
+
         // Tiles from Backend
         tileSystem = tiles;
         // Gameobject Tile array with right length and depth
@@ -83,12 +84,16 @@ public class GridController: MonoBehaviour
                     int random = UnityEngine.Random.Range(0, baseTiles.Length);
                     GameObject baseT;
                     baseT = baseTiles[random];
-                    tile = Instantiate(baseT) as GameObject;
-                    tile.GetComponent<TileController>().difficulty = (int)tileSystem[x][z].Difficulty;
-                    tile.GetComponent<TileController>().availableCategories = tileSystem[x][z].AvailableCategories;
-                    tile.GetComponent<TileController>().id = tileSystem[x][z].Id;
-                    tile.GetComponent<TileController>().ownerId = tileSystem[x][z].OwnerId;
-                    tile.GetComponent<TileController>().grid = gameObject;
+                    tile = Instantiate(baseT);
+
+                    TileController tileController = tile.GetComponent<TileController>();
+                    
+                    tileController.difficulty = tileSystem[x][z].Difficulty ?? 0;
+                    tileController.availableCategories = tileSystem[x][z].AvailableCategories;
+                    tileController.chosenCategoryId = tileSystem[x][z].ChosenCategoryId;
+                    tileController.id = tileSystem[x][z].Id;
+                    tileController.ownerId = tileSystem[x][z].OwnerId;
+                    tileController.grid = gameObject;
 
                     if (tileSystem[x][z].Difficulty > 0)
                     {

@@ -71,6 +71,8 @@ public class MenuController : MonoBehaviour
 
     private AudioSource Source => GetComponent<AudioSource>();
 
+    public static MenuController Instance;
+
     /**
      * update method listens for changes in the game state when it's currently not your turn
      */
@@ -85,6 +87,7 @@ public class MenuController : MonoBehaviour
 
     void Awake()
     {
+        Instance = this;
         _settingsToggle = true;
     }
 
@@ -319,36 +322,42 @@ public class MenuController : MonoBehaviour
         categoryCanvas.SetActive(false);
     }
 
-
-    public void ShowCategoryPanel()
+    public void LevelUpOrAttackTile()
     {
-        var chosenCategory = selectedTile.GetComponent<TileController>().chosenCategory;
-
-        if (chosenCategory != null)
+        var chosenCategoryId = selectedTile.GetComponent<TileController>().chosenCategoryId;
+        if (String.IsNullOrEmpty(chosenCategoryId))
         {
-            // Someone captured this tile already
-            StartMiniGame(chosenCategory.Id);
+            // we're on our start tile
+            ShowCategoryPanel();
         }
         else
         {
-            // We're trying to capture it for the first time
             actionPanel.SetActive(false);
-            categoryPanel.SetActive(true);
-
-            var availableCategories = selectedTile.GetComponent<TileController>().availableCategories;
-
-            c1.GetComponentInChildren<Text>().text = availableCategories[0].Title;
-            c2.GetComponentInChildren<Text>().text = availableCategories[1].Title;
-            c3.GetComponentInChildren<Text>().text = availableCategories[2].Title;
-
-            c1.onClick.RemoveAllListeners();
-            c2.onClick.RemoveAllListeners();
-            c3.onClick.RemoveAllListeners();
-
-            c1.onClick.AddListener(() => { StartMiniGame(availableCategories[0].Id); });
-            c2.onClick.AddListener(() => { StartMiniGame(availableCategories[1].Id); });
-            c3.onClick.AddListener(() => { StartMiniGame(availableCategories[2].Id); });
+            StartMiniGame(chosenCategoryId);
         }
+    }
+
+
+    public void ShowCategoryPanel()
+    {
+        // We're trying to capture it for the first time
+        actionPanel.SetActive(false);
+        categoryPanel.SetActive(true);
+
+        var availableCategories = selectedTile.GetComponent<TileController>().availableCategories;
+
+        c1.GetComponentInChildren<Text>().text = availableCategories[0].Title;
+        c2.GetComponentInChildren<Text>().text = availableCategories[1].Title;
+        c3.GetComponentInChildren<Text>().text = availableCategories[2].Title;
+
+        c1.onClick.RemoveAllListeners();
+        c2.onClick.RemoveAllListeners();
+        c3.onClick.RemoveAllListeners();
+
+        c1.onClick.AddListener(() => { StartMiniGame(availableCategories[0].Id); });
+        c2.onClick.AddListener(() => { StartMiniGame(availableCategories[1].Id); });
+        c3.onClick.AddListener(() => { StartMiniGame(availableCategories[2].Id); });
+        
     }
 
     public void CloseCategoryAndActionPamnel()

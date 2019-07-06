@@ -3284,6 +3284,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseTiles:
   - {fileID: 6059745421610948337, guid: e2c6dacfdd319184b87ee0b590be1c07, type: 3}
+  categoryObjects:
+  - {fileID: 7486172543914186852, guid: e541cdb3275307d4b9d0fccd9e7a2605, type: 3}
+  - {fileID: 6359937582784718252, guid: f735fd7698a19294c80a9a9437663f4e, type: 3}
+  - {fileID: 4424543093271639861, guid: 8f42127972d8f26468c059c16ebe8ea1, type: 3}
+  - {fileID: 3560245298624437235, guid: bbd16db94e05efc4aaede7981b2d78d8, type: 3}
   hexPrefabSpawn: {fileID: 5844315454276757609, guid: 408a487d6dc92d041a4ec7bc0991d16b,
     type: 3}
   captureButton: {fileID: 1765601989}

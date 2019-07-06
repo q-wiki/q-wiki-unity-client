@@ -736,10 +736,10 @@ PlayerSettings:
   facebookXfbml: 0
   facebookFrictionlessRequests: 1
   apiCompatibilityLevel: 6
-  cloudProjectId: 80cc2d2c-d8e7-46f8-8e3c-d78c2067035d
+  cloudProjectId: d0dfc7d5-20ae-4eff-8b82-c4dcc32959aa
   framebufferDepthMemorylessMode: 0
-  projectName: Wikidata
-  organizationId: m_eteora
+  projectName: Q-Wiki (4)
+  organizationId: jennylin
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0
   disableOldInputManagerSupport: 0

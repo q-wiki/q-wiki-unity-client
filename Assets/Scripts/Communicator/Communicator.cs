@@ -100,7 +100,6 @@ public class Communicator : MonoBehaviour
     {
         MiniGameInit init = new MiniGameInit(tileId, categoryId);
         var _minigame = await _gameApi.InitalizeMinigameAsync(_currentGameId, init);
-        Debug.Log($"Started minigame with id {_minigame.Id} on tile {tileId} with category {categoryId}");
         return _minigame;
     }
 

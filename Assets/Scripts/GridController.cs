@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using WikidataGame;
 using WikidataGame.Models;
 
 public class GridController: MonoBehaviour
 {
-    public GameObject[] hexPrefabFree0;
-    public GameObject[] hexPrefabFree1;
-    public GameObject[] hexPrefabFree2;
+    public GameObject[] baseTiles;
     public GameObject hexPrefabSpawn;
 
     public GameObject captureButton, attackButton, levelUpButton;
     public GameObject categoryCanvas, actionCanvas;
+   
 
     public bool addGap = true;
     public float gap = 0.0f;
@@ -26,10 +26,6 @@ public class GridController: MonoBehaviour
     private IList<IList<Tile>> tileSystem;
 
     Vector3 startPos;
-
-    public void Start()
-    {
-    }
 
     public void GenerateGrid(IList<IList<Tile>> tiles)
     {
@@ -74,37 +70,24 @@ public class GridController: MonoBehaviour
                 if (tileSystem[x][z] != null)
                 {
                     // Choose random tile design for right level
-                    int randomIndexFree;
-                    GameObject[] hexPrefabFree;
-                    if (tileSystem[x][z].Difficulty == 0)
-                    {
-                        randomIndexFree = UnityEngine.Random.Range(0, hexPrefabFree0.Length);
-                        hexPrefabFree = hexPrefabFree0;
-                    } else if (tileSystem[x][z].Difficulty == 1)
-                    {
-                        randomIndexFree = UnityEngine.Random.Range(0, hexPrefabFree1.Length);
-                        hexPrefabFree = hexPrefabFree1;
-                    }
-                    else if (tileSystem[x][z].Difficulty == 2)
-                    {
-                        randomIndexFree = UnityEngine.Random.Range(0, hexPrefabFree2.Length);
-                        hexPrefabFree = hexPrefabFree2;
-                    }
-                    else {
-                        Debug.Log("ERROR WRONG LEVEL");
-                        randomIndexFree = UnityEngine.Random.Range(0, hexPrefabFree0.Length);
-                        hexPrefabFree = hexPrefabFree0;
-                    }
-
-                    tile = Instantiate(hexPrefabFree[randomIndexFree]) as GameObject;
-
-
-                    tile.AddComponent<BoxCollider>();
-                    tile.AddComponent<TileController>();
+                    int random = UnityEngine.Random.Range(0, baseTiles.Length);
+                    GameObject baseT;
+                    baseT = baseTiles[random];
+                    tile = Instantiate(baseT) as GameObject;
+                    tile.GetComponent<TileController>().difficulty = (int)tileSystem[x][z].Difficulty;
                     tile.GetComponent<TileController>().availableCategories = tileSystem[x][z].AvailableCategories;
                     tile.GetComponent<TileController>().id = tileSystem[x][z].Id;
+                    tile.GetComponent<TileController>().ownerId = tileSystem[x][z].OwnerId;
                     tile.GetComponent<TileController>().grid = gameObject;
 
+                    if (tileSystem[x][z].Difficulty > 0)
+                    {
+                        tile.GetComponent<Animator>().SetBool("BaseA", true);
+                    }
+                    if (tileSystem[x][z].Difficulty > 1)
+                    {
+                        tile.GetComponent<Animator>().SetBool("BaseA2", true);
+                    }
 
 
                     float height = (float)tileSystem[x][z].Difficulty;
@@ -114,6 +97,11 @@ public class GridController: MonoBehaviour
                     tile.transform.position = CalcWorldPos(gridPos);
                     tile.transform.parent = this.transform;
                     tile.name = "GridTile" + x + "|" + z;
+
+                    float randRoationY = UnityEngine.Random.Range(0, 360);
+                    Vector3 rotation = new Vector3(0, randRoationY, 0);
+                    //Quaternion rotation = Quaternion.Euler(gameObject.transform.rotation.x, randRoationY, gameObject.transform.rotation.z);
+                    tile.transform.Rotate(rotation);
 
                     tileArray[x, z] = tile;
                 }

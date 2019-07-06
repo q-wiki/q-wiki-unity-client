@@ -312,7 +312,8 @@ public class MenuController : MonoBehaviour
         Debug.Log($"miniGame.task: {miniGame.TaskDescription}");
         foreach(var answer in miniGame.AnswerOptions) Debug.Log($"answerOption: {answer}");
         
-        miniGameInstance.Initialize(miniGame.Id, miniGame.TaskDescription, miniGame.AnswerOptions);
+        // TODO: use real difficulty from TileController
+        miniGameInstance.Initialize(miniGame.Id, miniGame.TaskDescription, miniGame.AnswerOptions, 0);
 
         ToggleCameraBehaviour();
         ActionPointHandler.Instance.Hide();

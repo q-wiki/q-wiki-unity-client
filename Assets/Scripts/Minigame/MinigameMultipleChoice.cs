@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using WikidataGame.Models;
@@ -29,9 +31,19 @@ namespace Minigame
         private string _taskDescription;
         private IList<string> _answerOptions;
 
+        // fields that are used for the timer
+        private readonly float[] timeouts = {30.0f, 20.0f, 10.0f};
+        private bool _isRunning;
+        private float _milliseconds;
+
         private GameObject ClosePanel => transform.Find("ClosePanel").gameObject;
 
-        public void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions)
+        public void Update()
+        {
+            UpdateTimer();
+        }
+        
+        public void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions, int difficulty)
         {
             Reset();
             
@@ -41,11 +53,34 @@ namespace Minigame
             _answerOptions = answerOptions;
             AssignDescription(_taskDescription);
             AssignChoices(_answerOptions);
+
+            SetTimer(timeouts[difficulty]);
+
         }
         
         /**
        * function to reset text colors and sprites before showing the game to user
        */
+        
+        
+        public void SetTimer(float milliseconds)
+        {
+            _isRunning = true;
+            _milliseconds = milliseconds;
+        }
+        
+        /**
+         * function to update timer
+         */
+        public void UpdateTimer()
+        {
+            if (_isRunning && _milliseconds > 0)
+            {
+                
+            }
+        }
+
+
         private void Reset()
         {
             foreach (var item in choices)
@@ -109,7 +144,7 @@ namespace Minigame
             gameObject.SetActive(false);
             ClosePanel.SetActive(false);
         }
-
+        
         public async void Send()
         {
             if (_checkedChoice == null)

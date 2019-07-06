@@ -25,21 +25,56 @@ namespace Minigame
         private string _id;
         private string _taskDescription;
         private IList<string> _answerOptions;
+        private int _difficulty;
+        
+        // fields that are used for the timer
+        private readonly float[] timeouts = {30.0f, 20.0f, 10.0f};
+        private bool _isRunning;
+        private float _milliseconds;
 
         private MenuController menuController => GameObject.Find("MenuController").GetComponent<MenuController>(); 
         private GameObject ClosePanel => transform.Find("ClosePanel").gameObject;
 
-        public void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions)
+        public void Update()
+        {
+            UpdateTimer();
+        }
+
+        public void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions, int difficulty)
         {
 
             Reset();
-            
 
             _id = miniGameId;
             _taskDescription = taskDescription;
             _answerOptions = answerOptions;
+            _difficulty = difficulty;
+            
             AssignDescription(_taskDescription);
             AssignChoices(_answerOptions);
+            
+            SetTimer(timeouts[_difficulty]);
+        }
+        
+        /**
+         * function to set timer
+         */
+
+        public void SetTimer(float milliseconds)
+        {
+            _isRunning = true;
+            _milliseconds = milliseconds;
+        }
+
+        /**
+         * function to update timer
+         */
+        public void UpdateTimer()
+        {
+            if (_isRunning && _milliseconds > 0)
+            {
+                
+            }
         }
         
         /**

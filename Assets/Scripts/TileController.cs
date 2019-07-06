@@ -20,14 +20,36 @@ public class TileController : MonoBehaviour
     public GameObject menuController;
     private Game game;
 
+    public Material[] tileMaterials;
 
-     void Start()
+    void Start()
     {
         menuController = GameObject.Find("MenuController");
         myId = menuController.GetComponent<MenuController>().PlayerId();
+        if (ownerId == myId)
+        {
+            gameObject.transform.GetChild(0).GetChild(1).GetComponent<MeshRenderer>().material = tileMaterials[0];
 
 
+        }
+        else if (ownerId != myId && ownerId != null)
+        {
+            gameObject.transform.GetChild(0).GetChild(1).GetComponent<MeshRenderer>().material = tileMaterials[1];
+        }
+    }
 
+    public void LevelUp()
+    {
+        difficulty++;
+        // Trigger next level animation
+        if(difficulty > 1)
+        {
+            gameObject.GetComponent<Animator>().SetBool("BaseA2", true);
+        }
+        else
+        {
+            gameObject.GetComponent<Animator>().SetBool("BaseA", true);
+        }
     }
 
     private void SetActiveAllChildren(Transform transform, bool value)

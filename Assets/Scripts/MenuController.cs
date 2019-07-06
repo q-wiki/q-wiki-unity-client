@@ -295,7 +295,6 @@ public class MenuController : MonoBehaviour
         Debug.Log("Trying to initialize minigame");
 
         var miniGame = await Communicator.InitializeMinigame(selectedTile.GetComponent<TileController>().id, categoryId);
-        Debug.Log($"Initialized minigame with id {miniGame.Id} and type {miniGame.Type}");
 
         if (miniGame.Type == null)
             return;

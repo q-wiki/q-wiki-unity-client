@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,6 +27,7 @@ public class MenuController : MonoBehaviour
     public GameObject loadingDots;
     public GameObject buttonPrefab;
     public GameObject menuGrid;
+    public CanvasGroup blockActionPanel;
     public Button newGameButton;
     public Sprite soundOff;
     public Sprite soundOn;
@@ -42,7 +44,12 @@ public class MenuController : MonoBehaviour
 
     public GameObject categoryPanel;
     public GameObject actionPanel;
-
+    public GameObject settingsPanel;
+    public GameObject confirmationPanel;
+    public GameObject settingsPanelGame;
+    public GameObject settingsPanelStart;
+    public GameObject startPanelStart;
+    
     public GameObject selectedTile;
 
 
@@ -58,8 +65,23 @@ public class MenuController : MonoBehaviour
     private bool _notificationToggle;
     private bool _vibrationToggle;
     private bool _settingsToggle;
+    private bool _isWaitingState;
+
+    private bool _isHandling;
 
     private AudioSource Source => GetComponent<AudioSource>();
+
+    /**
+     * update method listens for changes in the game state when it's currently not your turn
+     */
+
+    public async void Update()
+    {
+        if(_isWaitingState && !_isHandling)
+        {
+            HandleWaitingState();
+        }
+    }
 
     void Awake()
     {
@@ -84,7 +106,7 @@ public class MenuController : MonoBehaviour
             var previousGame = await Communicator.RestorePreviousGame();
             if (previousGame != null)
             {
-                Debug.Log("Previous game restored successfully, changing to game scene");
+                Debug.Log($"Previous game {previousGame.Id} restored successfully, changing to game scene");
                 _game = previousGame;
                 ChangeToGameScene();
             }
@@ -92,31 +114,101 @@ public class MenuController : MonoBehaviour
             {
                 Debug.Log("No previous game found, showing start scene");
                 // we don't have a running game, just show the normal start screen
-                //Debug.Log("StartScene");
-                _startPanel = GameObject.Find("StartPanel");
-                _settingsPanel = GameObject.Find("SettingsPanel");
-                _settingsPanel.SetActive(false);
+                _startPanel = startPanelStart;
+                _settingsPanel = settingsPanelStart;
+
+                /**
+                 * delete action point indicator from player prefs to prevent inconsistencies
+                 */
+
+                PlayerPrefs.DeleteKey("REMAINING_ACTION_POINTS");
             }
         }
         else if (sceneName == "GameScene")
         {
-            //Debug.Log("GameScene");
-            _settingsPanel = GameObject.Find("SettingsPanelContainer");
-            _settingsPanel?.SetActive(false);
+            _settingsPanel = settingsPanelGame;
 
             _game = await Communicator.GetCurrentGameState();
-            Debug.Log(_game.Tiles);
+
+            /**
+             * generate grid by reading tiles from game object
+             */
             grid.GetComponent<GridController>().GenerateGrid(_game.Tiles);
+            
+            /**
+             * if current player is not me, go to loop / block interaction
+             */
+
+            if(_game.NextMovePlayerId != _game.Me.Id)
+            {
+                _isWaitingState = true;
+                return;
+            }
+            
+            /**
+             * show action point indicator in UI
+             */
+            ActionPointHandler.Instance.Show();
         }
     }
 
-    public async void RefreshGameState()
+    private async void HandleWaitingState()
+    {
+
+        _isHandling = true;
+        
+        // make blockActionPanel visible and prevent user from selecting anything in the game
+        blockActionPanel.alpha = 1;
+        blockActionPanel.blocksRaycasts = true;
+
+        Debug.Log("Wait for 10 seconds");
+        await Task.Delay(10000);
+            
+        _game = await Communicator.GetCurrentGameState();
+            
+        if (_game == null)
+            throw new Exception("There is no game");
+
+        if (_game.NextMovePlayerId == _game.Me.Id)
+        {
+            blockActionPanel.alpha = 0;
+            blockActionPanel.blocksRaycasts = false;
+            _isWaitingState = false;
+            RefreshGameState(true);
+        }
+
+        _isHandling = false;
+    }
+
+    public async void RefreshGameState(bool isNewTurn)
     {
         // this is called whenever something happens (minigame finished, player made a turn...)
         _game = await Communicator.GetCurrentGameState();
-        Debug.Log(_game.Tiles);
-        // TODO: there needs to be an UpdateGrid(_game.Tiles)-method in GridController so that it is not redrawn every time 
+                
+        /**
+         * TODO:there needs to be an UpdateGrid(_game.Tiles)-method in GridController so that it is not redrawn every time
+         * currently the 'old' grid is destroyed so the new grid gets to be drawn safely
+         * but it starts to drift further apart because of the addGap-function in GridController
+         */
+        foreach (Transform child in grid.transform) Destroy(child.gameObject);
         grid.GetComponent<GridController>().GenerateGrid(_game.Tiles);
+        
+        
+        /**
+         * simple function to update action points in game controller
+         */
+
+        ActionPointHandler.Instance.UpdateState(_game.Me.Id, _game.NextMovePlayerId, isNewTurn);
+        
+        /**
+         * if current player is not me, go to loop / block interaction
+         */
+
+        if(_game.NextMovePlayerId != _game.Me.Id)
+        {
+            _isWaitingState = true;
+        }
+
     }
 
     public async void Send()
@@ -221,6 +313,8 @@ public class MenuController : MonoBehaviour
         
         miniGameInstance.Initialize(miniGame.Id, miniGame.TaskDescription, miniGame.AnswerOptions);
 
+        ToggleCameraBehaviour();
+        ActionPointHandler.Instance.Hide();
         miniGameCanvas.SetActive(true);
         categoryCanvas.SetActive(false);
     }
@@ -333,24 +427,40 @@ public class MenuController : MonoBehaviour
         }
     }
 
-    public void ToggleVibration()
-    {
-        _vibrationToggle = !_vibrationToggle;
-
-        if (_vibrationToggle)
-        {
-            Debug.Log("Vibration Off");
-            vibrationButtonIcon.GetComponent<Image>().sprite = vibrationOff;
-        }
-        else
-        {
-            Debug.Log("Vibration On");
-            vibrationButtonIcon.GetComponent<Image>().sprite = vibrationOn;
-        }
-    }
-
     public void ToggleCreditsPanel()
     {
         Debug.Log("Credits");
     }
+    
+    #region cancellationPanel
+    
+    public void HandleAbortGamePanel()
+    {
+        settingsPanel.SetActive(false);
+        confirmationPanel.SetActive(true);
+    }
+    
+    public async void LeaveGame()
+    {
+        Debug.Log($"Trying to delete game");
+        await Communicator.AbortCurrentGame();
+        Debug.Log($"Game deleted");
+        ChangeToStartScene();
+    }
+
+    public void StayInGame()
+    {
+        ToggleCameraBehaviour();
+        settingsPanel.SetActive(true);
+        confirmationPanel.SetActive(false);
+        _settingsPanel.SetActive(false);
+        _settingsToggle = !_settingsToggle;
+    }
+    
+    public void ChangeToStartScene()
+    {
+        SceneManager.LoadScene("StartScene");
+    }
+    
+    #endregion
 }

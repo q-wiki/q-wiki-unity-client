@@ -25,15 +25,6 @@ public class Communicator : MonoBehaviour
 
     private static string _currentGameId;
 
-    /**
-     * use this function to delete all player preferences before starting the game
-     * for testing purposes only
-     */
-    public void Awake()
-    {
-        PlayerPrefs.DeleteAll();
-    }
-
     public static bool IsConnected()
     {
         return _gameApi != null;
@@ -84,9 +75,21 @@ public class Communicator : MonoBehaviour
         var previousGameId = PlayerPrefs.GetString(CURRENT_GAME_ID);
         if (!string.IsNullOrEmpty(previousGameId))
         {
-            _currentGameId = previousGameId;
-            Debug.Log($"Restored previous game with ID: {_currentGameId}");
-            return await GetCurrentGameState();
+            try
+            {
+                _currentGameId = previousGameId;
+                var state = await GetCurrentGameState();
+                return state;
+            }
+            catch (Exception e)
+            {
+                _currentGameId = null;
+                Debug.LogError(e);
+                Debug.Log($"Game with ID {_currentGameId} could not be restored - deleting from player prefs");
+                PlayerPrefs.DeleteKey(CURRENT_GAME_ID);
+                return null;
+
+            } 
         }
 
         return null;
@@ -100,6 +103,8 @@ public class Communicator : MonoBehaviour
     {
         MiniGameInit init = new MiniGameInit(tileId, categoryId);
         var _minigame = await _gameApi.InitalizeMinigameAsync(_currentGameId, init);
+        Debug.Log($"TASK:{_minigame.TaskDescription}");
+        Debug.Log($"Started minigame with id {_minigame.Id} on tile {tileId} with category {categoryId}");
         return _minigame;
     }
 
@@ -128,7 +133,7 @@ public class Communicator : MonoBehaviour
      * Use this function to delete the current game
      * I made this private for now because I am not sure if a player should have the ability to delete a game on his/her own
      */
-    private static async void AbortCurrentGame()
+    public static async Task AbortCurrentGame()
     {
         PlayerPrefs.DeleteKey(CURRENT_GAME_ID);
         await _gameApi.DeleteGameAsync(_currentGameId);

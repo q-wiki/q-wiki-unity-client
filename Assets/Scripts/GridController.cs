@@ -29,6 +29,16 @@ public class GridController: MonoBehaviour
 
     public void GenerateGrid(IList<IList<Tile>> tiles)
     {
+        
+        /**
+         * because the grid is currently rebuilt from scratch after each action,
+         * hexWidth and hexHeight need to be set to default so the tiles do not
+         * grow further apart
+         */
+        
+        hexWidth = 1.732f;
+        hexHeight = 2.0f;
+        
         // Tiles from Backend
         tileSystem = tiles;
         // Gameobject Tile array with right length and depth

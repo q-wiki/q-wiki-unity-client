@@ -151,6 +151,9 @@ public class MenuController : MonoBehaviour
             /**
              * show action point indicator in UI
              */
+
+            if(PlayerPrefs.GetInt("REMAINING_ACTION_POINTS", -1) == 0)
+                ActionPointHandler.Instance.UpdateState(_game.Me.Id, _game.NextMovePlayerId, true);
             ActionPointHandler.Instance.Show();
         }
     }

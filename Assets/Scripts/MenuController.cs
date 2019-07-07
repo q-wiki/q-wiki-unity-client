@@ -52,6 +52,9 @@ public class MenuController : MonoBehaviour
     
     public GameObject selectedTile;
 
+    public GameObject legalNoticePanel;
+    public GameObject creditsPanel;
+
 
     /**
      * private fields
@@ -386,7 +389,17 @@ public class MenuController : MonoBehaviour
         }
     }
 
+    public void OpenCreditsPanel()
+    {
+        creditsPanel.SetActive(true);
+        _settingsPanel.SetActive(false);
+    }
 
+    public void OpenLegalNoticePanel()
+    {
+        legalNoticePanel.SetActive(true);
+        _settingsPanel.SetActive(false);
+    }
 
     public void ToggleSettingsStart()
     {
@@ -396,11 +409,15 @@ public class MenuController : MonoBehaviour
         {
             _settingsPanel.SetActive(false);
             _startPanel.SetActive(true);
+            creditsPanel.SetActive(false);
+            legalNoticePanel.SetActive(false);
         }
         else
         {
             _settingsPanel.SetActive(true);
             _startPanel.SetActive(false);
+
+
         }
     }
 
@@ -437,11 +454,6 @@ public class MenuController : MonoBehaviour
             Debug.Log("Notification On");
             notificationButtonIcon.GetComponent<Image>().sprite = notificationOn;
         }
-    }
-
-    public void ToggleCreditsPanel()
-    {
-        Debug.Log("Credits");
     }
     
     #region cancellationPanel

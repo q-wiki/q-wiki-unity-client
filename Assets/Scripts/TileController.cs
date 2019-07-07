@@ -8,6 +8,8 @@ using WikidataGame.Models;
 
 public class TileController : MonoBehaviour
 {
+    public long internalId;
+    
     public string id;
     public string ownerId;
     public int difficulty;
@@ -80,6 +82,12 @@ public class TileController : MonoBehaviour
 
         gameObject.transform.GetChild(0).GetChild(1).GetComponent<MeshRenderer>().material = tileMaterials[2];
 
+        IList<TileController> neighbors = grid.GetComponent<GridController>().GetNeighbors(this);
+        foreach (var tile in neighbors)
+        {
+            tile.transform.GetChild(0).GetChild(1).GetComponent<MeshRenderer>().material = tileMaterials[4];
+        }
+
         var gridController = grid.GetComponent<GridController>();
 
         //Owned
@@ -128,6 +136,9 @@ public class TileController : MonoBehaviour
         }
     }
 
+    /**
+     * function to check if there are any UI objects showing above the tile
+     */
     private bool IsPointerOverUIObject() {
         PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
         eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
@@ -135,4 +146,5 @@ public class TileController : MonoBehaviour
         EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
         return results.Count > 0;
     }
+
 }

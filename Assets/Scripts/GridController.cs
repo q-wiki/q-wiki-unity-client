@@ -73,6 +73,9 @@ public class GridController: MonoBehaviour
 
     void CreateGrid()
     {
+
+        long count = 0;
+
         for (int z = 0; z<tileSystem[0].Count; z++)
         {
             for (int x = 0; x< tileSystem.Count; x++)
@@ -95,6 +98,7 @@ public class GridController: MonoBehaviour
                     tileController.id = tileSystem[x][z].Id;
                     tileController.ownerId = tileSystem[x][z].OwnerId;
                     tileController.grid = gameObject;
+                    tileController.internalId = count;
 
                     if(tileController.chosenCategoryId != null)
                     {
@@ -146,9 +150,10 @@ public class GridController: MonoBehaviour
                     tile.transform.Rotate(rotation);
 
                     tileArray[x, z] = tile;
+
                 }
 
-
+                count++;
 
             }
         }
@@ -184,5 +189,59 @@ public class GridController: MonoBehaviour
     {
         hexWidth += hexWidth * gap;
         hexHeight += hexHeight * gap;
+    }
+    
+        
+    /**
+     * function to check if selected tile is a neighbor of a currently owned tile
+     */
+    public IList<TileController> GetNeighbors(TileController tile)
+    {
+        if(tile ==  null)
+            throw new Exception("There was no tile provided");
+
+        GameObject[] tiles = tileArray.Cast<GameObject>().ToArray();
+        
+        // find all neighbors of given tile
+        IList<TileController> neighbors = tiles.Select(t =>
+        {
+            if (t == null)
+                return null;
+            
+            TileController tileController = t.GetComponentInChildren<TileController>();
+            return AreNeighbors(tile.internalId, tileController.internalId) ? tileController : null;
+        }).Where(t => t != null).ToList();
+
+        return neighbors;
+    }
+
+    /**
+     * this function is used to determine if an index of a tile can be a neighbor of another tile
+     * its a little different depending on the row
+     * this has to be dependent of the size of the grid which it currently is not
+     */
+    private bool AreNeighbors(long first, long second)
+    {
+        long row = first / 10;
+        
+        if (row % 2 != 0 && (first - 1 == second ||
+                             first + 1 == second ||
+                             first - 9 == second ||
+                             first - 10 == second ||
+                             first + 10 == second ||
+                             first + 11 == second))
+            return true;
+
+        
+        if (row % 2 == 0 && (first - 1 == second ||
+                             first + 1 == second ||
+                             first + 9 == second ||
+                             first - 10 == second ||
+                             first + 10 == second ||
+                             first - 11 == second))
+            return true;
+
+        
+        return false;
     }
 }

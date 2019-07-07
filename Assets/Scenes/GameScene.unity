@@ -2409,6 +2409,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
         type: 3}
+      propertyPath: tileMaterials.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
+        type: 3}
       propertyPath: audioSource
       value: 
       objectReference: {fileID: 966564132}
@@ -2538,6 +2543,26 @@ PrefabInstance:
       propertyPath: levelText
       value: 
       objectReference: {fileID: 842265427}
+    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
+        type: 3}
+      propertyPath: tileMaterials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: d78f5cd650004b849a2606c48bf01956, type: 2}
+    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
+        type: 3}
+      propertyPath: tileMaterials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 0f7ee53bdbd330d4381ca3f0d1baf271, type: 2}
+    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
+        type: 3}
+      propertyPath: tileMaterials.Array.data[2]
+      value: 
+      objectReference: {fileID: 2100000, guid: 5ed55bd1ef975ac4cb6f718e170d0520, type: 2}
+    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
+        type: 3}
+      propertyPath: tileMaterials.Array.data[3]
+      value: 
+      objectReference: {fileID: 2100000, guid: b8f98e1db92d9be46a1185a35ba0c647, type: 2}
     - target: {fileID: 4312400960762222761, guid: 21d8f64ae92bc924dabe21a5130318ef,
         type: 3}
       propertyPath: m_LocalPosition.x

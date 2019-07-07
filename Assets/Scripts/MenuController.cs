@@ -51,6 +51,9 @@ public class MenuController : MonoBehaviour
     public GameObject startPanelStart;
     
     public GameObject selectedTile;
+    
+    public GameObject gameOverCanvas;
+    public Text gameOverText;
 
     public GameObject legalNoticePanel;
     public GameObject creditsPanel;
@@ -68,8 +71,8 @@ public class MenuController : MonoBehaviour
     private bool _notificationToggle;
     private bool _vibrationToggle;
     private bool _settingsToggle;
+    
     private bool _isWaitingState;
-
     private bool _isHandling;
 
     private AudioSource Source => GetComponent<AudioSource>();
@@ -106,6 +109,7 @@ public class MenuController : MonoBehaviour
 
         if (sceneName == "StartScene")
         {
+
             // initialize server session and restore previous game if there is one
             Debug.Log("Trying to restore previous game…");
             await Communicator.SetupApiConnection();
@@ -118,7 +122,9 @@ public class MenuController : MonoBehaviour
             }
             else
             {
+
                 Debug.Log("No previous game found, showing start scene");
+
                 // we don't have a running game, just show the normal start screen
                 _startPanel = startPanelStart;
                 _settingsPanel = settingsPanelStart;
@@ -135,6 +141,10 @@ public class MenuController : MonoBehaviour
             _settingsPanel = settingsPanelGame;
 
             _game = await Communicator.GetCurrentGameState();
+            
+            /* when in gamescene, check game over state */
+
+            HandleGameOverState();
 
             /**
              * generate grid by reading tiles from game object
@@ -163,7 +173,6 @@ public class MenuController : MonoBehaviour
 
     private async void HandleWaitingState()
     {
-
         _isHandling = true;
         
         // make blockActionPanel visible and prevent user from selecting anything in the game
@@ -174,7 +183,7 @@ public class MenuController : MonoBehaviour
         await Task.Delay(10000);
             
         _game = await Communicator.GetCurrentGameState();
-            
+
         if (_game == null)
             throw new Exception("There is no game");
 
@@ -188,12 +197,42 @@ public class MenuController : MonoBehaviour
 
         _isHandling = false;
     }
+    
+    private void HandleGameOverState()
+    {
+        if (_game.WinningPlayerIds != null && _game.WinningPlayerIds.Count > 0)
+        {
+            Debug.Log("Checking Game Over State!");
+
+            gameOverCanvas.SetActive(true);
+
+            if (_game.WinningPlayerIds.Count == 1 && _game.WinningPlayerIds.Contains(_game.Me.Id)){
+                gameOverText.text = "You won! Congratulations!";
+                Debug.Log("You won!");
+            }
+            else if (_game.WinningPlayerIds.Count == 1 && _game.WinningPlayerIds.Contains(_game.Opponent.Id))
+            {
+                gameOverText.text = "You Lost! \nTry again!";
+                Debug.Log("You Lost! Try again!");
+            }
+            else if (_game.WinningPlayerIds.Count == 2 && _game.WinningPlayerIds.Contains(_game.Opponent.Id) && _game.WinningPlayerIds.Contains(_game.Me.Id))
+            {
+
+                gameOverText.text = "Draw! \nTry again!";
+                Debug.Log("Draw!");
+            }
+
+        }
+    }
 
     public async void RefreshGameState(bool isNewTurn)
     {
+        Debug.Log($"isNewTurn:{isNewTurn}");
+        
+        
         // this is called whenever something happens (minigame finished, player made a turn...)
         _game = await Communicator.GetCurrentGameState();
-                
+        
         /**
          * TODO:there needs to be an UpdateGrid(_game.Tiles)-method in GridController so that it is not redrawn every time
          * currently the 'old' grid is destroyed so the new grid gets to be drawn safely
@@ -208,6 +247,13 @@ public class MenuController : MonoBehaviour
          */
 
         ActionPointHandler.Instance.UpdateState(_game.Me.Id, _game.NextMovePlayerId, isNewTurn);
+        
+        /**
+        * check for game over
+        */
+        
+        HandleGameOverState();
+
         
         /**
          * if current player is not me, go to loop / block interaction
@@ -240,31 +286,29 @@ public class MenuController : MonoBehaviour
             newGameButton.enabled = true;
             return;
         }
-        else
+
+        await Communicator.CreateOrJoinGame();
+        _game = await Communicator.GetCurrentGameState();
+
+        // we'll be checking the game state until another player joins
+        while (_game.AwaitingOpponentToJoin ?? true)
         {
-            await Communicator.CreateOrJoinGame();
+            Debug.Log($"Waiting for Opponent.");
+
+            // wait for 5 seconds
+            await Task.Delay(5000);
             _game = await Communicator.GetCurrentGameState();
-
-            // we'll be checking the game state until another player joins
-            while (_game.AwaitingOpponentToJoin ?? true)
-            {
-                Debug.Log($"Waiting for Opponent.");
-
-                // wait for 5 seconds
-                await Task.Delay(5000);
-                _game = await Communicator.GetCurrentGameState();
-            }
-
-            // another player joined :)
-            Debug.Log($"Found opponent, starting game.");
-            newGameButton.GetComponent<Image>().sprite = newGameButtonGrey;
-            newGameButtonPlayImage.SetActive(true);
-            newGameButtonPlayImage.GetComponent<Image>().sprite = newGameIconGrey;
-            loadingDots.SetActive(false);
-
-            // 🚀
-            ChangeToGameScene();
         }
+
+        // another player joined :)
+        Debug.Log($"Found opponent, starting game.");
+        newGameButton.GetComponent<Image>().sprite = newGameButtonGrey;
+        newGameButtonPlayImage.SetActive(true);
+        newGameButtonPlayImage.GetComponent<Image>().sprite = newGameIconGrey;
+        loadingDots.SetActive(false);
+
+        // 🚀
+        ChangeToGameScene();
     }
 
     public string PlayerId()
@@ -371,6 +415,19 @@ public class MenuController : MonoBehaviour
         categoryPanel.SetActive(false);
         actionPanel.SetActive(false);
     }
+    
+    /**
+     * this function gets called after a game is finished
+     * current game ID is deleted from player prefs to prevent looping
+     */
+    public void HandleGameFinished()
+    {
+        Debug.Log("Close");
+        gameOverCanvas.SetActive(false);
+        PlayerPrefs.SetString("CURRENT_GAME_ID", null);
+        ChangeToStartScene();
+    }
+
 
     public void ToggleSettingsGame()
     {

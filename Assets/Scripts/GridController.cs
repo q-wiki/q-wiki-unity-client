@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
@@ -10,6 +11,7 @@ using WikidataGame.Models;
 public class GridController: MonoBehaviour
 {
     public GameObject[] baseTiles;
+    public GameObject[] categoryObjects;
     public GameObject hexPrefabSpawn;
 
     public GameObject captureButton, attackButton, levelUpButton;
@@ -84,8 +86,7 @@ public class GridController: MonoBehaviour
                     int random = UnityEngine.Random.Range(0, baseTiles.Length);
                     GameObject baseT;
                     baseT = baseTiles[random];
-                    tile = Instantiate(baseT);
-
+                    tile = Instantiate(baseT) as GameObject;
                     TileController tileController = tile.GetComponent<TileController>();
                     
                     tileController.difficulty = tileSystem[x][z].Difficulty ?? 0;
@@ -94,6 +95,32 @@ public class GridController: MonoBehaviour
                     tileController.id = tileSystem[x][z].Id;
                     tileController.ownerId = tileSystem[x][z].OwnerId;
                     tileController.grid = gameObject;
+
+                    if(tileController.chosenCategoryId != null)
+                    {
+                        GameObject categoryPlaceholder = tile
+                            .transform
+                            .Find("TileAssetsL0")
+                            .Find("CategoryPlaceholder")
+                            .gameObject;
+
+                        /*
+                         * get name of category by looking up ID in available categories
+                         */
+                        string categoryName = tileController
+                            .availableCategories
+                            .First(c => c.Id == tileController.chosenCategoryId)
+                            .Title;
+
+                        foreach (GameObject cat in categoryObjects)
+                        {
+                            if (cat.name == categoryName)
+                            {
+                                var categoryItem = Instantiate(cat, categoryPlaceholder.transform, true);
+                                tile.transform.position = new Vector3(0, 0, 0);
+                            }
+                        }
+                    }
 
                     if (tileSystem[x][z].Difficulty > 0)
                     {

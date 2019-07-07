@@ -56,8 +56,7 @@ public class TileController : MonoBehaviour
 
     void OnMouseDown()
     {
-
-        if (EventSystem.current.IsPointerOverGameObject())
+        if (IsPointerOverUIObject())
             return;
 
         GameObject previousTile = menuController.selectedTile;
@@ -127,5 +126,13 @@ public class TileController : MonoBehaviour
         {
             Debug.Log("Tile already max Level, no actions left here");
         }
+    }
+
+    private bool IsPointerOverUIObject() {
+        PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
+        eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
+        return results.Count > 0;
     }
 }

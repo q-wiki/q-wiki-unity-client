@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Rest;
@@ -51,6 +52,7 @@ public class Communicator : MonoBehaviour
             var apiClient = new WikidataGameAPI(new Uri(SERVER_URL), new TokenCredentials("auth"));
             // CancellationTokenSource cts = new CancellationTokenSource(); // <-- Cancellation Token if you want to cancel the request, user quits, etc. [cts.Cancel()]
             var pushUrl = ""; // <-- empty push url means it will be ignored
+            Debug.Log(SystemInfo.deviceUniqueIdentifier);
             var authResponse = await apiClient.AuthenticateAsync(SystemInfo.deviceUniqueIdentifier, pushUrl);
             authToken = authResponse.Bearer;
             PlayerPrefs.SetString(AUTH_TOKEN, authToken);

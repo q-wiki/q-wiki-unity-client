@@ -80,7 +80,7 @@ public class MenuController : MonoBehaviour
      * update method listens for changes in the game state when it's currently not your turn
      */
 
-    public async void Update()
+    public void Update()
     {
         if(_isWaitingState && !_isHandling)
         {
@@ -448,16 +448,26 @@ public class MenuController : MonoBehaviour
     public void ToggleSettingsStart()
     {
         _settingsToggle = !_settingsToggle;
+        
+        if(_settingsPanel == null)
+            _settingsPanel = GameObject.Find("SettingsPanel");
+
+        if (_startPanel == null)
+            _startPanel = GameObject.Find("StartPanel");
 
         if (_settingsToggle)
         {
-            _settingsPanel.SetActive(false);
-            _startPanel.SetActive(true);
+            _settingsPanel.GetComponent<CanvasGroup>().alpha = 0;
+            _settingsPanel.GetComponent<CanvasGroup>().blocksRaycasts = false;
+            _startPanel.GetComponent<CanvasGroup>().alpha = 1;
+            _startPanel.GetComponent<CanvasGroup>().blocksRaycasts = true;
         }
         else
         {
-            _settingsPanel.SetActive(true);
-            _startPanel.SetActive(false);
+            _settingsPanel.GetComponent<CanvasGroup>().alpha = 1;
+            _settingsPanel.GetComponent<CanvasGroup>().blocksRaycasts = true;
+            _startPanel.GetComponent<CanvasGroup>().alpha = 0;
+            _startPanel.GetComponent<CanvasGroup>().blocksRaycasts = false;
         }
     }
 

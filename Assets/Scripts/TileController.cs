@@ -54,7 +54,7 @@ public class TileController : MonoBehaviour
 
     void OnMouseDown()
     {
-        if (EventSystem.current.IsPointerOverGameObject())
+        if (IsPointerOverUIObject())
             return;
 
         menuController.selectedTile = gameObject;
@@ -108,5 +108,13 @@ public class TileController : MonoBehaviour
         {
             throw new Exception("Tile should not be like this");
         }
+    }
+    
+    private bool IsPointerOverUIObject() {
+        PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
+        eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
+        return results.Count > 0;
     }
 }

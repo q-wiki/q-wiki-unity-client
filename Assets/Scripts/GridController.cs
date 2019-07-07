@@ -96,7 +96,7 @@ public class GridController: MonoBehaviour
                     tileController.ownerId = tileSystem[x][z].OwnerId;
                     tileController.grid = gameObject;
 
-                    if(tileSystem[x][z].ChosenCategoryId != null)
+                    if(tileController.chosenCategoryId != null)
                     {
                         GameObject categoryPlaceholder = tile
                             .transform
@@ -104,11 +104,17 @@ public class GridController: MonoBehaviour
                             .Find("CategoryPlaceholder")
                             .gameObject;
 
+                        /*
+                         * get name of category by looking up ID in available categories
+                         */
+                        string categoryName = tileController
+                            .availableCategories
+                            .First(c => c.Id == tileController.chosenCategoryId)
+                            .Title;
+
                         foreach (GameObject cat in categoryObjects)
                         {
-                            
-                            // TODO: chosenCategoryId ist eine ID und kein Name - müssen schauen, nach was genau wir überprüfen wollen
-                            if (cat.name == tileSystem[x][z].ChosenCategoryId)
+                            if (cat.name == categoryName)
                             {
                                 var categoryItem = Instantiate(cat, categoryPlaceholder.transform, true);
                                 tile.transform.position = new Vector3(0, 0, 0);

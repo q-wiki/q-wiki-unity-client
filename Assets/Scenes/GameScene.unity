@@ -1722,6 +1722,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89e5ab70db9624ae98d1855d49b89bd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &842265427 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1942632627341899276, guid: d3d3b72d7d5ff114789b80a94a9a0756,
+    type: 3}
+  m_PrefabInstance: {fileID: 1675141144330470270}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &880238774
 GameObject:
   m_ObjectHideFlags: 0
@@ -2521,6 +2533,11 @@ PrefabInstance:
       propertyPath: gameOverText
       value: 
       objectReference: {fileID: 6204374056624807584}
+    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
+        type: 3}
+      propertyPath: levelText
+      value: 
+      objectReference: {fileID: 842265427}
     - target: {fileID: 4312400960762222761, guid: 21d8f64ae92bc924dabe21a5130318ef,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -4955,7 +4972,7 @@ PrefabInstance:
     - target: {fileID: 1675141143386308444, guid: d3d3b72d7d5ff114789b80a94a9a0756,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 448.08588
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1675141143386308444, guid: d3d3b72d7d5ff114789b80a94a9a0756,
         type: 3}

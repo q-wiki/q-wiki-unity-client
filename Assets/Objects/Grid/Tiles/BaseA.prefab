@@ -1373,13 +1373,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 
   ownerId: 
-  myId: 
   difficulty: 0
+  chosenCategoryId: 
   grid: {fileID: 0}
-  menuController: {fileID: 0}
   tileMaterials:
   - {fileID: 2100000, guid: d78f5cd650004b849a2606c48bf01956, type: 2}
   - {fileID: 2100000, guid: 0f7ee53bdbd330d4381ca3f0d1baf271, type: 2}
+  - {fileID: 2100000, guid: 5ed55bd1ef975ac4cb6f718e170d0520, type: 2}
+  - {fileID: 2100000, guid: b8f98e1db92d9be46a1185a35ba0c647, type: 2}
 --- !u!65 &5596585490244780688
 BoxCollider:
   m_ObjectHideFlags: 0

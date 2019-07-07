@@ -49,6 +49,7 @@ public class MenuController : MonoBehaviour
     public GameObject settingsPanelGame;
     public GameObject settingsPanelStart;
     public GameObject startPanelStart;
+    public Text levelText;
     
     public GameObject selectedTile;
     

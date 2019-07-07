@@ -15,14 +15,16 @@ public class TileController : MonoBehaviour
     public string chosenCategoryId;
     public GameObject grid;
     public Material[] tileMaterials;
-    
+    private string myId;
+
+
     private Game game;
 
     private MenuController menuController => GameObject.Find("MenuController").GetComponent<MenuController>();
 
     void Start()
     {
-        string myId = menuController.PlayerId();
+        myId = menuController.PlayerId();
         if (ownerId == myId)
             gameObject.transform.GetChild(0).GetChild(1).GetComponent<MeshRenderer>().material = tileMaterials[0];
         else if (ownerId != myId && ownerId != null)
@@ -54,21 +56,37 @@ public class TileController : MonoBehaviour
 
     void OnMouseDown()
     {
+
         if (EventSystem.current.IsPointerOverGameObject())
             return;
 
+        GameObject previousTile = menuController.selectedTile;
+        if (previousTile != null)
+        {
+            if (string.IsNullOrEmpty(previousTile.GetComponent<TileController>().ownerId))
+            {
+                menuController.selectedTile.transform.GetChild(0).GetChild(1).GetComponent<MeshRenderer>().material = tileMaterials[3];
+            }
+            else if (previousTile.GetComponent<TileController>().ownerId == myId)
+            {
+                menuController.selectedTile.transform.GetChild(0).GetChild(1).GetComponent<MeshRenderer>().material = tileMaterials[0];
+            }
+            else
+            {
+                menuController.selectedTile.transform.GetChild(0).GetChild(1).GetComponent<MeshRenderer>().material = tileMaterials[1];
+            }
+        }
+
         menuController.selectedTile = gameObject;
 
-        string myId = menuController.PlayerId();
+        gameObject.transform.GetChild(0).GetChild(1).GetComponent<MeshRenderer>().material = tileMaterials[2];
 
         var gridController = grid.GetComponent<GridController>();
 
         //Owned
-        if (ownerId == myId)
+        if (ownerId == myId && difficulty < 2)
         {
             SetActiveAllChildren(gridController.actionCanvas.GetComponent<Transform>(), true);
-            Debug.Log("Red");
-            //Instantiate(actionPanelPrefab, GameObject.FindGameObjectWithTag("Canvas").transform);
             gridController.actionCanvas.SetActive(true);
             if (gridController.captureButton.activeSelf &&
                 gridController.attackButton.activeSelf)
@@ -76,12 +94,12 @@ public class TileController : MonoBehaviour
                 gridController.captureButton.SetActive(false);
                 gridController.attackButton.SetActive(false);
             }
+            menuController.levelText.text = "Level: " + difficulty;
         }
         //Enemy
         else if (ownerId != myId && !string.IsNullOrEmpty(ownerId))
         {
             SetActiveAllChildren(gridController.actionCanvas.GetComponent<Transform>(), true);
-            Debug.Log("Blue");
             gridController.actionCanvas.SetActive(true);
             if (gridController.captureButton.activeSelf &&
                 gridController.levelUpButton.activeSelf)
@@ -89,13 +107,13 @@ public class TileController : MonoBehaviour
                 gridController.captureButton.SetActive(false);
                 gridController.levelUpButton.SetActive(false);
             }
+            menuController.levelText.text = "Level: " + difficulty;
         }
         //Empty
         else if (string.IsNullOrEmpty(ownerId))
         {
             gridController.categoryCanvas.SetActive(false);
             SetActiveAllChildren(gridController.actionCanvas.GetComponent<Transform>(), true);
-            Debug.Log("Null");
             gridController.actionCanvas.SetActive(true);
             if (gridController.attackButton.activeSelf &&
                 gridController.levelUpButton.activeSelf)
@@ -103,10 +121,11 @@ public class TileController : MonoBehaviour
                 gridController.attackButton.SetActive(false);
                 gridController.levelUpButton.SetActive(false);
             }
+            menuController.levelText.text = "Level: " + difficulty;
         }
         else
         {
-            throw new Exception("Tile should not be like this");
+            Debug.Log("Tile already max Level, no actions left here");
         }
     }
 }

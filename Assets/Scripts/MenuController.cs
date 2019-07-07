@@ -54,7 +54,9 @@ public class MenuController : MonoBehaviour
     
     public GameObject gameOverCanvas;
     public Text gameOverText;
-
+    
+    public GameObject legalNoticePanel;
+    public GameObject creditsPanel;
 
     /**
      * private fields
@@ -425,6 +427,20 @@ public class MenuController : MonoBehaviour
         ChangeToStartScene();
     }
 
+    public void OpenCreditsPanel()
+    {
+        creditsPanel.SetActive(true);
+        _settingsPanel.GetComponent<CanvasGroup>().alpha = 0;
+        _settingsPanel.GetComponent<CanvasGroup>().blocksRaycasts = false;
+    }
+
+    public void OpenLegalNoticePanel()
+    {
+        legalNoticePanel.SetActive(true);
+        _settingsPanel.GetComponent<CanvasGroup>().alpha = 0;
+        _settingsPanel.GetComponent<CanvasGroup>().blocksRaycasts = false;
+    }
+
 
     public void ToggleSettingsGame()
     {
@@ -434,12 +450,14 @@ public class MenuController : MonoBehaviour
         if (_settingsToggle)
         {
             ToggleCameraBehaviour();
-            _settingsPanel.SetActive(false);
+            _settingsPanel.GetComponent<CanvasGroup>().alpha = 0;
+            _settingsPanel.GetComponent<CanvasGroup>().blocksRaycasts = false;
         }
         else
         {
             ToggleCameraBehaviour();
-            _settingsPanel.SetActive(true);
+            _settingsPanel.GetComponent<CanvasGroup>().alpha = 1;
+            _settingsPanel.GetComponent<CanvasGroup>().blocksRaycasts = true;
         }
     }
 
@@ -461,6 +479,10 @@ public class MenuController : MonoBehaviour
             _settingsPanel.GetComponent<CanvasGroup>().blocksRaycasts = false;
             _startPanel.GetComponent<CanvasGroup>().alpha = 1;
             _startPanel.GetComponent<CanvasGroup>().blocksRaycasts = true;
+            
+            creditsPanel.SetActive(false);
+            legalNoticePanel.SetActive(false);
+            
         }
         else
         {

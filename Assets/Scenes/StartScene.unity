@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -759,6 +759,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: CreditsPanel
       objectReference: {fileID: 0}
+    - target: {fileID: 1354328823351067080, guid: defde44b1f8049e4ead3869242afe94e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1354328823351067083, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -863,6 +868,80 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1354328824141321171, guid: defde44b1f8049e4ead3869242afe94e,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1354328824141321171, guid: defde44b1f8049e4ead3869242afe94e,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1354328822682760964, guid: defde44b1f8049e4ead3869242afe94e,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1354328822682760964, guid: defde44b1f8049e4ead3869242afe94e,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1354328822682760964, guid: defde44b1f8049e4ead3869242afe94e,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1354328822682760964, guid: defde44b1f8049e4ead3869242afe94e,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1354328823466374122, guid: defde44b1f8049e4ead3869242afe94e,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1354328823524678509, guid: defde44b1f8049e4ead3869242afe94e,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1354328823524678509, guid: defde44b1f8049e4ead3869242afe94e,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1354328823524678509, guid: defde44b1f8049e4ead3869242afe94e,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1354328823524678509, guid: defde44b1f8049e4ead3869242afe94e,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1354328823524678508, guid: defde44b1f8049e4ead3869242afe94e,
+        type: 3}
+      propertyPath: m_Text
+      value: "Q-Wiki\nStrategic wiki-data based knowledge game\n\nstudents: Antonia
+        Berger, Malte G\xF6tz, Jennifer Lindner, David M\xFCller, Arne Sch\xFCtz,
+        \ Laura W\xF6lbeling\n\nproject supervisor: Alaa Sarhan, Lucas Werkmeister
+        (Wikidata)\n\nmaster program international media and computing\n\nAssets:\n\nCC
+        Attribution:\r\n\r\n  Developer3.5Pro:\r\n    Rocket: https://sketchfab.com/3d-models/rocket-f266c4284e8344a08c41eff1aa81c9e0\r\n
+        \ Korveen:\r\n    LowPoly Environment Pack: https://assetstore.unity.com/packages/3d/environments/landscapes/lowpoly-environment-pack-99479\r\n\r\n\r\nRoyalty
+        Free:\r\n  Ursa Rigler:\r\n    Dinosaur Puzzle Toy: https://www.cgtrader.com/free-3d-models/animals/dinosaur/dinosaur-puzzle-toy\r\n
+        \ juhemarten:\r\n    LowPoly Earth and Moon: https://www.cgtrader.com/free-3d-models/space/planet/low-poly-earth-f1171419-eb81-4eaf-83a1-fcfec630afa8\r\n
+        \ Will_LaPuerta:\r\n    Theobromine Molecule Model: https://www.turbosquid.com/3d-models/3d-theobromine-molecule-chocolate-model/409427\r\n
+        \ Jhan Gutierrez:\r\n      Low Poly Nature Pack: https://jhan-gutierrez.itch.io/low-poly-nature-pack?download\r\n
+        \ Broken Vector:\r\n      Free Low Poly Pack: https://assetstore.unity.com/packages/3d/free-low-poly-pack-65375\r\nOther
+        Assets:\r\n  Arisan:\r\n    Flat Icoon & UI - 2D Puzzle Game UI: https://assetstore.unity.com/packages/2d/gui/icons/flat-icoon-ui-2d-puzzle-game-ui-69370\r\n
+        \ Synty Studios:\r\n    Polygon Nature Pack: https://assetstore.unity.com/packages/3d/vegetation/trees/polygon-nature-pack-120152\r\n
+        \ DropGames:\r\n    Low Poly Campament 3D: https://www.cgtrader.com/free-3d-models/exterior/exterior-public/low-poly-campament
+        \ \r\n"
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: defde44b1f8049e4ead3869242afe94e, type: 3}

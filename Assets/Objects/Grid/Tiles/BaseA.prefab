@@ -1371,6 +1371,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 549dc7d12f161184e9e9159a54e15fdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  internalId: 0
   id: 
   ownerId: 
   difficulty: 0

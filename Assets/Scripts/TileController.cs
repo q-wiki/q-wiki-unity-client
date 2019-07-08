@@ -8,6 +8,12 @@ using WikidataGame.Models;
 
 public class TileController : MonoBehaviour
 {
+    
+    /**
+     * public fields
+     */
+    
+    public long internalId;
     public string id;
     public string ownerId;
     public int difficulty;
@@ -15,22 +21,48 @@ public class TileController : MonoBehaviour
     public string chosenCategoryId;
     public GameObject grid;
     public Material[] tileMaterials;
-    private string myId;
 
-
-    private Game game;
-
+    /**
+     * private fields
+     */
+    private string _myId;
+    private Game _game;
+    private bool _isHighlight;
+    private bool _direction;
+    private MeshRenderer _circleRenderer;
+    
     private MenuController menuController => GameObject.Find("MenuController").GetComponent<MenuController>();
 
     void Start()
     {
-        myId = menuController.PlayerId();
-        if (ownerId == myId)
-            gameObject.transform.GetChild(0).GetChild(1).GetComponent<MeshRenderer>().material = tileMaterials[0];
-        else if (ownerId != myId && ownerId != null)
-            gameObject.transform.GetChild(0).GetChild(1).GetComponent<MeshRenderer>().material = tileMaterials[1];
+        _myId = menuController.PlayerId();
+        _circleRenderer = transform
+            .Find("TileBase/OuterCircle")
+            .GetComponent<MeshRenderer>();
+
+        if (ownerId == _myId)
+            _circleRenderer.material = tileMaterials[0];
+        else if (ownerId != _myId && ownerId != null)
+            _circleRenderer.material = tileMaterials[1];
     }
 
+    
+    /**
+     * direction: true = up , false = down
+     */
+    private void Update()
+    {
+        if (_isHighlight)
+        {
+            Color color = _circleRenderer.material.color;
+            _direction = (Math.Abs(color.a) <= 0.1f || Math.Abs(color.a) >= 0.3f) ? !_direction : _direction;
+            color.a += _direction ? 0.01f : -0.01f;
+            _circleRenderer.material.color = color;
+        }
+    }
+    
+    
+    [Obsolete("LevelUp is deprecated and currently not in use")]
     public void LevelUp()
     {
         difficulty++;
@@ -59,31 +91,37 @@ public class TileController : MonoBehaviour
         if (IsPointerOverUIObject())
             return;
 
+        GridController gridController = grid.GetComponent<GridController>();
+
+        if (!gridController.IsPossibleMove(this))
+            return;
+            
         GameObject previousTile = menuController.selectedTile;
         if (previousTile != null)
         {
+            var circleRenderer = menuController.selectedTile.transform.Find("TileBase/OuterCircle").GetComponent<MeshRenderer>();
+            
             if (string.IsNullOrEmpty(previousTile.GetComponent<TileController>().ownerId))
             {
-                menuController.selectedTile.transform.GetChild(0).GetChild(1).GetComponent<MeshRenderer>().material = tileMaterials[3];
+                circleRenderer.material = tileMaterials[3];
             }
-            else if (previousTile.GetComponent<TileController>().ownerId == myId)
+            else if (previousTile.GetComponent<TileController>().ownerId == _myId)
             {
-                menuController.selectedTile.transform.GetChild(0).GetChild(1).GetComponent<MeshRenderer>().material = tileMaterials[0];
+                circleRenderer.material = tileMaterials[0];
             }
             else
             {
-                menuController.selectedTile.transform.GetChild(0).GetChild(1).GetComponent<MeshRenderer>().material = tileMaterials[1];
+                circleRenderer.material = tileMaterials[1];
             }
         }
 
         menuController.selectedTile = gameObject;
 
-        gameObject.transform.GetChild(0).GetChild(1).GetComponent<MeshRenderer>().material = tileMaterials[2];
-
-        var gridController = grid.GetComponent<GridController>();
+        gameObject.transform.Find("TileBase/OuterCircle").GetComponent<MeshRenderer>().material = tileMaterials[2];
+        
 
         //Owned
-        if (ownerId == myId && difficulty < 2)
+        if (ownerId == _myId && difficulty < 2)
         {
             SetActiveAllChildren(gridController.actionCanvas.GetComponent<Transform>(), true);
             gridController.actionCanvas.SetActive(true);
@@ -96,7 +134,7 @@ public class TileController : MonoBehaviour
             menuController.levelText.text = "Level: " + (difficulty + 1);
         }
         //Enemy
-        else if (ownerId != myId && !string.IsNullOrEmpty(ownerId))
+        else if (ownerId != _myId && !string.IsNullOrEmpty(ownerId))
         {
             SetActiveAllChildren(gridController.actionCanvas.GetComponent<Transform>(), true);
             gridController.actionCanvas.SetActive(true);
@@ -128,6 +166,9 @@ public class TileController : MonoBehaviour
         }
     }
 
+    /**
+     * function to check if there are any UI objects showing above the tile
+     */
     private bool IsPointerOverUIObject() {
         PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
         eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
@@ -135,4 +176,10 @@ public class TileController : MonoBehaviour
         EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
         return results.Count > 0;
     }
+
+    public void SetHighlight(bool isHighlight)
+    {
+        _isHighlight = isHighlight;
+    }
+
 }

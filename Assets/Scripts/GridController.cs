@@ -10,25 +10,31 @@ using WikidataGame.Models;
 
 public class GridController: MonoBehaviour
 {
+    /**
+     * public fields
+     */
+    
     public GameObject[] baseTiles;
     public GameObject[] categoryObjects;
     public GameObject hexPrefabSpawn;
-
-    public GameObject captureButton, attackButton, levelUpButton;
-    public GameObject categoryCanvas, actionCanvas;
-
-
+    public GameObject captureButton;
+    public GameObject attackButton;
+    public GameObject levelUpButton;
+    public GameObject categoryCanvas;
+    public GameObject actionCanvas;
     public bool addGap = true;
     public float gap = 0.0f;
 
+    /**
+     * private fields
+     */
+    
     private float hexWidth = 1.732f;
     private float hexHeight = 2.0f;
-
     private GameObject[,] tileArray;
-
     private IList<IList<Tile>> tileSystem;
-
-    Vector3 startPos;
+    private Vector3 startPos;
+    private IList<TileController> _possibleMoves;
 
     public void GenerateGrid(IList<IList<Tile>> tiles)
     {
@@ -55,6 +61,7 @@ public class GridController: MonoBehaviour
         // Calculate the starting position for grid
         CalcStartPos();
 
+        // build tiles
         CreateGrid();
 
     }
@@ -73,6 +80,9 @@ public class GridController: MonoBehaviour
 
     void CreateGrid()
     {
+
+        long count = 0;
+
         for (int z = 0; z<tileSystem[0].Count; z++)
         {
             for (int x = 0; x< tileSystem.Count; x++)
@@ -86,22 +96,25 @@ public class GridController: MonoBehaviour
                     int random = UnityEngine.Random.Range(0, baseTiles.Length);
                     GameObject baseT;
                     baseT = baseTiles[random];
-                    tile = Instantiate(baseT) as GameObject;
-                    TileController tileController = tile.GetComponent<TileController>();
+                    tile = Instantiate(baseT);
                     
+                    /**
+                     * initialize tileController for current tile
+                     */
+                    TileController tileController = tile.GetComponent<TileController>();
                     tileController.difficulty = tileSystem[x][z].Difficulty ?? 0;
                     tileController.availableCategories = tileSystem[x][z].AvailableCategories;
                     tileController.chosenCategoryId = tileSystem[x][z].ChosenCategoryId;
                     tileController.id = tileSystem[x][z].Id;
                     tileController.ownerId = tileSystem[x][z].OwnerId;
                     tileController.grid = gameObject;
+                    tileController.internalId = count;
 
                     if(tileController.chosenCategoryId != null)
                     {
                         GameObject categoryPlaceholder = tile
                             .transform
-                            .Find("TileAssetsL0")
-                            .Find("CategoryPlaceholder")
+                            .Find("TileAssetsL0/CategoryPlaceholder")
                             .gameObject;
 
                         /*
@@ -146,9 +159,10 @@ public class GridController: MonoBehaviour
                     tile.transform.Rotate(rotation);
 
                     tileArray[x, z] = tile;
+
                 }
 
-
+                count++;
 
             }
         }
@@ -184,5 +198,94 @@ public class GridController: MonoBehaviour
     {
         hexWidth += hexWidth * gap;
         hexHeight += hexHeight * gap;
+    }
+
+    /**
+     * function to show all possible moves to user
+     */
+    public void ShowPossibleMoves(String ownerId)
+    {
+        List<TileController> possibleMoves = new List<TileController>();
+
+        IList<TileController> tiles = tileArray
+            .Cast<GameObject>()
+            .Where(t => t != null)
+            .Select(t => t.GetComponentInChildren<TileController>())
+            .Where(t => t.ownerId == ownerId)
+            .ToList();
+
+        foreach (var tile in tiles)
+        {
+            possibleMoves.Add(tile);
+            possibleMoves.AddRange(GetNeighbors(tile));
+        }
+
+        foreach (var tile in possibleMoves)
+            tile.SetHighlight(true);
+
+        /**
+         * store possible moves in variable for later use
+         */
+        _possibleMoves = possibleMoves;
+
+    }
+    
+        
+    /**
+     * function to check if selected tile is a neighbor of a currently owned tile
+     */
+    public IList<TileController> GetNeighbors(TileController tile)
+    {
+        if(tile ==  null)
+            throw new Exception("There was no tile provided");
+
+        GameObject[] tiles = tileArray.Cast<GameObject>().ToArray();
+        
+        // find all neighbors of given tile
+        IList<TileController> neighbors = tiles.Select(t =>
+        {
+            if (t == null)
+                return null;
+            
+            TileController tileController = t.GetComponentInChildren<TileController>();
+            return AreNeighbors(tile.internalId, tileController.internalId) ? tileController : null;
+        }).Where(t => t != null).ToList();
+
+        return neighbors;
+    }
+
+    /**
+     * this function is used to determine if an index of a tile can be a neighbor of another tile
+     * its a little different depending on the row
+     * this has to be dependent of the size of the grid which it currently is not
+     */
+    private bool AreNeighbors(long first, long second)
+    {
+        long row = first / 10;
+
+        if (row % 2 != 0 && (first - 1 == second ||
+                             first + 1 == second ||
+                             first - 9 == second ||
+                             first - 10 == second ||
+                             first + 10 == second ||
+                             first + 11 == second))
+            return true;
+
+        
+        if (row % 2 == 0 && (first - 1 == second ||
+                             first + 1 == second ||
+                             first + 9 == second ||
+                             first - 10 == second ||
+                             first + 10 == second ||
+                             first - 11 == second))
+            return true;
+
+        
+        return false;
+    }
+
+    public bool IsPossibleMove(TileController tile)
+    {
+        return _possibleMoves.Contains(tile);
     }
 }

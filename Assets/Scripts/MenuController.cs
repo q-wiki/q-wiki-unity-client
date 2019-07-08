@@ -169,6 +169,12 @@ public class MenuController : MonoBehaviour
             if(PlayerPrefs.GetInt("REMAINING_ACTION_POINTS", -1) == 0)
                 ActionPointHandler.Instance.UpdateState(_game.Me.Id, _game.NextMovePlayerId, true);
             ActionPointHandler.Instance.Show();
+            
+            /*
+             * highlight possible moves for current player
+             */
+            
+            grid.GetComponent<GridController>().ShowPossibleMoves(_game.Me.Id);
         }
     }
 
@@ -234,11 +240,6 @@ public class MenuController : MonoBehaviour
         // this is called whenever something happens (minigame finished, player made a turn...)
         _game = await Communicator.GetCurrentGameState();
 
-        /**
-         * TODO:there needs to be an UpdateGrid(_game.Tiles)-method in GridController so that it is not redrawn every time
-         * currently the 'old' grid is destroyed so the new grid gets to be drawn safely
-         * but it starts to drift further apart because of the addGap-function in GridController
-         */
         foreach (Transform child in grid.transform) Destroy(child.gameObject);
         grid.GetComponent<GridController>().GenerateGrid(_game.Tiles);
 
@@ -254,6 +255,12 @@ public class MenuController : MonoBehaviour
         */
 
         HandleGameOverState();
+        
+        /*
+         * highlight possible moves for current player
+         * */
+            
+        grid.GetComponent<GridController>().ShowPossibleMoves(_game.Me.Id);
 
 
         /**

@@ -10,25 +10,31 @@ using WikidataGame.Models;
 
 public class GridController: MonoBehaviour
 {
+    /**
+     * public fields
+     */
+    
     public GameObject[] baseTiles;
     public GameObject[] categoryObjects;
     public GameObject hexPrefabSpawn;
-
-    public GameObject captureButton, attackButton, levelUpButton;
-    public GameObject categoryCanvas, actionCanvas;
-
-
+    public GameObject captureButton;
+    public GameObject attackButton;
+    public GameObject levelUpButton;
+    public GameObject categoryCanvas;
+    public GameObject actionCanvas;
     public bool addGap = true;
     public float gap = 0.0f;
 
+    /**
+     * private fields
+     */
+    
     private float hexWidth = 1.732f;
     private float hexHeight = 2.0f;
-
     private GameObject[,] tileArray;
-
     private IList<IList<Tile>> tileSystem;
-
-    Vector3 startPos;
+    private Vector3 startPos;
+    private IList<TileController> _possibleMoves;
 
     public void GenerateGrid(IList<IList<Tile>> tiles)
     {
@@ -55,6 +61,7 @@ public class GridController: MonoBehaviour
         // Calculate the starting position for grid
         CalcStartPos();
 
+        // build tiles
         CreateGrid();
 
     }
@@ -89,9 +96,12 @@ public class GridController: MonoBehaviour
                     int random = UnityEngine.Random.Range(0, baseTiles.Length);
                     GameObject baseT;
                     baseT = baseTiles[random];
-                    tile = Instantiate(baseT) as GameObject;
-                    TileController tileController = tile.GetComponent<TileController>();
+                    tile = Instantiate(baseT);
                     
+                    /**
+                     * initialize tileController for current tile
+                     */
+                    TileController tileController = tile.GetComponent<TileController>();
                     tileController.difficulty = tileSystem[x][z].Difficulty ?? 0;
                     tileController.availableCategories = tileSystem[x][z].AvailableCategories;
                     tileController.chosenCategoryId = tileSystem[x][z].ChosenCategoryId;
@@ -104,8 +114,7 @@ public class GridController: MonoBehaviour
                     {
                         GameObject categoryPlaceholder = tile
                             .transform
-                            .Find("TileAssetsL0")
-                            .Find("CategoryPlaceholder")
+                            .Find("TileAssetsL0/CategoryPlaceholder")
                             .gameObject;
 
                         /*
@@ -190,6 +199,36 @@ public class GridController: MonoBehaviour
         hexWidth += hexWidth * gap;
         hexHeight += hexHeight * gap;
     }
+
+    /**
+     * function to show all possible moves to user
+     */
+    public void ShowPossibleMoves(String ownerId)
+    {
+        List<TileController> possibleMoves = new List<TileController>();
+
+        IList<TileController> tiles = tileArray
+            .Cast<GameObject>()
+            .Where(t => t != null)
+            .Select(t => t.GetComponentInChildren<TileController>())
+            .Where(t => t.ownerId == ownerId)
+            .ToList();
+
+        foreach (var tile in tiles)
+        {
+            possibleMoves.Add(tile);
+            possibleMoves.AddRange(GetNeighbors(tile));
+        }
+
+        foreach (var tile in possibleMoves)
+            tile.SetHighlight(true);
+
+        /**
+         * store possible moves in variable for later use
+         */
+        _possibleMoves = possibleMoves;
+
+    }
     
         
     /**
@@ -223,7 +262,7 @@ public class GridController: MonoBehaviour
     private bool AreNeighbors(long first, long second)
     {
         long row = first / 10;
-        
+
         if (row % 2 != 0 && (first - 1 == second ||
                              first + 1 == second ||
                              first - 9 == second ||
@@ -243,5 +282,10 @@ public class GridController: MonoBehaviour
 
         
         return false;
+    }
+
+    public bool IsPossibleMove(TileController tile)
+    {
+        return _possibleMoves.Contains(tile);
     }
 }

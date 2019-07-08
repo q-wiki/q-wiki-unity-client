@@ -382,8 +382,15 @@ public class MenuController : MonoBehaviour
 
         Debug.Log($"miniGame.task: {miniGame.TaskDescription}");
         foreach(var answer in miniGame.AnswerOptions) Debug.Log($"answerOption: {answer}");
+        
+        
+        /**
+         * get difficulty level from tile controller and initialize miniGame with it
+         */
+        
+        TileController tile = selectedTile.GetComponentInChildren<TileController>();
 
-        miniGameInstance.Initialize(miniGame.Id, miniGame.TaskDescription, miniGame.AnswerOptions);
+        miniGameInstance.Initialize(miniGame.Id, miniGame.TaskDescription, miniGame.AnswerOptions, tile.difficulty);
 
         ToggleCameraBehaviour();
         ActionPointHandler.Instance.Hide();

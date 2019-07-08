@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using WikidataGame.Models;
@@ -19,6 +21,7 @@ namespace Minigame
         public Sprite checkSprite;
         public GameObject warningMessage;
         public GameObject sendButton;
+        public Timer timerPrefab;
 
         /**
          * private fields
@@ -28,19 +31,43 @@ namespace Minigame
         private string _id;
         private string _taskDescription;
         private IList<string> _answerOptions;
+        private Timer _timer;
 
         private GameObject ClosePanel => transform.Find("ClosePanel").gameObject;
 
-        public void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions)
+        public async void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions, int difficulty)
         {
             Reset();
-            
+
             _checkedChoice = null;
             _id = miniGameId;
             _taskDescription = taskDescription;
             _answerOptions = answerOptions;
             AssignDescription(_taskDescription);
             AssignChoices(_answerOptions);
+            
+            /**
+             * match difficulty to timer value
+             * */
+
+            int milliseconds;
+            
+            if (difficulty == 0)
+                milliseconds = 30000;
+            else if (difficulty == 1)
+                milliseconds = 20000;
+            else if (difficulty == 2)
+                milliseconds = 10000;
+            else throw new Exception("Difficulty could not be used to determine milliseconds");
+
+            /**
+             * instantiate timer and let it count down x milliseconds
+             */
+            
+            _timer = Instantiate(timerPrefab, transform.Find("Layout"));
+            _timer.Initialize(this,  milliseconds);
+            await _timer.Countdown();
+            
         }
         
         /**
@@ -110,6 +137,13 @@ namespace Minigame
             ClosePanel.SetActive(false);
         }
 
+        public async void ForceQuit()
+        {
+            Debug.Log("Sorry, you were too slow");
+            var result = await Communicator.AnswerMinigame(_id, new List<string> {});
+            ClosePanel.SetActive(true);
+        }
+
         public async void Send()
         {
             if (_checkedChoice == null)
@@ -122,6 +156,9 @@ namespace Minigame
             }
             else
             {
+                _timer.isInterrupted = true;
+                Destroy(_timer.gameObject);
+
                 Debug.Log("Handling minigame result");
                 // hide minigame canvas and return to map
                 var chosenAnswer = _checkedChoice.GetComponentInChildren<Text>();

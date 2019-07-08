@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,6 +18,7 @@ namespace Minigame
         public GameObject description;
         public Sprite boxSprite;
         public GameObject sendButton;
+        public Timer timerPrefab;
 
         /**
          * private fields
@@ -25,21 +27,43 @@ namespace Minigame
         private string _id;
         private string _taskDescription;
         private IList<string> _answerOptions;
+        private Timer _timer;
 
         private MenuController menuController => GameObject.Find("MenuController").GetComponent<MenuController>(); 
         private GameObject ClosePanel => transform.Find("ClosePanel").gameObject;
 
-        public void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions)
+        public async void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions, int difficulty)
         {
 
             Reset();
-            
 
             _id = miniGameId;
             _taskDescription = taskDescription;
             _answerOptions = answerOptions;
             AssignDescription(_taskDescription);
             AssignChoices(_answerOptions);
+            
+            /**
+             * match difficulty to timer value
+             */
+
+            int milliseconds;
+            
+            if (difficulty == 0)
+                milliseconds = 30000;
+            else if (difficulty == 1)
+                milliseconds = 20000;
+            else if (difficulty == 2)
+                milliseconds = 10000;
+            else throw new Exception("Difficulty could not be used to determine milliseconds");
+
+            /**
+             * instantiate timer and let it count down x milliseconds
+             */
+            
+            _timer = Instantiate(timerPrefab, transform.Find("Layout"));
+            _timer.Initialize(this,  milliseconds);
+            await _timer.Countdown();
         }
         
         /**
@@ -66,6 +90,13 @@ namespace Minigame
         {
             description.GetComponent<Text>().text = desc;
         }
+        
+        public async void ForceQuit()
+        {
+            Debug.Log("Sorry, you were too slow");
+            var result = await Communicator.AnswerMinigame(_id, new List<string> {});
+            ClosePanel.SetActive(true);
+        }
 
         public async void Send()
         {
@@ -74,6 +105,9 @@ namespace Minigame
                 Debug.Log("You are not connected to any game");
                 return;
             }
+
+            _timer.isInterrupted = true;
+            Destroy(_timer.gameObject);
 
             Debug.Log("Handling minigame result");
             List<string> answers = new List<string>();

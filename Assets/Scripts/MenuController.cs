@@ -572,7 +572,9 @@ public class MenuController : MonoBehaviour
     public async void LeaveGame()
     {
         Debug.Log($"Trying to delete game");
+        LoadingIndicator.Instance.Show();
         await Communicator.AbortCurrentGame();
+        LoadingIndicator.Instance.Hide();
         Debug.Log($"Game deleted");
         ChangeToStartScene();
     }

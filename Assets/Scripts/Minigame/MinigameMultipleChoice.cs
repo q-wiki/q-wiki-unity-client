@@ -165,7 +165,9 @@ namespace Minigame
             // hide minigame canvas and return to map
             var chosenAnswer = _checkedChoice.GetComponentInChildren<Text>();
             
+            LoadingIndicator.Instance.Show();
             var result = await Communicator.AnswerMinigame(_id, new List<string> {chosenAnswer.text});
+            LoadingIndicator.Instance.Hide();
 
             // Check result and display feedback to user
             var correctAnswer = result.CorrectAnswer[0];

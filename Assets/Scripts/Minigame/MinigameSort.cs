@@ -115,8 +115,9 @@ namespace Minigame
                 answers.Add(text.text);
             }
 
-            // TODO: Result contains new game state
+            LoadingIndicator.Instance.Show();
             var result = await Communicator.AnswerMinigame(_id, answers);
+            LoadingIndicator.Instance.Hide();
 
             // Check result and display feedback to user
             var correctAnswer = result.CorrectAnswer;

@@ -19,7 +19,6 @@ namespace Minigame
         public GameObject description;
         public Sprite boxSprite;
         public Sprite checkSprite;
-        public GameObject warningMessage;
         public GameObject sendButton;
         public Timer timerPrefab;
 
@@ -34,6 +33,16 @@ namespace Minigame
         private Timer _timer;
 
         private GameObject ClosePanel => transform.Find("ClosePanel").gameObject;
+
+        public void Update()
+        {
+            if (_checkedChoice == null)
+                sendButton.GetComponent<Button>().interactable = false;
+            else
+            {
+                sendButton.GetComponent<Button>().interactable = true;
+            }
+        }
 
         public async void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions, int difficulty)
         {
@@ -147,54 +156,45 @@ namespace Minigame
         public async void Send()
         {
             if (_checkedChoice == null)
+                throw new Exception("It should not be possible to press the send button.");
+            
+            _timer.isInterrupted = true;
+            Destroy(_timer.gameObject);
+
+            Debug.Log("Handling minigame result");
+            // hide minigame canvas and return to map
+            var chosenAnswer = _checkedChoice.GetComponentInChildren<Text>();
+            
+            var result = await Communicator.AnswerMinigame(_id, new List<string> {chosenAnswer.text});
+
+            // Check result and display feedback to user
+            var correctAnswer = result.CorrectAnswer[0];
+            Debug.Log($"Chosen answer: {chosenAnswer.text}, Correct answer: {correctAnswer}");
+
+            var correctAnswerColor = new Color32(0x11, 0xA0, 0x4F, 0xFF);
+            if (correctAnswer == chosenAnswer.text)
             {
-                sendButton.GetComponent<Button>().interactable = false;
-                transform.Find("Layout").GetComponent<CanvasGroup>().blocksRaycasts = false;
-                CanvasGroup canvasGroup = warningMessage.GetComponent<CanvasGroup>();
-                canvasGroup.alpha = 1;
-                canvasGroup.blocksRaycasts = true;
+                // yay
+                chosenAnswer.color = correctAnswerColor;
             }
             else
             {
-                _timer.isInterrupted = true;
-                Destroy(_timer.gameObject);
-
-                Debug.Log("Handling minigame result");
-                // hide minigame canvas and return to map
-                var chosenAnswer = _checkedChoice.GetComponentInChildren<Text>();
-
-                // TODO: Result contains new game state
-                var result = await Communicator.AnswerMinigame(_id, new List<string> {chosenAnswer.text});
-
-                // Check result and display feedback to user
-                var correctAnswer = result.CorrectAnswer[0];
-                Debug.Log($"Chosen answer: {chosenAnswer.text}, Correct answer: {correctAnswer}");
-
-                var correctAnswerColor = new Color32(0x11, 0xA0, 0x4F, 0xFF);
-                if (correctAnswer == chosenAnswer.text)
+                // nay
+                chosenAnswer.color = Color.red;
+                foreach (var choice in choices)
                 {
-                    // yay
-                    chosenAnswer.color = correctAnswerColor;
-                }
-                else
-                {
-                    // nay
-                    chosenAnswer.color = Color.red;
-                    foreach (var choice in choices)
+                    GameObject text = choice
+                        .transform
+                        .Find("Text")
+                        .gameObject;
+                    if (text.GetComponent<Text>().text == correctAnswer)
                     {
-                        GameObject text = choice
-                            .transform
-                            .Find("Text")
-                            .gameObject;
-                        if (text.GetComponent<Text>().text == correctAnswer)
-                        {
-                            text.GetComponent<Text>().color = correctAnswerColor;
-                        }
+                        text.GetComponent<Text>().color = correctAnswerColor;
                     }
                 }
-
-                ClosePanel.SetActive(true);
             }
+
+            ClosePanel.SetActive(true);
         }
     }
 }

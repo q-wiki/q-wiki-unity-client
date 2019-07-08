@@ -131,7 +131,7 @@ public class TileController : MonoBehaviour
                 gridController.captureButton.SetActive(false);
                 gridController.attackButton.SetActive(false);
             }
-            menuController.levelText.text = "Level: " + (difficulty + 1);
+            menuController.levelText.text = "Tile Level: " + (difficulty + 1);
         }
         //Enemy
         else if (ownerId != _myId && !string.IsNullOrEmpty(ownerId))
@@ -144,7 +144,7 @@ public class TileController : MonoBehaviour
                 gridController.captureButton.SetActive(false);
                 gridController.levelUpButton.SetActive(false);
             }
-            menuController.levelText.text = "Level: " + (difficulty + 1);
+            menuController.levelText.text = "Tile Level: " + (difficulty + 1);
         }
         //Empty
         else if (string.IsNullOrEmpty(ownerId))
@@ -158,7 +158,7 @@ public class TileController : MonoBehaviour
                 gridController.attackButton.SetActive(false);
                 gridController.levelUpButton.SetActive(false);
             }
-            menuController.levelText.text = "Level: " + (difficulty + 1);
+            menuController.levelText.text = "Tile Level: " + (difficulty + 1);
         }
         else
         {

@@ -19,7 +19,7 @@ namespace Minigame
         private int _milliseconds;
         private IMinigame _minigameInstance;
         private readonly float x = 0.0f;
-        private readonly float y = -155.0f;
+        private readonly float y = 289.0f;
     
         public void Start()
         {

@@ -23,8 +23,6 @@ public class MenuController : MonoBehaviour
     public GameObject vibrationButtonIcon;
     public GameObject[] miniGameCanvases;
     public GameObject categoryCanvas;
-    public GameObject newGameButtonPlayImage;
-    public GameObject loadingDots;
     public GameObject buttonPrefab;
     public GameObject menuGrid;
     public CanvasGroup blockActionPanel;
@@ -46,7 +44,7 @@ public class MenuController : MonoBehaviour
     public GameObject actionPanel;
     public GameObject settingsPanel;
     public GameObject confirmationPanel;
-    public GameObject settingsPanelGame;
+    public GameObject settingsPanelContainerGame;
     public GameObject settingsPanelStart;
     public GameObject startPanelStart;
     public Text levelText;
@@ -138,7 +136,7 @@ public class MenuController : MonoBehaviour
         }
         else if (sceneName == "GameScene")
         {
-            _settingsPanel = settingsPanelGame;
+            _settingsPanel = settingsPanelContainerGame;
 
             _game = await Communicator.GetCurrentGameState();
 
@@ -289,9 +287,9 @@ public class MenuController : MonoBehaviour
     {
         // disable all buttons so we don't initialize multiple games
         var startGameText = newGameButton.GetComponentInChildren<Text>().text;
-        newGameButton.GetComponentInChildren<Text>().text = "Searching for \nOpponent";
-        newGameButtonPlayImage.SetActive(false);
-        loadingDots.SetActive(true);
+        newGameButton.GetComponentInChildren<Text>().text = "Please wait...";
+        
+        LoadingIndicator.Instance.Show();
         newGameButton.enabled = false;
 
 
@@ -300,8 +298,6 @@ public class MenuController : MonoBehaviour
             Debug.Log("You are not connected to any game");
             // reset the interface so we can try initializing a game again
             newGameButton.GetComponentInChildren<Text>().text = startGameText;
-            newGameButtonPlayImage.SetActive(true);
-            loadingDots.SetActive(false);
             newGameButton.enabled = true;
             return;
         }
@@ -321,12 +317,9 @@ public class MenuController : MonoBehaviour
 
         // another player joined :)
         Debug.Log($"Found opponent, starting game.");
-        newGameButton.GetComponent<Image>().sprite = newGameButtonGrey;
-        newGameButtonPlayImage.SetActive(true);
-        newGameButtonPlayImage.GetComponent<Image>().sprite = newGameIconGrey;
-        loadingDots.SetActive(false);
 
         // 🚀
+        LoadingIndicator.Instance.Hide();
         ChangeToGameScene();
     }
 
@@ -366,7 +359,9 @@ public class MenuController : MonoBehaviour
     {
         Debug.Log("Trying to initialize minigame");
 
+        LoadingIndicator.Instance.Show();
         var miniGame = await Communicator.InitializeMinigame(selectedTile.GetComponent<TileController>().id, categoryId);
+        LoadingIndicator.Instance.Hide();
 
         if (miniGame.Type == null)
             return;
@@ -587,7 +582,10 @@ public class MenuController : MonoBehaviour
         ToggleCameraBehaviour();
         settingsPanel.SetActive(true);
         confirmationPanel.SetActive(false);
-        _settingsPanel.SetActive(false);
+        
+        _settingsPanel.GetComponent<CanvasGroup>().alpha = 0;
+        _settingsPanel.GetComponent<CanvasGroup>().blocksRaycasts = false;
+        
         _settingsToggle = !_settingsToggle;
     }
 

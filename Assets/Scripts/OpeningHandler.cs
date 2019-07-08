@@ -11,7 +11,7 @@ public class OpeningHandler : MonoBehaviour
     {
         await Task.Delay(5000);
         LoadingIndicator.Instance.Hide();
-        SceneManager.LoadSceneAsync("Menu");
+        SceneManager.LoadSceneAsync("StartScene");
     }
 
 }

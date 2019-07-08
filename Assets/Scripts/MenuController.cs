@@ -98,7 +98,6 @@ public class MenuController : MonoBehaviour
         _settingsToggle = true;
     }
 
-
     async void Start()
     {
         gameObject.AddComponent<AudioSource>();
@@ -175,6 +174,18 @@ public class MenuController : MonoBehaviour
              */
             
             grid.GetComponent<GridController>().ShowPossibleMoves(_game.Me.Id);
+        }
+    }
+
+    /**
+     * if application is quit while user is searching for an opponent, delete the game to prevent inconsistencies
+     */
+    public async void OnApplicationQuit()
+    {
+        if (_game != null && _game.AwaitingOpponentToJoin == true)
+        {
+            await Communicator.AbortCurrentGame();
+            Debug.Log("Game deleted as there was no opponent found");
         }
     }
 

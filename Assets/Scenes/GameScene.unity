@@ -404,7 +404,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Please wait for your opponent to finish the turn
+  m_Text: Please wait for your opponent to finish their turn
 --- !u!222 &264865523
 CanvasRenderer:
   m_ObjectHideFlags: 0

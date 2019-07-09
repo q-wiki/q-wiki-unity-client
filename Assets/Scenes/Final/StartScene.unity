@@ -526,7 +526,7 @@ PrefabInstance:
     - target: {fileID: 1354328823351067080, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1354328823351067083, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
@@ -641,7 +641,7 @@ PrefabInstance:
     - target: {fileID: 1354328824141321171, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 1093.37
       objectReference: {fileID: 0}
     - target: {fileID: 1354328824141321171, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
@@ -671,7 +671,7 @@ PrefabInstance:
     - target: {fileID: 1354328822682760964, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -546.685
       objectReference: {fileID: 0}
     - target: {fileID: 1354328822682760964, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
@@ -686,7 +686,7 @@ PrefabInstance:
     - target: {fileID: 1354328823466374122, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 199
+      value: 112
       objectReference: {fileID: 0}
     - target: {fileID: 1354328823524678509, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
@@ -716,10 +716,10 @@ PrefabInstance:
     - target: {fileID: 1354328823524678508, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
       propertyPath: m_Text
-      value: "Q-Wiki\nStrategic wiki-data based knowledge game\n\nstudents: Antonia
+      value: "Q-Wiki\nStrategic wiki-data based knowledge game\n\nStudents: Antonia
         Berger, Malte G\xF6tz, Jennifer Lindner, David M\xFCller, Arne Sch\xFCtz,
-        \ Laura W\xF6lbeling\n\nproject supervisor: Alaa Sarhan, Lucas Werkmeister
-        (Wikidata)\n\nmaster program international media and computing\n\nAssets:\r\n\r\nDeveloper3.5Pro:\r\nRocket:
+        \ Laura W\xF6lbeling\n\nProject Supervisor: Alaa Sarhan, Lucas Werkmeister
+        (Wikidata)\n\nMaster Program International Media and Computing\n\nAssets:\r\n\r\nDeveloper3.5Pro:\r\nRocket:
         https://sketchfab.com/3d-models/rocket-f266c4284e8344a08c41eff1aa81c9e0\r\n\r\nKorveen:\r\nLowPoly
         Environment Pack: https://assetstore.unity.com/packages/3d/environments/landscapes/lowpoly-environment-pack-99479\r\n\r\nUrsa
         Rigler:\r\nDinosaur Puzzle Toy: https://www.cgtrader.com/free-3d-models/animals/dinosaur/dinosaur-puzzle-toy\r\n\r\njuhemarten:\r\nLowPoly
@@ -791,12 +791,22 @@ PrefabInstance:
     - target: {fileID: 1354328823654254513, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -153
+      value: -273
+      objectReference: {fileID: 0}
+    - target: {fileID: 1354328823654254513, guid: defde44b1f8049e4ead3869242afe94e,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: -216.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1354328823654254513, guid: defde44b1f8049e4ead3869242afe94e,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 8.5
       objectReference: {fileID: 0}
     - target: {fileID: 1354328823654254518, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: defde44b1f8049e4ead3869242afe94e, type: 3}
@@ -1479,8 +1489,8 @@ MonoBehaviour:
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 2960, y: 1440}
-  m_ScreenMatchMode: 0
+  m_ReferenceResolution: {x: 2560, y: 1440}
+  m_ScreenMatchMode: 1
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96

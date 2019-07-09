@@ -36,6 +36,9 @@ public class GridController: MonoBehaviour
     private Vector3 startPos;
     private IList<TileController> _possibleMoves;
 
+    private long rows;
+    private long columns;
+
 
     //Generates Grid from Backend Tiles setup
     public void GenerateGrid(IList<IList<Tile>> tiles)
@@ -54,6 +57,15 @@ public class GridController: MonoBehaviour
         tileSystem = tiles;
         // Gameobject Tile array with right length and depth
         tileArray = new GameObject[tileSystem.Count, tileSystem[0].Count];
+        
+        /**
+         * * set row and column count depending on tile system
+         * */
+
+        rows = tileSystem[0].Count;
+        columns = tileSystem.Count;
+        
+
 
         if (addGap)
         {
@@ -84,6 +96,7 @@ public class GridController: MonoBehaviour
     {
 
         long count = 0;
+
 
         for (int z = 0; z<tileSystem[0].Count; z++)
         {
@@ -252,7 +265,7 @@ public class GridController: MonoBehaviour
                 return null;
             
             TileController tileController = t.GetComponentInChildren<TileController>();
-            return AreNeighbors(tile.name, tileController.name) ? tileController : null;
+            return AreNeighbors(tile.internalId, tileController.internalId) ? tileController : null;
         }).Where(t => t != null).ToList();
 
         return neighbors;
@@ -261,50 +274,32 @@ public class GridController: MonoBehaviour
     /**
      * this function is used to determine if an index of a tile can be a neighbor of another tile
      * its a little different depending on the row
-     * this has to be dependent of the size of the grid which it currently is not
      */
-    private bool AreNeighbors(string first, string second)
+    private bool AreNeighbors(long first, long second)
     {
-       
-        int firstX = (int)Char.GetNumericValue(first.ToCharArray()[8]);
-        int secondX = (int)Char.GetNumericValue(second.ToCharArray()[8]);
+        // is row odd or even?
+        long row = first / rows;
 
-        int firstZ = (int)Char.GetNumericValue(first.ToCharArray()[10]);
-        int secondZ = (int)Char.GetNumericValue(second.ToCharArray()[10]);
-
-        int diffX = firstX - secondX;
-        int diffZ = firstZ - secondZ;
-
-
-        if (diffX == 0 && diffZ == -1 || diffX == -1 && diffZ == 0 || diffX == 0 && diffZ == 1 || diffX == 1 && diffZ == -1 || diffX == 1 && diffZ == 0 || diffX == 1 && diffZ == 1)
-        {
-            Debug.Log("diffZ " + diffZ + ", diffX " + diffX);
-            Debug.Log("first " + first + ", second " + second);
-            return true;
-        }
-        return false ;
-
-       /* long row = first / 8;
-
+        // row is odd
         if (row % 2 != 0 && (first - 1 == second ||
                              first + 1 == second ||
-                             first - 9 == second ||
-                             first - 10 == second ||
-                             first + 10 == second ||
-                             first + 11 == second))
+                             first - (columns - 1) == second ||
+                             first - columns == second ||
+                             first + columns == second ||
+                             first + (columns + 1) == second))
             return true;
-
         
+        // row is even
         if (row % 2 == 0 && (first - 1 == second ||
                              first + 1 == second ||
-                             first + 9 == second ||
-                             first - 10 == second ||
-                             first + 10 == second ||
-                             first - 11 == second))
+                             first + (columns - 1) == second ||
+                             first - columns == second ||
+                             first + columns == second ||
+                             first - (columns + 1) == second))
             return true;
 
-        
-        return false;*/
+
+        return false;
     }
 
     public bool IsPossibleMove(TileController tile)

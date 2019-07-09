@@ -100,14 +100,17 @@ public class ActionPointHandler : MonoBehaviour
 			}
 			else
 			{
+				resetFailedCount++;
+				
 				turnIndicator.text = "your turn:";
 				foreach(var actionPoint in actionPoints) 
 					actionPoint.SetActive(false);
 				
 				if(resetFailedCount < 3) 
 					Reset();
-				
-				resetFailedCount++;
+				else
+					resetFailedCount = 0;
+
 			}
 
 		}

@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Minigame
   - Canvas
+  - LoadingIndicator
+  - PushHandler
   layers:
   - Default
   - TransparentFX

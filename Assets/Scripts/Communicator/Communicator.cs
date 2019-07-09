@@ -64,14 +64,17 @@ public class Communicator : MonoBehaviour
         _gameApi = new WikidataGameAPI(new Uri(SERVER_URL), new TokenCredentials(authToken));
     }
 
+    //Creates a game when no previous game was found or joins a game 
     public static async Task CreateOrJoinGame()
     {
-        var gameInfo = await _gameApi.CreateNewGameAsync(10, 10, 70);
+        var gameInfo = await _gameApi.CreateNewGameAsync(8, 8, 50);
         _currentGameId = gameInfo.GameId;
         Debug.Log($"Initialized new game with id: {_currentGameId}");
         PlayerPrefs.SetString(CURRENT_GAME_ID, _currentGameId);
     }
 
+
+    //Checks if a game already exists
     public static async Task<Game> RestorePreviousGame()
     {
         var previousGameId = PlayerPrefs.GetString(CURRENT_GAME_ID);

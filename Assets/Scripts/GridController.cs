@@ -36,6 +36,8 @@ public class GridController: MonoBehaviour
     private Vector3 startPos;
     private IList<TileController> _possibleMoves;
 
+
+    //Generates Grid from Backend Tiles setup
     public void GenerateGrid(IList<IList<Tile>> tiles)
     {
 
@@ -169,6 +171,8 @@ public class GridController: MonoBehaviour
 
     }
 
+
+    //Place coordinates after Grid position 
     Vector3 CalcWorldPos(Vector3 gridPos)
     {
         float offset = 0;
@@ -248,7 +252,7 @@ public class GridController: MonoBehaviour
                 return null;
             
             TileController tileController = t.GetComponentInChildren<TileController>();
-            return AreNeighbors(tile.internalId, tileController.internalId) ? tileController : null;
+            return AreNeighbors(tile.name, tileController.name) ? tileController : null;
         }).Where(t => t != null).ToList();
 
         return neighbors;
@@ -259,9 +263,28 @@ public class GridController: MonoBehaviour
      * its a little different depending on the row
      * this has to be dependent of the size of the grid which it currently is not
      */
-    private bool AreNeighbors(long first, long second)
+    private bool AreNeighbors(string first, string second)
     {
-        long row = first / 10;
+       
+        int firstX = (int)Char.GetNumericValue(first.ToCharArray()[8]);
+        int secondX = (int)Char.GetNumericValue(second.ToCharArray()[8]);
+
+        int firstZ = (int)Char.GetNumericValue(first.ToCharArray()[10]);
+        int secondZ = (int)Char.GetNumericValue(second.ToCharArray()[10]);
+
+        int diffX = firstX - secondX;
+        int diffZ = firstZ - secondZ;
+
+
+        if (diffX == 0 && diffZ == -1 || diffX == -1 && diffZ == 0 || diffX == 0 && diffZ == 1 || diffX == 1 && diffZ == -1 || diffX == 1 && diffZ == 0 || diffX == 1 && diffZ == 1)
+        {
+            Debug.Log("diffZ " + diffZ + ", diffX " + diffX);
+            Debug.Log("first " + first + ", second " + second);
+            return true;
+        }
+        return false ;
+
+       /* long row = first / 8;
 
         if (row % 2 != 0 && (first - 1 == second ||
                              first + 1 == second ||
@@ -281,7 +304,7 @@ public class GridController: MonoBehaviour
             return true;
 
         
-        return false;
+        return false;*/
     }
 
     public bool IsPossibleMove(TileController tile)

@@ -56,7 +56,7 @@ public class TileController : MonoBehaviour
         {
             Color color = _circleRenderer.material.color;
             _direction = (Math.Abs(color.a) <= 0.1f || Math.Abs(color.a) >= 0.3f) ? !_direction : _direction;
-            color.a += _direction ? 0.01f : -0.01f;
+            color.a += _direction ? 0.02f : -0.02f;
             _circleRenderer.material.color = color;
         }
     }

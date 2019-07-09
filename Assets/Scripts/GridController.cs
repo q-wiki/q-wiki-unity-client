@@ -23,7 +23,7 @@ public class GridController: MonoBehaviour
     public GameObject categoryCanvas;
     public GameObject actionCanvas;
     public bool addGap = true;
-    public float gap = 0.0f;
+    public float gap = 0.3f;
 
     /**
      * private fields

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657838, g: 0.49641234, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657844, g: 0.49641222, b: 0.57481694, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -397,6 +397,11 @@ PrefabInstance:
       propertyPath: m_FontData.m_BestFit
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8178374425887846983, guid: 4b448fa8361efca4c89e7004276d03bb,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4b448fa8361efca4c89e7004276d03bb, type: 3}
 --- !u!224 &102734139 stripped
@@ -521,7 +526,7 @@ PrefabInstance:
     - target: {fileID: 1354328823351067080, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1354328823351067083, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
@@ -641,12 +646,12 @@ PrefabInstance:
     - target: {fileID: 1354328824141321171, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 494
+      value: 480
       objectReference: {fileID: 0}
     - target: {fileID: 1354328824141321171, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -343
+      value: -176
       objectReference: {fileID: 0}
     - target: {fileID: 1354328822682760964, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
@@ -667,16 +672,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1354328822682760964, guid: defde44b1f8049e4ead3869242afe94e,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 1093.37
       objectReference: {fileID: 0}
     - target: {fileID: 1354328823466374122, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 3534.1
       objectReference: {fileID: 0}
     - target: {fileID: 1354328823466374122, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: 199
       objectReference: {fileID: 0}
     - target: {fileID: 1354328823524678509, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
@@ -696,7 +706,12 @@ PrefabInstance:
     - target: {fileID: 1354328823524678509, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -1767.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 1354328823524678509, guid: defde44b1f8049e4ead3869242afe94e,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 3534.1
       objectReference: {fileID: 0}
     - target: {fileID: 1354328823524678508, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
@@ -704,18 +719,18 @@ PrefabInstance:
       value: "Q-Wiki\nStrategic wiki-data based knowledge game\n\nstudents: Antonia
         Berger, Malte G\xF6tz, Jennifer Lindner, David M\xFCller, Arne Sch\xFCtz,
         \ Laura W\xF6lbeling\n\nproject supervisor: Alaa Sarhan, Lucas Werkmeister
-        (Wikidata)\n\nmaster program international media and computing\n\nAssets:\n\nCC
-        Attribution:\r\n\r\n  Developer3.5Pro:\r\n    Rocket: https://sketchfab.com/3d-models/rocket-f266c4284e8344a08c41eff1aa81c9e0\r\n
-        \ Korveen:\r\n    LowPoly Environment Pack: https://assetstore.unity.com/packages/3d/environments/landscapes/lowpoly-environment-pack-99479\r\n\r\n\r\nRoyalty
-        Free:\r\n  Ursa Rigler:\r\n    Dinosaur Puzzle Toy: https://www.cgtrader.com/free-3d-models/animals/dinosaur/dinosaur-puzzle-toy\r\n
-        \ juhemarten:\r\n    LowPoly Earth and Moon: https://www.cgtrader.com/free-3d-models/space/planet/low-poly-earth-f1171419-eb81-4eaf-83a1-fcfec630afa8\r\n
-        \ Will_LaPuerta:\r\n    Theobromine Molecule Model: https://www.turbosquid.com/3d-models/3d-theobromine-molecule-chocolate-model/409427\r\n
-        \ Jhan Gutierrez:\r\n      Low Poly Nature Pack: https://jhan-gutierrez.itch.io/low-poly-nature-pack?download\r\n
-        \ Broken Vector:\r\n      Free Low Poly Pack: https://assetstore.unity.com/packages/3d/free-low-poly-pack-65375\r\nOther
-        Assets:\r\n  Arisan:\r\n    Flat Icoon & UI - 2D Puzzle Game UI: https://assetstore.unity.com/packages/2d/gui/icons/flat-icoon-ui-2d-puzzle-game-ui-69370\r\n
-        \ Synty Studios:\r\n    Polygon Nature Pack: https://assetstore.unity.com/packages/3d/vegetation/trees/polygon-nature-pack-120152\r\n
-        \ DropGames:\r\n    Low Poly Campament 3D: https://www.cgtrader.com/free-3d-models/exterior/exterior-public/low-poly-campament
-        \ \r\n"
+        (Wikidata)\n\nmaster program international media and computing\n\nAssets:\r\n\r\nDeveloper3.5Pro:\r\nRocket:
+        https://sketchfab.com/3d-models/rocket-f266c4284e8344a08c41eff1aa81c9e0\r\n\r\nKorveen:\r\nLowPoly
+        Environment Pack: https://assetstore.unity.com/packages/3d/environments/landscapes/lowpoly-environment-pack-99479\r\n\r\nUrsa
+        Rigler:\r\nDinosaur Puzzle Toy: https://www.cgtrader.com/free-3d-models/animals/dinosaur/dinosaur-puzzle-toy\r\n\r\njuhemarten:\r\nLowPoly
+        Earth and Moon: https://www.cgtrader.com/free-3d-models/space/planet/low-poly-earth-f1171419-eb81-4eaf-83a1-fcfec630afa8\r\n\r\nWill_LaPuerta:\r\nTheobromine
+        Molecule Model: https://www.turbosquid.com/3d-models/3d-theobromine-molecule-chocolate-model/409427\r\n\r\nJhan
+        Gutierrez:\r\nLow Poly Nature Pack: https://jhan-gutierrez.itch.io/low-poly-nature-pack?download\r\n\r\nBroken
+        Vector:\r\nFree Low Poly Pack: https://assetstore.unity.com/packages/3d/free-low-poly-pack-65375\r\n\r\nArisan:\r\nFlat
+        Icoon & UI - 2D Puzzle Game UI: https://assetstore.unity.com/packages/2d/gui/icons/flat-icoon-ui-2d-puzzle-game-ui-69370\r\n\r\nSynty
+        Studios:\r\nPolygon Nature Pack: https://assetstore.unity.com/packages/3d/vegetation/trees/polygon-nature-pack-120152\r\n\r\nDropGames:\r\nLow
+        Poly Campament 3D: https://www.turbosquid.com/3d-models/ready-assets-unity3d-3d-model-1316022
+        \ \n\n"
       objectReference: {fileID: 0}
     - target: {fileID: 1354328823524678508, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
@@ -761,6 +776,26 @@ PrefabInstance:
     - target: {fileID: 1354328823524678508, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
       propertyPath: m_FontData.m_MinSize
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1354328823524678508, guid: defde44b1f8049e4ead3869242afe94e,
+        type: 3}
+      propertyPath: m_FontData.m_Alignment
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1354328824141321168, guid: defde44b1f8049e4ead3869242afe94e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1354328823654254513, guid: defde44b1f8049e4ead3869242afe94e,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -153
+      objectReference: {fileID: 0}
+    - target: {fileID: 1354328823654254518, guid: defde44b1f8049e4ead3869242afe94e,
+        type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -1444,7 +1479,7 @@ MonoBehaviour:
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 2560, y: 1440}
+  m_ReferenceResolution: {x: 2960, y: 1440}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -1853,7 +1888,6 @@ MonoBehaviour:
   vibrationButtonIcon: {fileID: 0}
   miniGameCanvases: []
   categoryCanvas: {fileID: 0}
-  loadingDots: {fileID: 0}
   buttonPrefab: {fileID: 6944949401872547322, guid: 915e8328a51469a419657d6030088918,
     type: 3}
   menuGrid: {fileID: 2077317375}
@@ -1876,7 +1910,7 @@ MonoBehaviour:
   actionPanel: {fileID: 0}
   settingsPanel: {fileID: 0}
   confirmationPanel: {fileID: 0}
-  settingsPanelGame: {fileID: 0}
+  settingsPanelContainerGame: {fileID: 0}
   settingsPanelStart: {fileID: 1335742354}
   startPanelStart: {fileID: 1644052699}
   levelText: {fileID: 0}

@@ -506,7 +506,7 @@ public class MenuController : MonoBehaviour
 
     }
 
-    public void CloseCategoryAndActionPamnel()
+    public void CloseCategoryAndActionPanel()
     {
         categoryPanel.SetActive(false);
         actionPanel.SetActive(false);

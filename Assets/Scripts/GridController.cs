@@ -281,6 +281,10 @@ public class GridController: MonoBehaviour
         long firstRow = first / rows;
         long secondRow = second / rows;
 
+        // if tiles' rows are not next to each other, it's not possible they are neighbors
+        if (Math.Abs(firstRow - secondRow) > 1)
+            return false;
+
         // if tiles are in the same row, neighbors can be found easily
         if (firstRow == secondRow && (first - 1 == second ||
                                       first + 1 == second))

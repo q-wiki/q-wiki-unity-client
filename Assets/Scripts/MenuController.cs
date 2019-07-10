@@ -75,6 +75,8 @@ public class MenuController : MonoBehaviour
     private bool _isHandling;
     private Scene currentScene;
 
+    private readonly string CURRENT_GAME_BLOCK_TURN_UPDATE = "CURRENT_GAME_BLOCK_TURN_UPDATE";
+
     private AudioSource Source => GetComponent<AudioSource>();
 
     public static MenuController Instance;
@@ -154,9 +156,9 @@ public class MenuController : MonoBehaviour
         }
         else if (sceneName == "GameScene")
         {
-            
+
             Debug.Log("Game scene succesfully set up");
-            
+
             _settingsPanel = settingsPanelContainerGame;
 
             _game = await Communicator.GetCurrentGameState();
@@ -169,11 +171,11 @@ public class MenuController : MonoBehaviour
              * generate grid by reading tiles from game object
              */
             grid.GetComponent<GridController>().GenerateGrid(_game.Tiles);
-            
+
             /**
              * update points to show an updated state
              */
-            
+
             ScoreHandler.Instance.UpdatePoints(_game.Tiles, _game.Me.Id, _game.Opponent.Id);
 
             /**
@@ -193,17 +195,18 @@ public class MenuController : MonoBehaviour
             if(PlayerPrefs.GetInt("REMAINING_ACTION_POINTS", -1) == 0)
                 ActionPointHandler.Instance.UpdateState(_game.Me.Id, _game.NextMovePlayerId, true);
             ActionPointHandler.Instance.Show();
-            
+
             /**
              * update turn UI when it is the player's move directly after opening the app
              */
-            
-            ScoreHandler.Instance.UpdateTurns();
-            
+
+            if(PlayerPrefs.GetInt(CURRENT_GAME_BLOCK_TURN_UPDATE, 0) == 0)
+                ScoreHandler.Instance.UpdateTurns();
+
             /*
              * highlight possible moves for current player
              */
-            
+
             grid.GetComponent<GridController>().ShowPossibleMoves(_game.Me.Id);
         }
     }
@@ -217,6 +220,14 @@ public class MenuController : MonoBehaviour
         {
             await Communicator.AbortCurrentGame();
             Debug.Log("Game deleted as there was no opponent found");
+        }
+
+        if (_game != null)
+        {
+            if (_game.NextMovePlayerId == _game.Me.Id)
+                PlayerPrefs.SetInt(CURRENT_GAME_BLOCK_TURN_UPDATE, 1);
+            else
+                PlayerPrefs.SetInt(CURRENT_GAME_BLOCK_TURN_UPDATE, 0);
         }
     }
 
@@ -293,27 +304,27 @@ public class MenuController : MonoBehaviour
     public async void RefreshGameState(bool isNewTurn)
     {
         Debug.Log($"isNewTurn:{isNewTurn}");
-        
+
         // this is called whenever something happens (minigame finished, player made a turn...)
         _game = await Communicator.GetCurrentGameState();
 
         foreach (Transform child in grid.transform) Destroy(child.gameObject);
         grid.GetComponent<GridController>().GenerateGrid(_game.Tiles);
-        
+
         /**
          * adjust UI to new score
          */
-        
+
         ScoreHandler.Instance.Show();
         ScoreHandler.Instance.UpdatePoints(_game.Tiles, _game.Me.Id, _game.Opponent.Id);
-        
+
         /**
          * if current update happens in a new turn, update turn count
          */
 
         if(isNewTurn)
             ScoreHandler.Instance.UpdateTurns();
-            
+
 
         /**
          * simple function to update action points in game controller
@@ -326,11 +337,11 @@ public class MenuController : MonoBehaviour
         */
 
         HandleGameOverState();
-        
+
         /*
          * highlight possible moves for current player
          * */
-            
+
         grid.GetComponent<GridController>().ShowPossibleMoves(_game.Me.Id);
 
 
@@ -350,7 +361,7 @@ public class MenuController : MonoBehaviour
         // disable all buttons so we don't initialize multiple games
         var startGameText = newGameButton.GetComponentInChildren<Text>().text;
         newGameButton.GetComponentInChildren<Text>().text = "Please wait...";
-        
+
         LoadingIndicator.Instance.Show();
         newGameButton.enabled = false;
 
@@ -439,12 +450,12 @@ public class MenuController : MonoBehaviour
 
         Debug.Log($"miniGame.task: {miniGame.TaskDescription}");
         foreach(var answer in miniGame.AnswerOptions) Debug.Log($"answerOption: {answer}");
-        
-        
+
+
         /**
          * get difficulty level from tile controller and initialize miniGame with it
          */
-        
+
         TileController tile = selectedTile.GetComponentInChildren<TileController>();
 
         miniGameInstance.Initialize(miniGame.Id, miniGame.TaskDescription, miniGame.AnswerOptions, tile.difficulty);
@@ -498,7 +509,7 @@ public class MenuController : MonoBehaviour
     {
         categoryPanel.SetActive(false);
         actionPanel.SetActive(false);
-        
+
         if (string.IsNullOrEmpty(selectedTile.GetComponent<TileController>().ownerId))
         {
             selectedTile.transform.GetChild(0).GetChild(1).GetComponent<MeshRenderer>().material = tileMaterials[3];
@@ -649,10 +660,10 @@ public class MenuController : MonoBehaviour
         ToggleCameraBehaviour();
         settingsPanel.SetActive(true);
         confirmationPanel.SetActive(false);
-        
+
         _settingsPanel.GetComponent<CanvasGroup>().alpha = 0;
         _settingsPanel.GetComponent<CanvasGroup>().blocksRaycasts = false;
-        
+
         _settingsToggle = !_settingsToggle;
     }
 

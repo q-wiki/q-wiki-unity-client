@@ -107,35 +107,23 @@ public class MenuController : MonoBehaviour
 
         if (sceneName == "StartScene")
         {
+            Debug.Log("Start scene succesfully set up");
 
-            // initialize server session and restore previous game if there is one
-            Debug.Log("Trying to restore previous game…");
-            await Communicator.SetupApiConnection();
-            var previousGame = await Communicator.RestorePreviousGame();
-            if (previousGame != null)
-            {
-                Debug.Log($"Previous game {previousGame.Id} restored successfully, changing to game scene");
-                _game = previousGame;
-                ChangeToGameScene();
-            }
-            else
-            {
+            // we don't have a running game, just show the normal start screen
+            _startPanel = startPanelStart;
+            _settingsPanel = settingsPanelStart;
 
-                Debug.Log("No previous game found, showing start scene");
+            /**
+             * delete action point indicator from player prefs to prevent inconsistencies
+             */
 
-                // we don't have a running game, just show the normal start screen
-                _startPanel = startPanelStart;
-                _settingsPanel = settingsPanelStart;
-
-                /**
-                 * delete action point indicator from player prefs to prevent inconsistencies
-                 */
-
-                PlayerPrefs.DeleteKey("REMAINING_ACTION_POINTS");
-            }
+            PlayerPrefs.DeleteKey("REMAINING_ACTION_POINTS");
         }
         else if (sceneName == "GameScene")
         {
+            
+            Debug.Log("Game scene succesfully set up");
+            
             _settingsPanel = settingsPanelContainerGame;
 
             _game = await Communicator.GetCurrentGameState();

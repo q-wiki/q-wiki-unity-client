@@ -73,6 +73,8 @@ public class MenuController : MonoBehaviour
 
     private bool _isWaitingState;
     private bool _isHandling;
+    
+    private readonly string CURRENT_GAME_BLOCK_TURN_UPDATE = "CURRENT_GAME_BLOCK_TURN_UPDATE";
 
     private AudioSource Source => GetComponent<AudioSource>();
 
@@ -166,7 +168,8 @@ public class MenuController : MonoBehaviour
              * update turn UI when it is the player's move directly after opening the app
              */
             
-            ScoreHandler.Instance.UpdateTurns();
+            if(PlayerPrefs.GetInt(CURRENT_GAME_BLOCK_TURN_UPDATE, 0) == 0) 
+                ScoreHandler.Instance.UpdateTurns();
             
             /*
              * highlight possible moves for current player
@@ -185,6 +188,14 @@ public class MenuController : MonoBehaviour
         {
             await Communicator.AbortCurrentGame();
             Debug.Log("Game deleted as there was no opponent found");
+        }
+
+        if (_game != null)
+        {
+            if (_game.NextMovePlayerId == _game.Me.Id)
+                PlayerPrefs.SetInt(CURRENT_GAME_BLOCK_TURN_UPDATE, 1);
+            else
+                PlayerPrefs.SetInt(CURRENT_GAME_BLOCK_TURN_UPDATE, 0);
         }
     }
 

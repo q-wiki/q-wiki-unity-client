@@ -43,7 +43,7 @@ public class ScoreHandler : MonoBehaviour
 
     public void Start()
     {
-        _turnsPlayedText.text = $"{_turnsPlayed + 1} / 6 Turns";
+        _turnsPlayedText.text = $"{_turnsPlayed} / 6 Turns";
     }
 
     public void UpdatePoints(IList<IList<Tile>> t, string myId, string opponentId)
@@ -91,7 +91,7 @@ public class ScoreHandler : MonoBehaviour
     {
         _turnsPlayed++;
         PlayerPrefs.SetInt(CURRENT_GAME_TURNS_PLAYED, _turnsPlayed);
-        _turnsPlayedText.text = $"{_turnsPlayed + 1} / 6 Turns";
+        _turnsPlayedText.text = $"{_turnsPlayed} / 6 Turns";
 
     } 
     

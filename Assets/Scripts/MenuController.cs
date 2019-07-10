@@ -162,6 +162,12 @@ public class MenuController : MonoBehaviour
                 ActionPointHandler.Instance.UpdateState(_game.Me.Id, _game.NextMovePlayerId, true);
             ActionPointHandler.Instance.Show();
             
+            /**
+             * update turn UI when it is the player's move directly after opening the app
+             */
+            
+            ScoreHandler.Instance.UpdateTurns();
+            
             /*
              * highlight possible moves for current player
              */
@@ -481,9 +487,9 @@ public class MenuController : MonoBehaviour
      */
     public void HandleGameFinished()
     {
-        Debug.Log("Close");
-        gameOverCanvas.SetActive(false);
-        PlayerPrefs.SetString("CURRENT_GAME_ID", null);
+        LoadingIndicator.Instance.Show();
+        PlayerPrefs.DeleteKey("CURRENT_GAME_ID");
+        LoadingIndicator.Instance.Hide();
         ChangeToStartScene();
     }
 

@@ -62,18 +62,18 @@ public class CameraBehavior : MonoBehaviour
             touchesPrevPosDifference = (firstTouchPrevPos - secondTouchPrevPos).magnitude;
             touchesCurPosDifference = (firstTouch.position - secondTouch.position).magnitude;
 
-
-            if (touchesPrevPosDifference > touchesCurPosDifference && transform.position.y >= heightLimitMin)
-            {
-                GetComponent<Transform>().position = new Vector3(transform.position.x, transform.position.y - yTranslocation, transform.position.z + zTranslocation);
-                gameObject.transform.eulerAngles = new Vector3(gameObject.transform.eulerAngles.x - rotationDegree, 0, 0);
-                //Debug.Log("Zoom in " + camera.transform.eulerAngles);
-            }
-            if (touchesPrevPosDifference < touchesCurPosDifference && transform.position.y <= heightLimitMax)
+            //Zoom in
+            if (touchesPrevPosDifference > touchesCurPosDifference && transform.position.y <= heightLimitMax)
             {
                 GetComponent<Transform>().position = new Vector3(transform.position.x, transform.position.y + yTranslocation, transform.position.z - zTranslocation);
                 gameObject.transform.eulerAngles = new Vector3(gameObject.transform.eulerAngles.x + rotationDegree, 0, 0);
-                //Debug.Log("Zoom out " + camera.transform.eulerAngles);
+            }
+
+            //Zoom out
+            if (touchesPrevPosDifference < touchesCurPosDifference && transform.position.y >= heightLimitMin)
+            {
+                GetComponent<Transform>().position = new Vector3(transform.position.x, transform.position.y - yTranslocation, transform.position.z + zTranslocation);
+                gameObject.transform.eulerAngles = new Vector3(gameObject.transform.eulerAngles.x - rotationDegree, 0, 0);
             }
         }
 

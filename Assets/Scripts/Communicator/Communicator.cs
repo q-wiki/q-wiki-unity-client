@@ -41,8 +41,7 @@ public class Communicator : MonoBehaviour
     {
         // have we already set up the api connection?
         if (_gameApi != null) return;
-
-
+        
         // do we have an auth token that's saved?
         Debug.Log("Trying to restore previously saved auth token…");
         var authToken = PlayerPrefs.GetString(AUTH_TOKEN);
@@ -51,9 +50,8 @@ public class Communicator : MonoBehaviour
             Debug.Log("No auth token in PlayerPrefs, fetching new token from server");
             var apiClient = new WikidataGameAPI(new Uri(SERVER_URL), new TokenCredentials("auth"));
             // CancellationTokenSource cts = new CancellationTokenSource(); // <-- Cancellation Token if you want to cancel the request, user quits, etc. [cts.Cancel()]
-            var pushUrl = ""; // <-- empty push url means it will be ignored
-            Debug.Log(SystemInfo.deviceUniqueIdentifier);
-            var authResponse = await apiClient.AuthenticateAsync(SystemInfo.deviceUniqueIdentifier, pushUrl);
+            var pushToken = PushHandler.Instance.pushToken ?? "";
+            var authResponse = await apiClient.AuthenticateAsync(SystemInfo.deviceUniqueIdentifier, pushToken);
             authToken = authResponse.Bearer;
             PlayerPrefs.SetString(AUTH_TOKEN, authToken);
         }
@@ -61,6 +59,46 @@ public class Communicator : MonoBehaviour
         Debug.Log($"Auth token: {authToken}");
 
         // this _gameApi can now be used by all other methods
+        _gameApi = new WikidataGameAPI(new Uri(SERVER_URL), new TokenCredentials(authToken));
+    }
+    
+    /*
+     * This function updates the auth token when a push token is received
+     */
+    public static async Task UpdateApiConnection(string token)
+    {
+        /**
+         * set current auth token to null to prevent inconsistencies
+         */
+        PlayerPrefs.SetString(AUTH_TOKEN, null);
+        
+        /**
+         * if game API was not built yet, use standard setup function
+         */
+        if (_gameApi == null)
+        {
+            await SetupApiConnection();
+            return;
+        }
+        
+        Debug.Log("Rebuilding auth token with newly generated push token");
+        
+        /**
+         * regenerate API and auth process
+         */
+        
+        var apiClient = new WikidataGameAPI(new Uri(SERVER_URL), new TokenCredentials("auth"));
+        var pushToken = token;
+        var authResponse = await apiClient.AuthenticateAsync(SystemInfo.deviceUniqueIdentifier, pushToken);
+        var authToken = authResponse.Bearer;
+        
+        Debug.Log($"Saving new auth token {authToken} in Player Prefs");
+        PlayerPrefs.SetString(AUTH_TOKEN, authToken);
+        
+        /**
+         * reset game api with new auth token
+         */
+        
         _gameApi = new WikidataGameAPI(new Uri(SERVER_URL), new TokenCredentials(authToken));
     }
 

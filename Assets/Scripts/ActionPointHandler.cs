@@ -19,6 +19,7 @@ public class ActionPointHandler : MonoBehaviour
 
 	private int _remainingActionPoints;
 	private CanvasGroup _canvasGroup => GetComponent<CanvasGroup>();
+	private int resetFailedCount;
 
 	/**
 	 * static fields
@@ -39,6 +40,7 @@ public class ActionPointHandler : MonoBehaviour
 	public void Awake()
 	{
 		Instance = this;
+		resetFailedCount = 0;
 		Reset();
 	}
 
@@ -98,9 +100,17 @@ public class ActionPointHandler : MonoBehaviour
 			}
 			else
 			{
-				turnIndicator.text = "opponent's turn:";
+				resetFailedCount++;
+				
+				turnIndicator.text = "your turn:";
 				foreach(var actionPoint in actionPoints) 
 					actionPoint.SetActive(false);
+				
+				if(resetFailedCount < 3) 
+					Reset();
+				else
+					resetFailedCount = 0;
+
 			}
 
 		}

@@ -123,7 +123,7 @@ namespace Minigame
             var correctAnswer = result.CorrectAnswer;
             Debug.Log($"Chosen answer: {answers}, Correct answer: {correctAnswer}");
 
-            var correctAnswerColor = Color.green;
+            var correctAnswerColor = new Color32(0x11, 0xA0, 0x4F, 0xFF);
 
             if (answers.SequenceEqual(correctAnswer))
             {

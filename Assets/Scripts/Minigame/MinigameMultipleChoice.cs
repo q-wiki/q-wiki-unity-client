@@ -21,11 +21,14 @@ namespace Minigame
         public Sprite checkSprite;
         public GameObject sendButton;
         public Timer timerPrefab;
+        public Image sendButtonImage;
+        public Sprite closeButtonSprite;
+        public Sprite sendButtonSprite;
 
         /**
          * private fields
          */
-        
+
         private GameObject _checkedChoice;
         private string _id;
         private string _taskDescription;
@@ -84,6 +87,10 @@ namespace Minigame
        */
         private void Reset()
         {
+            sendButton.GetComponent<Image>().color = new Color32(80, 158, 158, 255);
+            sendButton.GetComponentInChildren<Text>().text = "Send";
+            sendButtonImage.sprite = sendButtonSprite;
+
             foreach (var item in choices)
             {
                 item.GetComponentInChildren<Text>().color = Color.black;
@@ -197,6 +204,9 @@ namespace Minigame
             }
 
             ClosePanel.SetActive(true);
+            sendButton.GetComponent<Image>().color = new Color32(195, 98, 98, 255);
+            sendButton.GetComponentInChildren<Text>().text = "Close";
+            sendButtonImage.sprite = closeButtonSprite;
         }
     }
 }

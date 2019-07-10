@@ -73,6 +73,7 @@ public class MenuController : MonoBehaviour
 
     private bool _isWaitingState;
     private bool _isHandling;
+    private Scene currentScene;
 
     private AudioSource Source => GetComponent<AudioSource>();
 
@@ -88,6 +89,37 @@ public class MenuController : MonoBehaviour
         {
             HandleWaitingState();
         }
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            if (!_settingsToggle)
+            {
+                if (currentScene.name.Contains("Game"))
+                {
+                    ToggleSettingsGame();
+                }
+                else if (currentScene.name.Contains("Start"))
+                {
+                    ToggleSettingsStart();
+                }
+            }else
+            {
+                if (!hasActiveMinigamePanel())
+                {
+                    Debug.Log("Closing App ...");
+                    Application.Quit();
+                }
+            }
+        }
+    }
+    bool hasActiveMinigamePanel()
+    {
+        foreach(GameObject panel in miniGameCanvases)
+        {
+            if (panel.active)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     void Awake()
@@ -102,7 +134,7 @@ public class MenuController : MonoBehaviour
         Source.clip = clickSound;
         Source.playOnAwake = false;
 
-        Scene currentScene = SceneManager.GetActiveScene();
+        currentScene = SceneManager.GetActiveScene();
         string sceneName = currentScene.name;
 
         if (sceneName == "StartScene")

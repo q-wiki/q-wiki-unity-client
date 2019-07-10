@@ -118,6 +118,7 @@ public class MenuController : MonoBehaviour
              */
 
             PlayerPrefs.DeleteKey("REMAINING_ACTION_POINTS");
+            PlayerPrefs.DeleteKey("CURRENT_GAME_TURNS_PLAYED");
         }
         else if (sceneName == "GameScene")
         {
@@ -136,6 +137,12 @@ public class MenuController : MonoBehaviour
              * generate grid by reading tiles from game object
              */
             grid.GetComponent<GridController>().GenerateGrid(_game.Tiles);
+            
+            /**
+             * update points to show an updated state
+             */
+            
+            ScoreHandler.Instance.UpdatePoints(_game.Tiles, _game.Me.Id, _game.Opponent.Id);
 
             /**
              * if current player is not me, go to loop / block interaction
@@ -190,6 +197,11 @@ public class MenuController : MonoBehaviour
 
         if (_game == null)
             throw new Exception("There is no game");
+        
+        /**
+         * check if game is over
+         */
+        HandleGameOverState();
 
         if (_game.NextMovePlayerId == _game.Me.Id)
         {
@@ -232,14 +244,27 @@ public class MenuController : MonoBehaviour
     public async void RefreshGameState(bool isNewTurn)
     {
         Debug.Log($"isNewTurn:{isNewTurn}");
-
-
+        
         // this is called whenever something happens (minigame finished, player made a turn...)
         _game = await Communicator.GetCurrentGameState();
 
         foreach (Transform child in grid.transform) Destroy(child.gameObject);
         grid.GetComponent<GridController>().GenerateGrid(_game.Tiles);
+        
+        /**
+         * adjust UI to new score
+         */
+        
+        ScoreHandler.Instance.Show();
+        ScoreHandler.Instance.UpdatePoints(_game.Tiles, _game.Me.Id, _game.Opponent.Id);
+        
+        /**
+         * if current update happens in a new turn, update turn count
+         */
 
+        if(isNewTurn)
+            ScoreHandler.Instance.UpdateTurns();
+            
 
         /**
          * simple function to update action points in game controller
@@ -377,6 +402,7 @@ public class MenuController : MonoBehaviour
 
         ToggleCameraBehaviour();
         ActionPointHandler.Instance.Hide();
+        ScoreHandler.Instance.Hide();
         miniGameCanvas.SetActive(true);
         categoryCanvas.SetActive(false);
     }
@@ -473,12 +499,14 @@ public class MenuController : MonoBehaviour
         if (_settingsToggle)
         {
             ToggleCameraBehaviour();
+            ScoreHandler.Instance.Show();
             _settingsPanel.GetComponent<CanvasGroup>().alpha = 0;
             _settingsPanel.GetComponent<CanvasGroup>().blocksRaycasts = false;
         }
         else
         {
             ToggleCameraBehaviour();
+            ScoreHandler.Instance.Hide();
             _settingsPanel.GetComponent<CanvasGroup>().alpha = 1;
             _settingsPanel.GetComponent<CanvasGroup>().blocksRaycasts = true;
         }

@@ -278,26 +278,32 @@ public class GridController: MonoBehaviour
     private bool AreNeighbors(long first, long second)
     {
         // is row odd or even?
-        long row = first / rows;
+        long firstRow = first / rows;
+        long secondRow = second / rows;
 
-        // row is odd
-        if (row % 2 != 0 && (first - 1 == second ||
-                             first + 1 == second ||
-                             first - (columns - 1) == second ||
-                             first - columns == second ||
-                             first + columns == second ||
-                             first + (columns + 1) == second))
-            return true;
-        
-        // row is even
-        if (row % 2 == 0 && (first - 1 == second ||
-                             first + 1 == second ||
-                             first + (columns - 1) == second ||
-                             first - columns == second ||
-                             first + columns == second ||
-                             first - (columns + 1) == second))
+        // if tiles are in the same row, neighbors can be found easily
+        if (firstRow == secondRow && (first - 1 == second ||
+                                      first + 1 == second))
             return true;
 
+        // if tiles are not in the same row, there need to be a few checks depending on the type of the row
+        if (firstRow != secondRow)
+        {
+            // row is odd
+            if (firstRow % 2 != 0 && (first - (columns - 1) == second ||
+                                      first - columns == second ||
+                                      first + columns == second ||
+                                      first + (columns + 1) == second))
+                return true;
+
+            // row is even
+            if (firstRow % 2 == 0 && (first + (columns - 1) == second ||
+                                      first - columns == second ||
+                                      first + columns == second ||
+                                      first - (columns + 1) == second))
+                return true;
+
+        }
 
         return false;
     }

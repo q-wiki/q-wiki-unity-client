@@ -195,9 +195,20 @@ public class MenuController : MonoBehaviour
 
         _game = await Communicator.GetCurrentGameState();
 
+        /**
+         * check if game is over
+         * if game is deleted, we assume for now, that the other player deleted it and show the winning screen
+         */
         if (_game == null)
-            throw new Exception("There is no game");
-        
+        {
+            Debug.Log("Game is null - the other player probably deleted it");
+            gameOverText.text = "You won! Congratulations!";
+            blockActionPanel.alpha = 0;
+            blockActionPanel.blocksRaycasts = false;
+            gameOverCanvas.SetActive(true);
+            return;
+        }
+
         /**
          * check if game is over
          */

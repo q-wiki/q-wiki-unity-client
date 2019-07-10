@@ -635,7 +635,7 @@ PrefabInstance:
         Icoon & UI - 2D Puzzle Game UI: https://assetstore.unity.com/packages/2d/gui/icons/flat-icoon-ui-2d-puzzle-game-ui-69370\r\n\r\nSynty
         Studios:\r\nPolygon Nature Pack: https://assetstore.unity.com/packages/3d/vegetation/trees/polygon-nature-pack-120152\r\n\r\nDropGames:\r\nLow
         Poly Campament 3D: https://www.turbosquid.com/3d-models/ready-assets-unity3d-3d-model-1316022
-        \ \n\n"
+        \n\nFont:\nBD Cartoon Shout\nhttp://allfont.net/download/bd-cartoon-shout/"
       objectReference: {fileID: 0}
     - target: {fileID: 1354328823524678508, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
@@ -713,6 +713,12 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1354328824511089168, guid: defde44b1f8049e4ead3869242afe94e,
+        type: 3}
+      propertyPath: m_FontData.m_Font
+      value: 
+      objectReference: {fileID: 12800000, guid: e69309d696bb64ae49bf43e7cf36965e,
+        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: defde44b1f8049e4ead3869242afe94e, type: 3}
 --- !u!1 &257222137 stripped

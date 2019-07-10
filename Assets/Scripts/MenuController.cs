@@ -360,7 +360,8 @@ public class MenuController : MonoBehaviour
     {
         // disable all buttons so we don't initialize multiple games
         var startGameText = newGameButton.GetComponentInChildren<Text>().text;
-        newGameButton.GetComponentInChildren<Text>().text = "Please wait...";
+        newGameButton.GetComponentInChildren<Text>().text = "Searching for Opponent...";
+        newGameButton.GetComponentInChildren<Text>().fontSize = 56;
 
         LoadingIndicator.Instance.Show();
         newGameButton.enabled = false;

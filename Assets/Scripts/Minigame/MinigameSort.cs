@@ -125,6 +125,12 @@ namespace Minigame
             LoadingIndicator.Instance.Show();
             var result = await Communicator.AnswerMinigame(_id, answers);
             LoadingIndicator.Instance.Hide();
+            
+            /**
+             * use block panel to block further interaction by user
+             */
+
+            transform.Find("BlockPanel").GetComponentInChildren<CanvasGroup>().blocksRaycasts = true;
 
             // Check result and display feedback to user
             var correctAnswer = result.CorrectAnswer;
@@ -161,7 +167,9 @@ namespace Minigame
 
         public void Close()
         {
+            
             menuController.GetComponent<MenuController>().RefreshGameState(false);
+            transform.Find("BlockPanel").GetComponentInChildren<CanvasGroup>().blocksRaycasts = false;
             menuController.ToggleCameraBehaviour();
             gameObject.SetActive(false);
             ClosePanel.SetActive(false);

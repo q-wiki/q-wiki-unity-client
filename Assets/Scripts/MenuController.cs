@@ -213,7 +213,10 @@ public class MenuController : MonoBehaviour
 
     /**
      * if application is quit while user is searching for an opponent, delete the game to prevent inconsistencies
+     * because it's triggered differently on an Android phone, we have to differentiate
      */
+    
+    #if UNITY_EDITOR
     public async void OnApplicationQuit()
     {
         if (_game != null && _game.AwaitingOpponentToJoin == true)
@@ -229,7 +232,30 @@ public class MenuController : MonoBehaviour
             else
                 PlayerPrefs.SetInt(CURRENT_GAME_BLOCK_TURN_UPDATE, 0);
         }
-    }
+    } 
+    #endif
+    
+    #if UNITY_ANDROID
+    public async void OnApplicationPause()
+    {
+        if (_game != null && _game.AwaitingOpponentToJoin == true)
+        {
+            await Communicator.AbortCurrentGame();
+            Debug.Log("Game deleted as there was no opponent found");
+        }
+
+        if (_game != null)
+        {
+            if (_game.NextMovePlayerId == _game.Me.Id)
+                PlayerPrefs.SetInt(CURRENT_GAME_BLOCK_TURN_UPDATE, 1);
+            else
+                PlayerPrefs.SetInt(CURRENT_GAME_BLOCK_TURN_UPDATE, 0);
+        }
+    } 
+    #endif
+    
+    
+    
 
     private async void HandleWaitingState()
     {

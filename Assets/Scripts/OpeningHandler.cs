@@ -15,7 +15,28 @@ public class OpeningHandler : MonoBehaviour
         await Communicator.SetupApiConnection();
         var previousGame = await Communicator.RestorePreviousGame();
 
-        string scene = previousGame == null ? "StartScene" : "GameScene";
+        string scene;
+        
+        if (previousGame == null)
+            scene = "StartScene";
+        else
+        {
+            /**
+             * if there was no opponent found in the previous game, delete the game from backend / player prefs
+             */
+            if (previousGame.AwaitingOpponentToJoin == true)
+            {
+                scene = "StartScene";
+                await Communicator.AbortCurrentGame();
+                PlayerPrefs.DeleteKey("CURRENT_GAME_ID");
+                Debug.Log("Deleted previous game");
+            }
+            else
+            {
+                scene = "GameScene";
+            }
+        }
+        
         Debug.Log($"Switching to {scene}");
         StartCoroutine(LoadScene(scene));
     }

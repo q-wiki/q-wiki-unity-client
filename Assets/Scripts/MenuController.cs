@@ -288,7 +288,7 @@ public class MenuController : MonoBehaviour
             }
             else if (_game.WinningPlayerIds.Count == 1 && _game.WinningPlayerIds.Contains(_game.Opponent.Id))
             {
-                gameOverText.text = "You Lost! \nTry again!";
+                gameOverText.text = "You Lost!";
                 Debug.Log("You Lost! Try again!");
             }
             else if (_game.WinningPlayerIds.Count == 2 && _game.WinningPlayerIds.Contains(_game.Opponent.Id) && _game.WinningPlayerIds.Contains(_game.Me.Id))

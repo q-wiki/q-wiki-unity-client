@@ -6,6 +6,9 @@ using UnityEngine.UI;
 
 namespace Minigame
 {
+    /// <summary>
+    /// Frontend implementation of the sorting MiniGame
+    /// </summary>
     public class MinigameSort : MonoBehaviour, IMinigame
     {
         /**
@@ -33,6 +36,14 @@ namespace Minigame
         private MenuController menuController => GameObject.Find("MenuController").GetComponent<MenuController>(); 
         private GameObject ClosePanel => transform.Find("ClosePanel").gameObject;
 
+        /// <summary>
+        /// Initialize MiniGame in the frontend
+        /// </summary>
+        /// <param name="miniGameId">ID of the current MiniGame</param>
+        /// <param name="taskDescription">Description of the current MiniGame</param>
+        /// <param name="answerOptions">Provided answer options</param>
+        /// <param name="difficulty">Provided difficulty</param>
+        /// <exception cref="Exception">Timer could not be set properly</exception>
         public async void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions, int difficulty)
         {
 
@@ -67,9 +78,9 @@ namespace Minigame
             await _timer.Countdown();
         }
         
-        /**
-       * function to reset text colors before showing the game to user
-       */
+        /// <summary>
+        /// function to reset text colors and sprites before showing the game to user
+        /// </summary>
         private void Reset()
         {
             sendButton.GetComponent<Image>().color = new Color32(80, 158, 158, 255);
@@ -82,6 +93,10 @@ namespace Minigame
             }
         }
 
+        /// <summary>
+        /// Assign provided answer options to on-screen placeholders
+        /// </summary>
+        /// <param name="answerOptions">Provided answer options</param>
         private void AssignChoices(IList<string> answerOptions)
         {
             for (var i = 0; i < choices.Count; i++)
@@ -91,21 +106,31 @@ namespace Minigame
             }
         }
 
+        /// <summary>
+        /// Assign provided description to on-screen placeholder
+        /// </summary>
+        /// <param name="desc">Provided description</param>
         private void AssignDescription(string desc)
         {
             description.GetComponent<Text>().text = desc;
         }
         
+        /// <summary>
+        /// This is used to force a shutdown of the MiniGame when timer reaches null
+        /// </summary>
         public async void ForceQuit()
         {
             Debug.Log("Sorry, you were too slow");
-            var result = await Communicator.AnswerMinigame(_id, new List<string> {});
+            var result = await Communicator.Communicator.AnswerMinigame(_id, new List<string> {});
             ClosePanel.SetActive(true);
         }
 
+        /// <summary>
+        /// This is used to send answer options to the backend
+        /// </summary>
         public async void Send()
         {
-            if (!Communicator.IsConnected())
+            if (!Communicator.Communicator.IsConnected())
             {
                 Debug.Log("You are not connected to any game");
                 return;
@@ -123,7 +148,7 @@ namespace Minigame
             }
 
             LoadingIndicator.Instance.Show();
-            var result = await Communicator.AnswerMinigame(_id, answers);
+            var result = await Communicator.Communicator.AnswerMinigame(_id, answers);
             LoadingIndicator.Instance.Hide();
             
             /**
@@ -165,6 +190,9 @@ namespace Minigame
 
         }
 
+        /// <summary>
+        /// This is used to close the MiniGame
+        /// </summary>
         public void Close()
         {
             

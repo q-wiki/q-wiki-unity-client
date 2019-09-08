@@ -7,6 +7,9 @@ using WikidataGame.Models;
 
 namespace Minigame
 {
+    /// <summary>
+    /// Frontend implementation of the multiple choice MiniGame
+    /// </summary>
     public class MinigameMultipleChoice : MonoBehaviour, IMinigame
     {
  
@@ -37,6 +40,9 @@ namespace Minigame
 
         private GameObject ClosePanel => transform.Find("ClosePanel").gameObject;
 
+        /// <summary>
+        /// Update is called every frame
+        /// </summary>
         public void Update()
         {
             if (_checkedChoice == null)
@@ -47,6 +53,14 @@ namespace Minigame
             }
         }
 
+        /// <summary>
+        /// Initialize MiniGame in the frontend
+        /// </summary>
+        /// <param name="miniGameId">ID of the current MiniGame</param>
+        /// <param name="taskDescription">Description of the current MiniGame</param>
+        /// <param name="answerOptions">Provided answer options</param>
+        /// <param name="difficulty">Provided difficulty</param>
+        /// <exception cref="Exception">Timer could not be set properly</exception>
         public async void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions, int difficulty)
         {
             Reset();
@@ -82,9 +96,9 @@ namespace Minigame
             
         }
         
-        /**
-       * function to reset text colors and sprites before showing the game to user
-       */
+        /// <summary>
+        /// function to reset text colors and sprites before showing the game to user
+        /// </summary>
         private void Reset()
         {
             sendButton.GetComponent<Image>().color = new Color32(80, 158, 158, 255);
@@ -98,9 +112,12 @@ namespace Minigame
             }
         }
 
+        /// <summary>
+        /// Assign provided answer options to on-screen placeholders
+        /// </summary>
+        /// <param name="answerOptions">Provided answer options</param>
         private void AssignChoices(IList<string> answerOptions)
         {
-            // TODO: Set correct answers
             for (var i = 0; i < choices.Count; i++)
             {
                 var text = choices[i].transform.Find("Text");
@@ -108,12 +125,19 @@ namespace Minigame
             }
         }
 
+        /// <summary>
+        /// Assign provided description to on-screen placeholder
+        /// </summary>
+        /// <param name="desc">Provided description</param>
         private void AssignDescription(string desc)
         {
-            // TODO: Set correct description??
             description.GetComponent<Text>().text = desc;
         }
 
+        /// <summary>
+        /// Process selection of an answer option by the user
+        /// </summary>
+        /// <param name="selected">Selected answer option</param>
         public void Process(GameObject selected)
         {
 
@@ -134,17 +158,28 @@ namespace Minigame
             }
         }
 
+        /// <summary>
+        /// This is used to visually select an answer option
+        /// </summary>
+        /// <param name="g">GameObject that should be selected on-screen</param>
         private void Select(GameObject g)
         {
             g.GetComponentInChildren<Image>().sprite = checkSprite;
         }
 
+        /// <summary>
+        /// This is used to visually deselect an answer option
+        /// </summary>
+        /// <param name="g">GameObject that should be deselected on-screen</param>
         private void Deselect(GameObject g)
         {
             g.GetComponentInChildren<Image>().sprite = boxSprite;
 
         }
 
+        /// <summary>
+        /// This is used to close the MiniGame
+        /// </summary>
         public void Close()
         {
             menuController.GetComponent<MenuController>().RefreshGameState(false);
@@ -154,13 +189,20 @@ namespace Minigame
             ClosePanel.SetActive(false);
         }
 
+        /// <summary>
+        /// This is used to force a shutdown of the MiniGame when timer reaches null
+        /// </summary>
         public async void ForceQuit()
         {
             Debug.Log("Sorry, you were too slow");
-            var result = await Communicator.AnswerMinigame(_id, new List<string> {});
+            var result = await Communicator.Communicator.AnswerMinigame(_id, new List<string> {});
             ClosePanel.SetActive(true);
         }
 
+        /// <summary>
+        /// This is used to send an answer option to the backend
+        /// </summary>
+        /// <exception cref="Exception">No selection was made, therefore the send button should not be clickable.</exception>
         public async void Send()
         {
             if (_checkedChoice == null)
@@ -174,7 +216,7 @@ namespace Minigame
             var chosenAnswer = _checkedChoice.GetComponentInChildren<Text>();
             
             LoadingIndicator.Instance.Show();
-            var result = await Communicator.AnswerMinigame(_id, new List<string> {chosenAnswer.text});
+            var result = await Communicator.Communicator.AnswerMinigame(_id, new List<string> {chosenAnswer.text});
             LoadingIndicator.Instance.Hide();
             
             /**

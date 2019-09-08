@@ -12,8 +12,8 @@ public class OpeningHandler : MonoBehaviour
 
         // initialize server session and restore previous game if there is one
         Debug.Log("Trying to restore previous game…");
-        await Communicator.SetupApiConnection();
-        var previousGame = await Communicator.RestorePreviousGame();
+        await Communicator.Communicator.SetupApiConnection();
+        var previousGame = await Communicator.Communicator.RestorePreviousGame();
 
         string scene;
         
@@ -27,7 +27,7 @@ public class OpeningHandler : MonoBehaviour
             if (previousGame.AwaitingOpponentToJoin == true)
             {
                 scene = "StartScene";
-                await Communicator.AbortCurrentGame();
+                await Communicator.Communicator.AbortCurrentGame();
                 PlayerPrefs.DeleteKey("CURRENT_GAME_ID");
                 Debug.Log("Deleted previous game");
             }

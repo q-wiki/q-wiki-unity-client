@@ -161,7 +161,7 @@ public class MenuController : MonoBehaviour
 
             _settingsPanel = settingsPanelContainerGame;
 
-            _game = await Communicator.GetCurrentGameState();
+            _game = await Communicator.Communicator.GetCurrentGameState();
 
             /* when in gamescene, check game over state */
 
@@ -256,7 +256,7 @@ public class MenuController : MonoBehaviour
         Debug.Log("Wait for 10 seconds");
         await Task.Delay(10000);
 
-        _game = await Communicator.GetCurrentGameState();
+        _game = await Communicator.Communicator.GetCurrentGameState();
 
         /**
          * check if game is over
@@ -320,7 +320,7 @@ public class MenuController : MonoBehaviour
         Debug.Log($"isNewTurn:{isNewTurn}");
 
         // this is called whenever something happens (minigame finished, player made a turn...)
-        _game = await Communicator.GetCurrentGameState();
+        _game = await Communicator.Communicator.GetCurrentGameState();
 
         foreach (Transform child in grid.transform) Destroy(child.gameObject);
         grid.GetComponent<GridController>().GenerateGrid(_game.Tiles);
@@ -381,7 +381,7 @@ public class MenuController : MonoBehaviour
         newGameButton.enabled = false;
 
 
-        if (!Communicator.IsConnected())
+        if (!Communicator.Communicator.IsConnected())
         {
             Debug.Log("You are not connected to any game");
             // reset the interface so we can try initializing a game again
@@ -390,8 +390,8 @@ public class MenuController : MonoBehaviour
             return;
         }
 
-        await Communicator.CreateOrJoinGame();
-        _game = await Communicator.GetCurrentGameState();
+        await Communicator.Communicator.CreateOrJoinGame();
+        _game = await Communicator.Communicator.GetCurrentGameState();
 
         // we'll be checking the game state until another player joins
         while (_game.AwaitingOpponentToJoin ?? true)
@@ -400,7 +400,7 @@ public class MenuController : MonoBehaviour
 
             // wait for 5 seconds
             await Task.Delay(5000);
-            _game = await Communicator.GetCurrentGameState();
+            _game = await Communicator.Communicator.GetCurrentGameState();
         }
 
         // another player joined :)
@@ -448,7 +448,7 @@ public class MenuController : MonoBehaviour
         Debug.Log("Trying to initialize minigame");
 
         LoadingIndicator.Instance.Show();
-        var miniGame = await Communicator.InitializeMinigame(selectedTile.GetComponent<TileController>().id, categoryId);
+        var miniGame = await Communicator.Communicator.InitializeMinigame(selectedTile.GetComponent<TileController>().id, categoryId);
         LoadingIndicator.Instance.Hide();
 
         if (miniGame.Type == null)
@@ -652,6 +652,11 @@ public class MenuController : MonoBehaviour
         }
     }
 
+    public void OpenPrivacyPolicy()
+    {
+        Application.OpenURL("https://wikidatagame.azurewebsites.net/privacy");
+    }
+
     #region cancellationPanel
 
     public void HandleAbortGamePanel()
@@ -664,7 +669,7 @@ public class MenuController : MonoBehaviour
     {
         Debug.Log($"Trying to delete game");
         LoadingIndicator.Instance.Show();
-        await Communicator.AbortCurrentGame();
+        await Communicator.Communicator.AbortCurrentGame();
         LoadingIndicator.Instance.Hide();
         Debug.Log($"Game deleted");
         ChangeToStartScene();

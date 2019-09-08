@@ -60,7 +60,7 @@ public class PushHandler : MonoBehaviour {
     {
         Debug.Log("Received Registration Token: " + token.Token);
         pushToken = token.Token;
-        await Communicator.UpdateApiConnection(pushToken);
+        await Communicator.Communicator.UpdateApiConnection(pushToken);
     }
 
     private void OnMessageReceived(object sender, MessageReceivedEventArgs e)

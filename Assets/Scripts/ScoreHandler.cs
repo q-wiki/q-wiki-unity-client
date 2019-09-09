@@ -1,29 +1,15 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using WikidataGame.Models;
 
+/// <summary>
+///     This class is used to handle the score of the client.
+///     It also handles the number of remaining turns and shows it to the user.
+/// </summary>
 public class ScoreHandler : MonoBehaviour
 {
-    
-    /**
-     * private fields
-     */
-
-    private long _playerScore;
-    private long _opponentScore;
-
-    private CanvasGroup _canvasGroup => GetComponent<CanvasGroup>();
-    
-    private Text _playerScoreText;
-    private Text _opponentScoreText;
-    private Text _turnsPlayedText;
-
-    private int _turnsPlayed;
-    
     private const string CURRENT_GAME_TURNS_PLAYED = "CURRENT_GAME_TURNS_PLAYED";
 
     /**
@@ -31,7 +17,22 @@ public class ScoreHandler : MonoBehaviour
      */
 
     public static ScoreHandler Instance;
+    private long _opponentScore;
+    private Text _opponentScoreText;
 
+    /**
+     * private fields
+     */
+
+    private long _playerScore;
+    private Text _playerScoreText;
+    private int _turnsPlayed;
+    private Text _turnsPlayedText;
+    private CanvasGroup _canvasGroup => GetComponent<CanvasGroup>();
+
+    /// <summary>
+    ///     On awake, some variables get filled with components.
+    /// </summary>
     public void Awake()
     {
         Instance = this;
@@ -41,14 +42,22 @@ public class ScoreHandler : MonoBehaviour
         _turnsPlayed = PlayerPrefs.GetInt(CURRENT_GAME_TURNS_PLAYED, 0);
     }
 
+    /// <summary>
+    ///     When the ScoreHandler gets called, the text of the turn indicator is set.
+    /// </summary>
     public void Start()
     {
         _turnsPlayedText.text = $"{_turnsPlayed} / 6 Turns";
     }
 
+    /// <summary>
+    ///     This function is used to update the current score of the client.
+    /// </summary>
+    /// <param name="t">The grid as a two-dimensional array of tiles</param>
+    /// <param name="myId">The ID of the client</param>
+    /// <param name="opponentId">The ID of the opponent</param>
     public void UpdatePoints(IList<IList<Tile>> t, string myId, string opponentId)
     {
-
         /**
          * reset player scores before counting again
          */
@@ -57,7 +66,7 @@ public class ScoreHandler : MonoBehaviour
 
         // flatten input to one dimension
         var tiles = t.SelectMany(x => x);
-        
+
         /**
          * check every tile if it is valid / has an owner
          * add (difficulty + 1) to player's score
@@ -67,10 +76,10 @@ public class ScoreHandler : MonoBehaviour
             if (tile == null)
                 continue;
 
-            string ownerId = tile.OwnerId;
+            var ownerId = tile.OwnerId;
             long difficulty = tile.Difficulty + 1 ?? 0;
 
-            if (String.IsNullOrEmpty(ownerId))
+            if (string.IsNullOrEmpty(ownerId))
                 continue;
 
             if (tile.OwnerId == myId)
@@ -78,7 +87,7 @@ public class ScoreHandler : MonoBehaviour
             else
                 _opponentScore += difficulty;
         }
-        
+
         /**
          * update UI text
          */
@@ -87,24 +96,31 @@ public class ScoreHandler : MonoBehaviour
         _opponentScoreText.text = $"{_opponentScore}";
     }
 
+    /// <summary>
+    ///     This function is used to update the remaining turns of the client.
+    /// </summary>
     public void UpdateTurns()
     {
         _turnsPlayed++;
         PlayerPrefs.SetInt(CURRENT_GAME_TURNS_PLAYED, _turnsPlayed);
         _turnsPlayedText.text = $"{_turnsPlayed} / 6 Turns";
+    }
 
-    } 
-    
+    /// <summary>
+    ///     This function is used to show score and remaining points to the user.
+    /// </summary>
     public void Show()
     {
         _canvasGroup.alpha = 1;
         _canvasGroup.blocksRaycasts = true;
     }
 
+    /// <summary>
+    ///     This function is used to hide score and remaining points from the user.
+    /// </summary>
     public void Hide()
     {
         _canvasGroup.alpha = 0;
         _canvasGroup.blocksRaycasts = false;
     }
-    
 }

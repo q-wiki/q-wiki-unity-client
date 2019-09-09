@@ -7,22 +7,11 @@ using UnityEngine.UI;
 namespace Minigame
 {
     /// <summary>
-    /// Frontend implementation of the sorting MiniGame
+    ///     Frontend implementation of the sorting MiniGame
     /// </summary>
     public class MinigameSort : MonoBehaviour, IMinigame
     {
-        /**
-         * public fields
-         */
-        
-        public List<GameObject> choices;
-        public GameObject description;
-        public Sprite boxSprite;
-        public Button sendButton;
-        public Timer timerPrefab;
-        public Image sendButtonImage;
-        public Sprite closeButtonSprite;
-        public Sprite sendButtonSprite;
+        private IList<string> _answerOptions;
 
         /**
          * private fields
@@ -30,23 +19,35 @@ namespace Minigame
 
         private string _id;
         private string _taskDescription;
-        private IList<string> _answerOptions;
         private Timer _timer;
 
-        private MenuController menuController => GameObject.Find("MenuController").GetComponent<MenuController>(); 
+        public Sprite boxSprite;
+        /**
+         * public fields
+         */
+
+        public List<GameObject> choices;
+        public Sprite closeButtonSprite;
+        public GameObject description;
+        public Button sendButton;
+        public Image sendButtonImage;
+        public Sprite sendButtonSprite;
+        public Timer timerPrefab;
+
+        private MenuController menuController => GameObject.Find("MenuController").GetComponent<MenuController>();
         private GameObject ClosePanel => transform.Find("ClosePanel").gameObject;
 
         /// <summary>
-        /// Initialize MiniGame in the frontend
+        ///     Initialize MiniGame in the frontend
         /// </summary>
         /// <param name="miniGameId">ID of the current MiniGame</param>
         /// <param name="taskDescription">Description of the current MiniGame</param>
         /// <param name="answerOptions">Provided answer options</param>
         /// <param name="difficulty">Provided difficulty</param>
         /// <exception cref="Exception">Timer could not be set properly</exception>
-        public async void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions, int difficulty)
+        public async void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions,
+            int difficulty)
         {
-
             Reset();
 
             _id = miniGameId;
@@ -54,13 +55,13 @@ namespace Minigame
             _answerOptions = answerOptions;
             AssignDescription(_taskDescription);
             AssignChoices(_answerOptions);
-            
+
             /**
              * match difficulty to timer value
              */
 
             int milliseconds;
-            
+
             if (difficulty == 0)
                 milliseconds = 30000;
             else if (difficulty == 1)
@@ -72,65 +73,28 @@ namespace Minigame
             /**
              * instantiate timer and let it count down x milliseconds
              */
-            
+
             _timer = Instantiate(timerPrefab, transform.Find("Layout"));
-            _timer.Initialize(this,  milliseconds);
+            _timer.Initialize(this, milliseconds);
             await _timer.Countdown();
         }
-        
-        /// <summary>
-        /// function to reset text colors and sprites before showing the game to user
-        /// </summary>
-        private void Reset()
-        {
-            sendButton.GetComponent<Image>().color = new Color32(80, 158, 158, 255);
-            sendButton.GetComponentInChildren<Text>().text = "Send";
-            sendButtonImage.sprite = sendButtonSprite;
-
-            foreach (var item in choices)
-            {
-                item.GetComponentInChildren<Text>().color = Color.black;
-            }
-        }
 
         /// <summary>
-        /// Assign provided answer options to on-screen placeholders
-        /// </summary>
-        /// <param name="answerOptions">Provided answer options</param>
-        private void AssignChoices(IList<string> answerOptions)
-        {
-            for (var i = 0; i < choices.Count; i++)
-            {
-                var text = choices[i].transform.Find("Text");
-                text.GetComponent<Text>().text = answerOptions[i];
-            }
-        }
-
-        /// <summary>
-        /// Assign provided description to on-screen placeholder
-        /// </summary>
-        /// <param name="desc">Provided description</param>
-        private void AssignDescription(string desc)
-        {
-            description.GetComponent<Text>().text = desc;
-        }
-        
-        /// <summary>
-        /// This is used to force a shutdown of the MiniGame when timer reaches null
+        ///     This is used to force a shutdown of the MiniGame when timer reaches null
         /// </summary>
         public async void ForceQuit()
         {
             Debug.Log("Sorry, you were too slow");
-            var result = await Communicator.Communicator.AnswerMinigame(_id, new List<string> {});
+            var result = await Communicator.AnswerMinigame(_id, new List<string>());
             ClosePanel.SetActive(true);
         }
 
         /// <summary>
-        /// This is used to send answer options to the backend
+        ///     This is used to send answer options to the backend
         /// </summary>
         public async void Send()
         {
-            if (!Communicator.Communicator.IsConnected())
+            if (!Communicator.IsConnected())
             {
                 Debug.Log("You are not connected to any game");
                 return;
@@ -140,17 +104,17 @@ namespace Minigame
             Destroy(_timer.gameObject);
 
             Debug.Log("Handling minigame result");
-            List<string> answers = new List<string>();
+            var answers = new List<string>();
             foreach (var choice in choices)
             {
-                Text text = choice.GetComponentInChildren<Text>();
+                var text = choice.GetComponentInChildren<Text>();
                 answers.Add(text.text);
             }
 
             LoadingIndicator.Instance.Show();
-            var result = await Communicator.Communicator.AnswerMinigame(_id, answers);
+            var result = await Communicator.AnswerMinigame(_id, answers);
             LoadingIndicator.Instance.Hide();
-            
+
             /**
              * use block panel to block further interaction by user
              */
@@ -164,43 +128,70 @@ namespace Minigame
             var correctAnswerColor = new Color32(0x11, 0xA0, 0x4F, 0xFF);
 
             if (answers.SequenceEqual(correctAnswer))
-            {
                 // sequence is correct
                 choices.ForEach(c => c.GetComponentInChildren<Text>().color = correctAnswerColor);
-            }
             else
-            {
                 // sequence has wrong elements => highlight right and wrong elements
                 for (var i = 0; i < choices.Count; i++)
                 {
                     var c = choices[i];
-                    Text text = c.GetComponentInChildren<Text>();
+                    var text = c.GetComponentInChildren<Text>();
                     if (answers[i] == correctAnswer[i])
                         text.color = correctAnswerColor;
                     else
                         text.color = Color.red;
                 }
-            }
 
             ClosePanel.SetActive(true);
             sendButton.GetComponent<Image>().color = new Color32(195, 98, 98, 255);
             sendButton.GetComponentInChildren<Text>().text = "Close";
             sendButtonImage.sprite = closeButtonSprite;
-            
-
         }
 
         /// <summary>
-        /// This is used to close the MiniGame
+        ///     This is used to close the MiniGame
         /// </summary>
         public void Close()
         {
-            
             menuController.GetComponent<MenuController>().RefreshGameState(false);
             transform.Find("BlockPanel").GetComponentInChildren<CanvasGroup>().blocksRaycasts = false;
             menuController.ToggleCameraBehaviour();
             gameObject.SetActive(false);
             ClosePanel.SetActive(false);
+        }
+
+        /// <summary>
+        ///     function to reset text colors and sprites before showing the game to user
+        /// </summary>
+        private void Reset()
+        {
+            sendButton.GetComponent<Image>().color = new Color32(80, 158, 158, 255);
+            sendButton.GetComponentInChildren<Text>().text = "Send";
+            sendButtonImage.sprite = sendButtonSprite;
+
+            foreach (var item in choices) item.GetComponentInChildren<Text>().color = Color.black;
+        }
+
+        /// <summary>
+        ///     Assign provided answer options to on-screen placeholders
+        /// </summary>
+        /// <param name="answerOptions">Provided answer options</param>
+        private void AssignChoices(IList<string> answerOptions)
+        {
+            for (var i = 0; i < choices.Count; i++)
+            {
+                var text = choices[i].transform.Find("Text");
+                text.GetComponent<Text>().text = answerOptions[i];
+            }
+        }
+
+        /// <summary>
+        ///     Assign provided description to on-screen placeholder
+        /// </summary>
+        /// <param name="desc">Provided description</param>
+        private void AssignDescription(string desc)
+        {
+            description.GetComponent<Text>().text = desc;
         }
     }
 }

@@ -1,23 +1,34 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/// <summary>
+///     This classed is used to handle clicks on tiles of the grid while being in-game.
+/// </summary>
+[Obsolete("This class is currently not used anymore.", true)]
 public class OnMouseDownTile : MonoBehaviour
 {
+    private Renderer _objectRenderer;
+    public GameObject actionCanvas;
+    public GameObject attackButton;
+    public GameObject captureButton;
+    public GameObject categoryCanvas;
+    public GameObject levelUpButton;
 
-    Renderer objectRenderer;
-
-    public GameObject captureButton, attackButton, levelUpButton;
-    public GameObject categoryCanvas, actionCanvas;
-
-
-    void Start()
+    /// <summary>
+    ///     Start is called before the first frame update.
+    /// </summary>
+    private void Start()
     {
-        objectRenderer = GetComponent<Renderer>();
+        _objectRenderer = GetComponent<Renderer>();
     }
 
 
+    /// <summary>
+    ///     Set all children of a Transform active or inactive.
+    /// </summary>
+    /// <param name="transform">Transform to use.</param>
+    /// <param name="value">Should children be set active or inactive?</param>
     private void SetActiveAllChildren(Transform transform, bool value)
     {
         foreach (Transform child in transform)
@@ -28,25 +39,27 @@ public class OnMouseDownTile : MonoBehaviour
         }
     }
 
-
-    void OnMouseDown()
+    /// <summary>
+    ///     Handle a mouse down event.
+    /// </summary>
+    private void OnMouseDown()
     {
         if (EventSystem.current.IsPointerOverGameObject()) return;
 
-        if (objectRenderer.sharedMaterial.name == "Red")
+        if (_objectRenderer.sharedMaterial.name == "Red")
         {
             SetActiveAllChildren(actionCanvas.GetComponent<Transform>(), true);
             Debug.Log("Red");
             //Instantiate(actionPanelPrefab, GameObject.FindGameObjectWithTag("Canvas").transform);
             actionCanvas.SetActive(true);
 
-            if(captureButton.activeSelf && attackButton.activeSelf)
+            if (captureButton.activeSelf && attackButton.activeSelf)
             {
                 captureButton.SetActive(false);
                 attackButton.SetActive(false);
             }
         }
-        else if (objectRenderer.sharedMaterial.name == "Blue")
+        else if (_objectRenderer.sharedMaterial.name == "Blue")
         {
             SetActiveAllChildren(actionCanvas.GetComponent<Transform>(), true);
             Debug.Log("Blue");
@@ -58,7 +71,7 @@ public class OnMouseDownTile : MonoBehaviour
                 levelUpButton.SetActive(false);
             }
         }
-        else if (objectRenderer.sharedMaterial.name == "White")
+        else if (_objectRenderer.sharedMaterial.name == "White")
         {
             categoryCanvas.SetActive(false);
             SetActiveAllChildren(actionCanvas.GetComponent<Transform>(), true);
@@ -70,7 +83,8 @@ public class OnMouseDownTile : MonoBehaviour
                 attackButton.SetActive(false);
                 levelUpButton.SetActive(false);
             }
-        } else
+        }
+        else
         {
             Debug.Log("Invalid");
         }

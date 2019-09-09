@@ -1,30 +1,22 @@
-﻿using UnityEngine;
-using System.Collections;
-using Minigame;
+﻿using Minigame;
+using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
+/// <summary>
+///     This class is used to handle click events in the multiple choice MiniGame.
+/// </summary>
 public class ClickHandler : MonoBehaviour, IPointerDownHandler
 {
-
-    // Use this for initialization
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
+    /// <summary>
+    ///     When a click is detected, it is processed by the MiniGame.
+    /// </summary>
+    /// <param name="eventData">Event data about the click event.</param>
     public void OnPointerDown(PointerEventData eventData)
     {
-        MinigameMultipleChoice handler = 
-        GameObject
-            .Find("MinigameMchoiceCanvas")
-            .GetComponent<MinigameMultipleChoice>();
+        var handler =
+            GameObject
+                .Find("MinigameMchoiceCanvas")
+                .GetComponent<MinigameMultipleChoice>();
         handler.Process(gameObject);
     }
 }

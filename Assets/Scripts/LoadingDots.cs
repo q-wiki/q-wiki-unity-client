@@ -1,30 +1,29 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
+[Obsolete("This class is currently not used anymore.", false)]
 public class LoadingDots : MonoBehaviour
 {
-    //the total time of the animation
-    public float repeatTime = 1;
+    //how far does each dot move
+    public float bounceHeight = 10;
 
     //the time for a dot to bounce up and come back down
     public float bounceTime = 0.25f;
 
-    //how far does each dot move
-    public float bounceHeight = 10;
-
     public Transform[] dots;
 
+    //the total time of the animation
+    public float repeatTime = 1;
 
     private void Update()
     {
-        for (int i = 0; i < this.dots.Length; i++)
+        for (var i = 0; i < dots.Length; i++)
         {
-            var p = this.dots[i].localPosition;
-            var t = Time.time * this.repeatTime * Mathf.PI + p.x;
-            var y = (Mathf.Cos(t) - this.bounceTime) / (1f -  this.bounceTime);
-            p.y = Mathf.Max(0, y * this.bounceHeight);
-            this.dots[i].localPosition = p;
+            var p = dots[i].localPosition;
+            var t = Time.time * repeatTime * Mathf.PI + p.x;
+            var y = (Mathf.Cos(t) - bounceTime) / (1f - bounceTime);
+            p.y = Mathf.Max(0, y * bounceHeight);
+            dots[i].localPosition = p;
         }
     }
 }

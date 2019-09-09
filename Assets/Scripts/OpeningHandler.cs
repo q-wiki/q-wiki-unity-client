@@ -1,24 +1,31 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+///     This class is used to handle the opening screen / splash screen of the app.
+///     It preloads a scene and shows a loading indicator.
+/// </summary>
 public class OpeningHandler : MonoBehaviour
 {
     // Start is called before the first frame update
-    async void Start()
+    /// <summary>
+    ///     When the app is started, try to restore a previous game.
+    ///     If it does not exist, show the start screen of the game.
+    /// </summary>
+    private async void Start()
     {
-
         // initialize server session and restore previous game if there is one
         Debug.Log("Trying to restore previous game…");
-        await Communicator.Communicator.SetupApiConnection();
-        var previousGame = await Communicator.Communicator.RestorePreviousGame();
+        await Communicator.SetupApiConnection();
+        var previousGame = await Communicator.RestorePreviousGame();
 
         string scene;
-        
+
         if (previousGame == null)
+        {
             scene = "StartScene";
+        }
         else
         {
             /**
@@ -27,7 +34,7 @@ public class OpeningHandler : MonoBehaviour
             if (previousGame.AwaitingOpponentToJoin == true)
             {
                 scene = "StartScene";
-                await Communicator.Communicator.AbortCurrentGame();
+                await Communicator.AbortCurrentGame();
                 PlayerPrefs.DeleteKey("CURRENT_GAME_ID");
                 Debug.Log("Deleted previous game");
             }
@@ -36,14 +43,19 @@ public class OpeningHandler : MonoBehaviour
                 scene = "GameScene";
             }
         }
-        
+
         Debug.Log($"Switching to {scene}");
         StartCoroutine(LoadScene(scene));
     }
 
-    IEnumerator LoadScene(string scene)
+    /// <summary>
+    ///     Load the provided scene asynchronously.
+    /// </summary>
+    /// <param name="scene">The scene to load.</param>
+    /// <returns>A coroutine.</returns>
+    private IEnumerator LoadScene(string scene)
     {
-        AsyncOperation operation = SceneManager.LoadSceneAsync(scene);
+        var operation = SceneManager.LoadSceneAsync(scene);
         operation.allowSceneActivation = false;
         while (operation.progress < 0.9f)
             yield return null;

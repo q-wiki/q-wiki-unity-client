@@ -1,16 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+///     This class is used to generate sounds when the client clicks on a button etc.
+/// </summary>
 public class ClickSound : MonoBehaviour
 {
     public AudioClip clickSound;
 
-    private Button button { get { return GetComponent<Button>(); } }
-    private AudioSource source { get { return GetComponent<AudioSource>(); } }
-    // Start is called before the first frame update
-    void Start()
+    private Button button => GetComponent<Button>();
+    private AudioSource source => GetComponent<AudioSource>();
+
+    /// <summary>
+    ///     Start is called before the first frame update.
+    /// </summary>
+    private void Start()
     {
         gameObject.AddComponent<AudioSource>();
         source.clip = clickSound;
@@ -19,13 +23,11 @@ public class ClickSound : MonoBehaviour
         button.onClick.AddListener(() => PlaySound());
     }
 
-    void PlaySound()
+    /// <summary>
+    ///     One shot of a sound is played.
+    /// </summary>
+    private void PlaySound()
     {
         source.PlayOneShot(clickSound);
-    }
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

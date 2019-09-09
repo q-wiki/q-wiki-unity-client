@@ -1,39 +1,44 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using WikidataGame;
 using WikidataGame.Models;
 
+/// <summary>
+///     This class handles the behaviour of a single tile.
+///     Several values from the backend are stored and updated in place to ensure accessibility.
+/// </summary>
 public class TileController : MonoBehaviour
 {
-    
-    /**
-     * public fields
-     */
-    
-    public long internalId;
-    public string id;
-    public string ownerId;
-    public int difficulty;
-    public IList<Category> availableCategories;
-    public string chosenCategoryId;
-    public GameObject grid;
-    public Material[] tileMaterials;
+    private MeshRenderer _circleRenderer;
+    private bool _direction;
+    private Game _game;
+    private bool _isHighlight;
 
     /**
      * private fields
      */
     private string _myId;
-    private Game _game;
-    private bool _isHighlight;
-    private bool _direction;
-    private MeshRenderer _circleRenderer;
-    
+    public IList<Category> availableCategories;
+    public string chosenCategoryId;
+    public int difficulty;
+    public GameObject grid;
+    public string id;
+
+    /**
+     * public fields
+     */
+
+    public long internalId;
+    public string ownerId;
+    public Material[] tileMaterials;
+
     private MenuController menuController => GameObject.Find("MenuController").GetComponent<MenuController>();
 
-    void Start()
+    /// <summary>
+    ///     When a TileController is instantiated, its material is set.
+    /// </summary>
+    private void Start()
     {
         _myId = menuController.PlayerId();
         _circleRenderer = transform
@@ -46,37 +51,28 @@ public class TileController : MonoBehaviour
             _circleRenderer.material = tileMaterials[1];
     }
 
-    
-    /**
-     * direction: true = up , false = down
-     */
+    /// <summary>
+    ///     The update function checks if a tile needs to be highlighted.
+    ///     It is highlighted if its a possible move for the current user.
+    ///     The highlighting looks like a glow.
+    ///     Directions of alpha value: true = up, false = down
+    /// </summary>
     private void Update()
     {
         if (_isHighlight)
         {
-            Color color = _circleRenderer.material.color;
-            _direction = (Math.Abs(color.a) <= 0.1f || Math.Abs(color.a) >= 0.3f) ? !_direction : _direction;
+            var color = _circleRenderer.material.color;
+            _direction = Math.Abs(color.a) <= 0.1f || Math.Abs(color.a) >= 0.3f ? !_direction : _direction;
             color.a += _direction ? 0.02f : -0.02f;
             _circleRenderer.material.color = color;
         }
     }
-    
-    
-    [Obsolete("LevelUp is deprecated and currently not in use")]
-    public void LevelUp()
-    {
-        difficulty++;
-        // Trigger next level animation
-        if(difficulty > 1)
-        {
-            gameObject.GetComponent<Animator>().SetBool("BaseA2", true);
-        }
-        else
-        {
-            gameObject.GetComponent<Animator>().SetBool("BaseA", true);
-        }
-    }
 
+    /// <summary>
+    ///     This function is used to activate or deactivate all children of a Transform object.
+    /// </summary>
+    /// <param name="transform">The Transform object to be modified.</param>
+    /// <param name="value">Should children be set active or inactive?</param>
     private void SetActiveAllChildren(Transform transform, bool value)
     {
         foreach (Transform child in transform)
@@ -86,39 +82,38 @@ public class TileController : MonoBehaviour
         }
     }
 
-    void OnMouseDown()
+    /// <summary>
+    ///     When the user clicks on a tile that's accessible and a possible move,
+    ///     a canvas is shown depending on the state of the tile.
+    /// </summary>
+    private void OnMouseDown()
     {
         if (IsPointerOverUIObject())
             return;
 
-        GridController gridController = grid.GetComponent<GridController>();
+        var gridController = grid.GetComponent<GridController>();
 
         if (!gridController.IsPossibleMove(this))
             return;
-            
-        GameObject previousTile = menuController.selectedTile;
+
+        var previousTile = menuController.selectedTile;
         if (previousTile != null)
         {
-            var circleRenderer = menuController.selectedTile.transform.Find("TileBase/OuterCircle").GetComponent<MeshRenderer>();
-            
+            var circleRenderer = menuController.selectedTile.transform.Find("TileBase/OuterCircle")
+                .GetComponent<MeshRenderer>();
+
             if (string.IsNullOrEmpty(previousTile.GetComponent<TileController>().ownerId))
-            {
                 circleRenderer.material = tileMaterials[3];
-            }
             else if (previousTile.GetComponent<TileController>().ownerId == _myId)
-            {
                 circleRenderer.material = tileMaterials[0];
-            }
             else
-            {
                 circleRenderer.material = tileMaterials[1];
-            }
         }
 
         menuController.selectedTile = gameObject;
 
         gameObject.transform.Find("TileBase/OuterCircle").GetComponent<MeshRenderer>().material = tileMaterials[2];
-        
+
 
         //Owned
         if (ownerId == _myId && difficulty < 2)
@@ -131,6 +126,7 @@ public class TileController : MonoBehaviour
                 gridController.captureButton.SetActive(false);
                 gridController.attackButton.SetActive(false);
             }
+
             menuController.levelText.text = "Tile Level: " + (difficulty + 1);
         }
         //Enemy
@@ -144,6 +140,7 @@ public class TileController : MonoBehaviour
                 gridController.captureButton.SetActive(false);
                 gridController.levelUpButton.SetActive(false);
             }
+
             menuController.levelText.text = "Tile Level: " + (difficulty + 1);
         }
         //Empty
@@ -158,6 +155,7 @@ public class TileController : MonoBehaviour
                 gridController.attackButton.SetActive(false);
                 gridController.levelUpButton.SetActive(false);
             }
+
             menuController.levelText.text = "Tile Level: " + (difficulty + 1);
         }
         else
@@ -166,20 +164,25 @@ public class TileController : MonoBehaviour
         }
     }
 
-    /**
-     * function to check if there are any UI objects showing above the tile
-     */
-    private bool IsPointerOverUIObject() {
-        PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
+    /// <summary>
+    ///     This function is used to check if there are any UI objects showing above the tile.
+    /// </summary>
+    /// <returns></returns>
+    private bool IsPointerOverUIObject()
+    {
+        var eventDataCurrentPosition = new PointerEventData(EventSystem.current);
         eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-        List<RaycastResult> results = new List<RaycastResult>();
+        var results = new List<RaycastResult>();
         EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
         return results.Count > 0;
     }
 
+    /// <summary>
+    ///     This function is used to set whether a tile should be highlighted.
+    /// </summary>
+    /// <param name="isHighlight">Should a tile be highlighted?</param>
     public void SetHighlight(bool isHighlight)
     {
         _isHighlight = isHighlight;
     }
-
 }

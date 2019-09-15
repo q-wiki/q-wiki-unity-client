@@ -11,6 +11,75 @@ using WikidataGame.Models;
 /// </summary>
 public class MenuController : MonoBehaviour
 {
+    
+    
+    /// <summary>
+    ///     These are the public fields of the game controller.
+    ///     They can be accessed via Unity Editor or other classes.
+    /// </summary>
+
+    public GameObject grid;
+
+    public AudioClip clickSound;
+    public GameObject audioSource;
+    public GameObject soundButtonIcon;
+    public GameObject notificationButtonIcon;
+    public GameObject vibrationButtonIcon;
+    public GameObject[] miniGameCanvases;
+    public GameObject categoryCanvas;
+    public GameObject buttonPrefab;
+    public GameObject menuGrid;
+    public CanvasGroup blockActionPanel;
+    public Button newGameButton;
+    public Sprite soundOff;
+    public Sprite soundOn;
+    public Sprite notificationOff;
+    public Sprite notificationOn;
+    public Sprite vibrationOff;
+    public Sprite vibrationOn;
+    public Sprite opponentImage;
+    public Sprite myImage;
+    public Sprite newGameButtonGrey;
+    public Sprite newGameIconGrey;
+    public bool awaitingOpponentToJoin;
+    public Camera camera;
+    public Material[] tileMaterials;
+    public GameObject categoryPanel;
+    public GameObject actionPanel;
+    public GameObject settingsPanel;
+    public GameObject confirmationPanel;
+    public GameObject settingsPanelContainerGame;
+    public GameObject settingsPanelStart;
+    public GameObject startPanelStart;
+    public Text levelText;
+    public GameObject selectedTile;
+    public GameObject gameOverCanvas;
+    public Text gameOverText;
+    public GameObject legalNoticePanel;
+    public GameObject creditsPanel;
+
+    /// <summary>
+    ///     These are private fields of the game controller.
+    ///     They can only be accessed from within the class.
+    /// </summary>
+
+    private static MenuController Instance;
+
+    private static Game _game;
+    private GameObject _startPanel;
+    private GameObject _settingsPanel;
+    public Button c1, c2, c3;
+    private bool _soundToggle;
+    private bool _notificationToggle;
+    private bool _vibrationToggle;
+    private bool _settingsToggle;
+    private bool _isWaitingState;
+    private bool _isHandling;
+    private Scene currentScene;
+    private readonly string CURRENT_GAME_BLOCK_TURN_UPDATE = "CURRENT_GAME_BLOCK_TURN_UPDATE";
+    private AudioSource Source => GetComponent<AudioSource>();
+
+
     /// <summary>
     ///     update method listens for changes in the game state when it's currently not your turn
     /// </summary>
@@ -638,80 +707,6 @@ public class MenuController : MonoBehaviour
     {
         Application.OpenURL("https://wikidatagame.azurewebsites.net/privacy");
     }
-
-    /// <summary>
-    ///     These are the public fields of the game controller.
-    ///     They can be accessed via Unity Editor or other classes.
-    /// </summary>
-
-    #region public_fields
-
-    public GameObject grid;
-
-    public AudioClip clickSound;
-    public GameObject audioSource;
-    public GameObject soundButtonIcon;
-    public GameObject notificationButtonIcon;
-    public GameObject vibrationButtonIcon;
-    public GameObject[] miniGameCanvases;
-    public GameObject categoryCanvas;
-    public GameObject buttonPrefab;
-    public GameObject menuGrid;
-    public CanvasGroup blockActionPanel;
-    public Button newGameButton;
-    public Sprite soundOff;
-    public Sprite soundOn;
-    public Sprite notificationOff;
-    public Sprite notificationOn;
-    public Sprite vibrationOff;
-    public Sprite vibrationOn;
-    public Sprite opponentImage;
-    public Sprite myImage;
-    public Sprite newGameButtonGrey;
-    public Sprite newGameIconGrey;
-    public bool awaitingOpponentToJoin;
-    public Camera camera;
-    public Material[] tileMaterials;
-    public GameObject categoryPanel;
-    public GameObject actionPanel;
-    public GameObject settingsPanel;
-    public GameObject confirmationPanel;
-    public GameObject settingsPanelContainerGame;
-    public GameObject settingsPanelStart;
-    public GameObject startPanelStart;
-    public Text levelText;
-    public GameObject selectedTile;
-    public GameObject gameOverCanvas;
-    public Text gameOverText;
-    public GameObject legalNoticePanel;
-    public GameObject creditsPanel;
-
-    #endregion
-
-    /// <summary>
-    ///     These are private fields of the game controller.
-    ///     They can only be accessed from within the class.
-    /// </summary>
-
-    #region private_fields
-
-    private static MenuController Instance;
-
-    private static Game _game;
-    private GameObject _startPanel;
-    private GameObject _settingsPanel;
-    public Button c1, c2, c3;
-    private bool _soundToggle;
-    private bool _notificationToggle;
-    private bool _vibrationToggle;
-    private bool _settingsToggle;
-    private bool _isWaitingState;
-    private bool _isHandling;
-    private Scene currentScene;
-    private readonly string CURRENT_GAME_BLOCK_TURN_UPDATE = "CURRENT_GAME_BLOCK_TURN_UPDATE";
-    private AudioSource Source => GetComponent<AudioSource>();
-
-    #endregion
 
     #region cancellationPanel
 

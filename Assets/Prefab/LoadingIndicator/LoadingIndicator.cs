@@ -34,6 +34,12 @@ public class LoadingIndicator : MonoBehaviour
         _canvasGroup.blocksRaycasts = true;
         _animator.enabled = true;
     }
+    
+    public void ShowWithoutBlockingUI()
+    {
+        _canvasGroup.alpha = 1;
+        _animator.enabled = true;
+    }
 
     public void Hide()
     {

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
+
 
 namespace Minigame
 {
@@ -27,6 +29,8 @@ namespace Minigame
          */
 
         public List<GameObject> choices;
+        public List<Sprite> numbersSprites;
+        public Sprite unselectedSprite;
         public Sprite closeButtonSprite;
         public GameObject description;
         public Button sendButton;
@@ -34,6 +38,7 @@ namespace Minigame
         public Sprite sendButtonSprite;
         public Timer timerPrefab;
 
+        private List<GameObject> sortedChoices = new List<GameObject>();
         private MenuController menuController => GameObject.Find("MenuController").GetComponent<MenuController>();
         private GameObject ClosePanel => transform.Find("ClosePanel").gameObject;
 
@@ -80,6 +85,31 @@ namespace Minigame
         }
 
         /// <summary>
+        ///     Visual representation of selected choice, when a new choice is clicked.
+        ///     Updating sorted list to relfect changes.
+        /// </summary>
+        public void ChoiceSortOnClick()
+        {
+            GameObject clickedChoice = EventSystem.current.currentSelectedGameObject;  
+
+            if (sortedChoices.Contains(clickedChoice))
+            {
+                sortedChoices.Remove(clickedChoice);
+                clickedChoice.transform.GetChild(0).GetComponent<Image>().sprite = unselectedSprite;
+                foreach (GameObject choice in sortedChoices)
+                {
+                    choice.transform.GetChild(0).GetComponent<Image>().sprite = numbersSprites[sortedChoices.IndexOf(choice)];
+                }
+            }
+            else
+            {
+                sortedChoices.Add(clickedChoice);
+                clickedChoice.transform.GetChild(0).GetComponent<Image>().sprite = numbersSprites[sortedChoices.IndexOf(clickedChoice)];
+            }
+
+        }
+
+        /// <summary>
         ///     This is used to force a shutdown of the MiniGame when timer reaches null
         /// </summary>
         public async void ForceQuit()
@@ -105,7 +135,18 @@ namespace Minigame
 
             Debug.Log("Handling minigame result");
             var answers = new List<string>();
-            foreach (var choice in choices)
+            // if not all answers selected : fill sorted list with missing answers
+            if (sortedChoices.Count < 4)
+            {
+                foreach(var choice in choices)
+                {
+                    if (!sortedChoices.Contains(choice))
+                    {
+                        sortedChoices.Add(choice);
+                    }
+                }
+            }
+            foreach (var choice in sortedChoices)
             {
                 var text = choice.GetComponentInChildren<Text>();
                 answers.Add(text.text);

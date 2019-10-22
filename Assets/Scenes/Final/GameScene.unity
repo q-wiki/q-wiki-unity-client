@@ -996,17 +996,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71a9fe1349092d64bbf073f7091f5694, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dragSpeed: 0.5
+  heightLimitMax: 14
+  heightLimitMin: 3
+  MAX_X: 11.2
+  MAX_Z: 4.2
+  MIN_X: -8.4
+  MIN_Z: -18.4
+  moveSpeed: 0.15
+  rotationDegree: 2
   yTranslocation: 0.5
   zTranslocation: 0.5
-  moveSpeed: 0.15
-  heightLimitMin: 3
-  heightLimitMax: 14
-  rotationDegree: 2
-  dragSpeed: 0.5
-  MIN_X: -8.4
-  MAX_X: 11.2
-  MIN_Z: -18.4
-  MAX_Z: 4.2
 --- !u!1 &199098775
 GameObject:
   m_ObjectHideFlags: 0
@@ -3411,8 +3411,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9261777ad443cd449f60d79dfedf002, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tiles: []
   tileAnimators: []
+  tiles: []
 --- !u!4 &758734832
 Transform:
   m_ObjectHideFlags: 0
@@ -4535,7 +4535,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1037221916
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6892,11 +6892,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fff55f63833c48c2847081cd7dea7232, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  turnIndicator: {fileID: 830926507}
   actionPoints:
   - {fileID: 2028500785}
   - {fileID: 505697470}
   - {fileID: 1474776012}
+  turnIndicator: {fileID: 830926507}
 --- !u!225 &1540492059
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -7455,22 +7455,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d2903ace44717f4f8d057176f8e55a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  actionCanvas: {fileID: 1345315749}
+  addGap: 1
+  attackButton: {fileID: 1846780633}
   baseTiles:
   - {fileID: 6059745421610948337, guid: e2c6dacfdd319184b87ee0b590be1c07, type: 3}
+  captureButton: {fileID: 692387599}
+  categoryCanvas: {fileID: 880238774}
   categoryObjects:
   - {fileID: 7486172543914186852, guid: e541cdb3275307d4b9d0fccd9e7a2605, type: 3}
   - {fileID: 6359937582784718252, guid: f735fd7698a19294c80a9a9437663f4e, type: 3}
   - {fileID: 4424543093271639861, guid: 8f42127972d8f26468c059c16ebe8ea1, type: 3}
   - {fileID: 1398739566024778803, guid: a8f96a63046058b41a981f49aa32fe90, type: 3}
+  gap: 0.18
   hexPrefabSpawn: {fileID: 5844315454276757609, guid: 408a487d6dc92d041a4ec7bc0991d16b,
     type: 3}
-  captureButton: {fileID: 692387599}
-  attackButton: {fileID: 1846780633}
   levelUpButton: {fileID: 868305536}
-  categoryCanvas: {fileID: 880238774}
-  actionCanvas: {fileID: 1345315749}
-  addGap: 1
-  gap: 0.18
 --- !u!1 &1686396149
 GameObject:
   m_ObjectHideFlags: 0
@@ -9025,19 +9025,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de6c254fe477148cca44b97c012754a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  boxSprite: {fileID: 21300000, guid: 9b9dbca163b3569408e3f458dbaae95c, type: 3}
   choices:
   - {fileID: 2125643362624418194}
   - {fileID: 2125643363017998110}
   - {fileID: 2125643363323060863}
   - {fileID: 2125643362818356456}
+  closeButtonSprite: {fileID: 21300000, guid: 28f10292b85333a4093d63d6c55de696, type: 3}
   description: {fileID: 2125643363245379157}
-  boxSprite: {fileID: 21300000, guid: 9b9dbca163b3569408e3f458dbaae95c, type: 3}
   sendButton: {fileID: 2125643362588712842}
+  sendButtonImage: {fileID: 1921785741}
+  sendButtonSprite: {fileID: 21300000, guid: 9ca135e4b19996e4c94869d682461aef, type: 3}
   timerPrefab: {fileID: 1947301806055178073, guid: 657e39921e39449fb82c95a3e0ede49a,
     type: 3}
-  sendButtonImage: {fileID: 1921785741}
-  closeButtonSprite: {fileID: 21300000, guid: 28f10292b85333a4093d63d6c55de696, type: 3}
-  sendButtonSprite: {fileID: 21300000, guid: 9ca135e4b19996e4c94869d682461aef, type: 3}
 --- !u!1 &1955937725
 GameObject:
   m_ObjectHideFlags: 0
@@ -12681,21 +12681,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f7e88aff67314548bf8c7042fe574ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menuController: {fileID: 1262909488}
+  boxSprite: {fileID: 21300000, guid: 9b9dbca163b3569408e3f458dbaae95c, type: 3}
+  checkSprite: {fileID: 21300000, guid: 057d64e35c75c22408b01eefa5437cf1, type: 3}
   choices:
   - {fileID: 9167687158886367123}
   - {fileID: 9167687160502893012}
   - {fileID: 9167687159858426316}
   - {fileID: 9167687159701807684}
+  closeButtonSprite: {fileID: 21300000, guid: 28f10292b85333a4093d63d6c55de696, type: 3}
   description: {fileID: 9167687160230066449}
-  boxSprite: {fileID: 21300000, guid: 9b9dbca163b3569408e3f458dbaae95c, type: 3}
-  checkSprite: {fileID: 21300000, guid: 057d64e35c75c22408b01eefa5437cf1, type: 3}
+  menuController: {fileID: 1262909488}
   sendButton: {fileID: 9167687159558497105}
+  sendButtonImage: {fileID: 561744994}
+  sendButtonSprite: {fileID: 21300000, guid: 9ca135e4b19996e4c94869d682461aef, type: 3}
   timerPrefab: {fileID: 1947301806055178073, guid: 657e39921e39449fb82c95a3e0ede49a,
     type: 3}
-  sendButtonImage: {fileID: 561744994}
-  closeButtonSprite: {fileID: 21300000, guid: 28f10292b85333a4093d63d6c55de696, type: 3}
-  sendButtonSprite: {fileID: 21300000, guid: 9ca135e4b19996e4c94869d682461aef, type: 3}
 --- !u!114 &9167687158886367122
 MonoBehaviour:
   m_ObjectHideFlags: 0

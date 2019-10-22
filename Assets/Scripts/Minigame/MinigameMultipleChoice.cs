@@ -99,9 +99,37 @@ namespace Minigame
         public async void ForceQuit()
         {
             Debug.Log("Sorry, you were too slow");
-            var result = await Communicator.AnswerMinigame(_id, new List<string>());
+            transform.Find("BlockPanel").GetComponentInChildren<CanvasGroup>().blocksRaycasts = true;
+
+            sendButton.GetComponent<Image>().color = new Color32(195, 98, 98, 255);
+            sendButton.GetComponentInChildren<Text>().text = "Close Minigame";
+            sendButtonImage.sprite = closeButtonSprite;
             ClosePanel.SetActive(true);
+
+            if (_checkedChoice == null)
+            {
+                var result = await Communicator.AnswerMinigame(_id, new List<string>());
+                var correctAnswer = result.CorrectAnswer[0];
+                var correctAnswerColor = new Color32(0x11, 0xA0, 0x4F, 0xFF);
+
+                foreach (var choice in choices)
+                {
+                    var text = choice
+                        .transform
+                        .Find("Text")
+                        .gameObject;
+                    if (text.GetComponent<Text>().text == correctAnswer)
+                        text.GetComponent<Text>().color = correctAnswerColor;
+                }
+
+
+            }
+            else
+            {
+                Send();           
+            }
         }
+
 
         /// <summary>
         ///     This is used to send an answer option to the backend
@@ -156,7 +184,7 @@ namespace Minigame
 
             ClosePanel.SetActive(true);
             sendButton.GetComponent<Image>().color = new Color32(195, 98, 98, 255);
-            sendButton.GetComponentInChildren<Text>().text = "Close";
+            sendButton.GetComponentInChildren<Text>().text = "Close Minigame";
             sendButtonImage.sprite = closeButtonSprite;
         }
 

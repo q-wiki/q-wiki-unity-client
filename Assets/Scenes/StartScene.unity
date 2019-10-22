@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657838, g: 0.49641234, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2010,8 +2010,6 @@ MonoBehaviour:
   vibrationButtonIcon: {fileID: 0}
   miniGameCanvases: []
   categoryCanvas: {fileID: 0}
-  newGameButtonPlayImage: {fileID: 2078860720}
-  loadingDots: {fileID: 1989982043}
   buttonPrefab: {fileID: 6944949401872547322, guid: 915e8328a51469a419657d6030088918,
     type: 3}
   menuGrid: {fileID: 2077317375}
@@ -2034,7 +2032,7 @@ MonoBehaviour:
   actionPanel: {fileID: 0}
   settingsPanel: {fileID: 0}
   confirmationPanel: {fileID: 0}
-  settingsPanelGame: {fileID: 0}
+  settingsPanelContainerGame: {fileID: 0}
   settingsPanelStart: {fileID: 1335742354}
   startPanelStart: {fileID: 1644052699}
   levelText: {fileID: 0}
@@ -3032,7 +3030,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 139.66, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1625368454
@@ -3997,7 +3995,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 317.705, y: 0}
   m_SizeDelta: {x: 0, y: 353.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1988498065
@@ -4089,13 +4087,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5dd3637a723e7e344a174795cd9467fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  repeatTime: 1.5
-  bounceTime: 0.2
   bounceHeight: 20
+  bounceTime: 0.2
   dots:
   - {fileID: 1743831029}
   - {fileID: 617746889}
   - {fileID: 1493518118}
+  repeatTime: 1.5
 --- !u!1 &2049297369
 GameObject:
   m_ObjectHideFlags: 0
@@ -4212,7 +4210,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 139.66, y: 0}
   m_SizeDelta: {x: 0, y: 99.8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2077317377

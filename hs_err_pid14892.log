@@ -1,0 +1,160 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x000000006b222eb3, pid=14892, tid=10276
+#
+# JRE version:  (9.0+181) (build )
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (9+181, mixed mode, tiered, compressed oops, g1 gc, windows-amd64)
+# Problematic frame:
+# V  [jvm.dll+0x1b2eb3]
+#
+# No core dump will be written. Minidumps are not enabled by default on client versions of Windows
+#
+# If you would like to submit a bug report, please visit:
+#   http://bugreport.java.com/bugreport/crash.jsp
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: 
+
+Host: Intel(R) Core(TM) i7 CPU         860  @ 2.80GHz, 8 cores, 15G,  Windows 10 , 64 bit Build 18362 (10.0.18362.329)
+Time: Sun Oct 20 03:35:52 2019 Mitteleuropäische Sommerzeit elapsed time: 0 seconds (0d 0h 0m 0s)
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x000001fae3291000):  JavaThread "Unknown thread" [_thread_in_vm, id=10276, stack(0x0000005353f00000,0x0000005354000000)]
+
+Stack: [0x0000005353f00000,0x0000005354000000],  sp=0x0000005353fff880,  free space=1022k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+
+
+siginfo: EXCEPTION_ACCESS_VIOLATION (0xc0000005), reading address 0x0000000000000000
+
+
+Registers:
+RAX=0x0000000000000001, RBX=0x0000000000000000, RCX=0x0000000000000000, RDX=0x000001fae3276301
+RSP=0x0000005353fff880, RBP=0x0000000000000000, RSI=0x0000005353fffcb8, RDI=0x000001fae3291000
+R8 =0x0000000000000000, R9 =0x0000000000000006, R10=0x0000000000000006, R11=0x0000005353fff100
+R12=0x000000006b5afb80, R13=0x0000000000000000, R14=0x000001fae327a6d8, R15=0x0000000000000000
+RIP=0x000000006b222eb3, EFLAGS=0x0000000000010256
+
+Top of Stack: (sp=0x0000005353fff880)
+0x0000005353fff880:   000001fae329b380 000000006b61d7c3
+0x0000005353fff890:   0000000000000038 000000006b5d1c2d
+0x0000005353fff8a0:   000000006b84e798 000000006b7e9f70
+0x0000005353fff8b0:   0000000000000140 0000005353fff910
+0x0000005353fff8c0:   000001fae3291000 000000006b5d1f85
+0x0000005353fff8d0:   000001fae328fa90 0000000000000000
+0x0000005353fff8e0:   0000000000000000 000000006b5d1967
+0x0000005353fff8f0:   0000000000000000 000000006b61d5b9
+0x0000005353fff900:   00000603b7024486 000000006b070000
+0x0000005353fff910:   000001fae329b380 0000000000000000
+0x0000005353fff920:   0000000000000004 0000cd9c5f8e8886
+0x0000005353fff930:   0000000000000000 000000006b222a65
+0x0000005353fff940:   0000000000000004 0000000000000000
+0x0000005353fff950:   0000000000000000 0000005353fffcb8
+0x0000005353fff960:   0000005353fff9a0 000000006b220e11
+0x0000005353fff970:   0000000000000000 0000005353fff9a0 
+
+Instructions: (pc=0x000000006b222eb3)
+0x000000006b222e93:   48 33 c4 48 89 84 24 a8 00 00 00 0f b6 c2 88 54
+0x000000006b222ea3:   24 31 48 8b e9 49 83 c8 ff 0f 1f 40 00 49 ff c0
+0x000000006b222eb3:   41 80 3c 08 00 75 f6 33 f6 45 33 ed 88 44 24 30
+0x000000006b222ec3:   45 85 c0 0f 8e 78 02 00 00 8b 0d 82 61 7e 00 65 
+
+
+
+---------------  P R O C E S S  ---------------
+
+Java Threads: ( => current thread )
+
+Other Threads:
+
+[error occurred during error reporting (printing all threads), id 0xc0000005]
+
+VM state:not at safepoint (not fully initialized)
+
+VM Mutex/Monitor currently owned by a thread: None
+
+
+[error occurred during error reporting (printing compressed oops mode), id 0xc0000005]
+
+Deoptimization events (0 events):
+No events
+
+Classes redefined (0 events):
+No events
+
+Internal exceptions (0 events):
+No events
+
+Events (0 events):
+No events
+
+
+Dynamic libraries:
+0x00007ff744190000 - 0x00007ff7441ce000 	C:\Program Files\Java\jdk-9\bin\java.exe
+0x00007ffac0f20000 - 0x00007ffac1110000 	C:\WINDOWS\SYSTEM32\ntdll.dll
+0x00007ffabf940000 - 0x00007ffabf9f2000 	C:\WINDOWS\System32\KERNEL32.DLL
+0x00007ffabe7a0000 - 0x00007ffabea43000 	C:\WINDOWS\System32\KERNELBASE.dll
+0x00007ffabfa00000 - 0x00007ffabfaa3000 	C:\WINDOWS\System32\ADVAPI32.dll
+0x00007ffac0260000 - 0x00007ffac02fe000 	C:\WINDOWS\System32\msvcrt.dll
+0x00007ffac05e0000 - 0x00007ffac0677000 	C:\WINDOWS\System32\sechost.dll
+0x00007ffac04b0000 - 0x00007ffac05d0000 	C:\WINDOWS\System32\RPCRT4.dll
+0x00007ffac0300000 - 0x00007ffac0494000 	C:\WINDOWS\System32\USER32.dll
+0x00007ffabefa0000 - 0x00007ffabefc1000 	C:\WINDOWS\System32\win32u.dll
+0x00007ffabfab0000 - 0x00007ffabfad6000 	C:\WINDOWS\System32\GDI32.dll
+0x00007ffabec00000 - 0x00007ffabed94000 	C:\WINDOWS\System32\gdi32full.dll
+0x00007ffabe630000 - 0x00007ffabe6ce000 	C:\WINDOWS\System32\msvcp_win.dll
+0x00007ffabea50000 - 0x00007ffabeb4a000 	C:\WINDOWS\System32\ucrtbase.dll
+0x00007ffabd230000 - 0x00007ffabd4b5000 	C:\WINDOWS\WinSxS\amd64_microsoft.windows.common-controls_6595b64144ccf1df_6.0.18362.418_none_e6c6b287130d565d\COMCTL32.dll
+0x00007ffabb070000 - 0x00007ffabb07a000 	C:\WINDOWS\SYSTEM32\VERSION.dll
+0x00007ffac0a00000 - 0x00007ffac0d36000 	C:\WINDOWS\System32\combase.dll
+0x00007ffabeb50000 - 0x00007ffabebd0000 	C:\WINDOWS\System32\bcryptPrimitives.dll
+0x00007ffabf860000 - 0x00007ffabf88e000 	C:\WINDOWS\System32\IMM32.DLL
+0x00007ffa80270000 - 0x00007ffa8035f000 	C:\Program Files\Java\jdk-9\bin\msvcr120.dll
+0x00007ffa807f0000 - 0x00007ffa80896000 	C:\Program Files\Java\jdk-9\bin\msvcp120.dll
+0x000000006b070000 - 0x000000006ba9a000 	C:\Program Files\Java\jdk-9\bin\server\jvm.dll
+0x00007ffac09f0000 - 0x00007ffac09f8000 	C:\WINDOWS\System32\PSAPI.DLL
+0x00007ffabadf0000 - 0x00007ffabae14000 	C:\WINDOWS\SYSTEM32\WINMM.dll
+0x00007ffabaf00000 - 0x00007ffabaf09000 	C:\WINDOWS\SYSTEM32\WSOCK32.dll
+0x00007ffac08b0000 - 0x00007ffac091f000 	C:\WINDOWS\System32\WS2_32.dll
+0x00007ffabac90000 - 0x00007ffabacbd000 	C:\WINDOWS\SYSTEM32\WINMMBASE.dll
+0x00007ffabe6d0000 - 0x00007ffabe71a000 	C:\WINDOWS\System32\cfgmgr32.dll
+0x00007ffabba40000 - 0x00007ffabba4f000 	C:\Program Files\Java\jdk-9\bin\verify.dll
+0x00007ffabb1a0000 - 0x00007ffabb1c7000 	C:\Program Files\Java\jdk-9\bin\java.dll
+0x00007ffabb860000 - 0x00007ffabb876000 	C:\Program Files\Java\jdk-9\bin\zip.dll
+0x00007ffab4d70000 - 0x00007ffab4d7a000 	C:\Program Files\Java\jdk-9\bin\jimage.dll
+0x00007ffabd8e0000 - 0x00007ffabdad4000 	C:\WINDOWS\SYSTEM32\dbghelp.dll
+
+VM Arguments:
+java_command: <unknown>
+java_class_path (initial): <not set>
+Launcher Type: SUN_STANDARD
+
+Logging:
+Log output configuration:
+#0: stdout all=warning uptime,level,tags
+#1: stderr all=off uptime,level,tags
+
+Environment Variables:
+JAVA_HOME=C:\Program Files\Java\jdk-9\
+PATH=C:\Program Files\MiKTeX 2.9\miktex\bin\x64\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files (x86)\Windows Live\Shared;C:\Program Files\CMake\bin;F:\Uni\HASS\OpenCV2\opencv\build\x64\vc14\bin;;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Users\Jonas\.dnx\bin;C:\Users\Jonas\AppData\Local\Microsoft\WindowsApps;C:\Users\Jonas\AppData\Local\atom\bin;C:\Users\Jonas\Anaconda3\Scripts;C:\Users\Jonas\Anaconda3\pkgs\python-3.6.3-h9e2ca53_1;C:\Users\Jonas\Anaconda3\pkgs\python-3.6.3-h9e2ca53_1\Scripts;C:\Users\Jonas\Anaconda3\pkgs\cudatoolkit-8.0-3;C:\Users\Jonas\Anaconda3\pkgs\cudatoolkit-8.0-3\DLLs;C:\Users\Jonas\AppData\Local\Google\Cloud SDK\google-cloud-sdk\bin;C:\cuda\bin;C:\Users\Jonas\Anaconda3\envs\tensorflow\Lib\site-packages;C:\Users\Jonas\Anaconda3\pkgs;;%USERPROFILE%\AppData\Local\Microsoft\WindowsApps
+USERNAME=Jonas
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 30 Stepping 5, GenuineIntel
+
+
+
+---------------  S Y S T E M  ---------------
+
+OS: Windows 10 , 64 bit Build 18362 (10.0.18362.329)
+
+CPU:total 8 (initial active 8) 
+
+Memory: 4k page, physical 16772596k(6137092k free), swap 20293396k(3746828k free)
+
+vm_info: Java HotSpot(TM) 64-Bit Server VM (9+181) for windows-amd64 JRE (9+181), built on Aug  2 2017 21:30:51 by "javare" with MS VC++ 12.0 (VS2013)
+
+END.

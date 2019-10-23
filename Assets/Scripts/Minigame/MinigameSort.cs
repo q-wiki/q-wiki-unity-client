@@ -30,6 +30,7 @@ namespace Minigame
 
         public List<GameObject> choices;
         public List<Sprite> numbersSprites;
+        public List<Sprite> numbersSpritesCorrect;
         public Sprite unselectedSprite;
         public Sprite closeButtonSprite;
         public GameObject description;
@@ -173,14 +174,23 @@ namespace Minigame
                 choices.ForEach(c => c.GetComponentInChildren<Text>().color = correctAnswerColor);
             else
                 // sequence has wrong elements => highlight right and wrong elements
-                for (var i = 0; i < choices.Count; i++)
+                for (var i = 0; i < sortedChoices.Count; i++)
                 {
-                    var c = choices[i];
+                    var c = sortedChoices[i];
                     var text = c.GetComponentInChildren<Text>();
-                    if (answers[i] == correctAnswer[i])
+                    int index = correctAnswer.IndexOf(text.text);
+                    var child = c.transform.GetChild(2).gameObject;
+                    child.SetActive(true);
+                    child.GetComponent<Image>().sprite = numbersSpritesCorrect[correctAnswer.IndexOf(text.text)];
+
+                    if (text.text == correctAnswer[i])
+                    {
                         text.color = correctAnswerColor;
+                    }
                     else
+                    {
                         text.color = Color.red;
+                    }
                 }
 
             ClosePanel.SetActive(true);
@@ -198,6 +208,10 @@ namespace Minigame
             transform.Find("BlockPanel").GetComponentInChildren<CanvasGroup>().blocksRaycasts = false;
             menuController.ToggleCameraBehaviour();
             gameObject.SetActive(false);
+            foreach(var c in choices)
+            {
+                c.transform.GetChild(2).gameObject.SetActive(false);
+            }
             ClosePanel.SetActive(false);
         }
 

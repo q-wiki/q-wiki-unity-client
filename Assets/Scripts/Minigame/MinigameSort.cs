@@ -95,8 +95,10 @@ namespace Minigame
 
             if (sortedChoices.Contains(clickedChoice))
             {
+                clickedChoice.transform.GetChild(0).GetComponent<Image>().sprite = null;
                 sortedChoices.Remove(clickedChoice);
                 clickedChoice.transform.GetChild(0).GetComponent<Image>().sprite = unselectedSprite;
+
                 foreach (GameObject choice in sortedChoices)
                 {
                     choice.transform.GetChild(0).GetComponent<Image>().sprite = numbersSprites[sortedChoices.IndexOf(choice)];
@@ -116,8 +118,11 @@ namespace Minigame
         public async void ForceQuit()
         {
             Debug.Log("Sorry, you were too slow");
-            var result = await Communicator.AnswerMinigame(_id, new List<string>());
-            ClosePanel.SetActive(true);
+            transform.Find("BlockPanel").GetComponentInChildren<CanvasGroup>().blocksRaycasts = true;
+            sendButton.GetComponent<Image>().color = new Color32(195, 98, 98, 255);
+            sendButton.GetComponentInChildren<Text>().text = "Close Minigame";
+            sendButtonImage.sprite = closeButtonSprite;
+            Send();
         }
 
         /// <summary>
@@ -223,8 +228,16 @@ namespace Minigame
             sendButton.GetComponent<Image>().color = new Color32(80, 158, 158, 255);
             sendButton.GetComponentInChildren<Text>().text = "Send";
             sendButtonImage.sprite = sendButtonSprite;
+            sortedChoices.Clear();
 
-            foreach (var item in choices) item.GetComponentInChildren<Text>().color = Color.black;
+            foreach (var item in choices)
+
+            {
+                item.transform.GetChild(0).GetComponent<Image>().sprite = null;
+                item.transform.GetChild(0).GetComponent<Image>().sprite = unselectedSprite;
+                item.GetComponentInChildren<Text>().color = Color.white;
+            }
+
         }
 
         /// <summary>

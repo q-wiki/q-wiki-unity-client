@@ -200,7 +200,7 @@ namespace Minigame
 
             ClosePanel.SetActive(true);
             sendButton.GetComponent<Image>().color = new Color32(195, 98, 98, 255);
-            sendButton.GetComponentInChildren<Text>().text = "Close";
+            sendButton.GetComponentInChildren<Text>().text = "Close Minigame";
             sendButtonImage.sprite = closeButtonSprite;
         }
 

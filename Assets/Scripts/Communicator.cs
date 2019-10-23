@@ -13,7 +13,7 @@ using WikidataGame.Models;
 /// </summary>
 public class Communicator : MonoBehaviour
 {
-    private const string SERVER_URL = "https://wikidatagame-testing.azurewebsites.net/";
+    private const string SERVER_URL = "https://wikidatagame.azurewebsites.net/";
     private const string AUTH_TOKEN = "AUTH_TOKEN";
     private const string CURRENT_GAME_ID = "CURRENT_GAME_ID";
 

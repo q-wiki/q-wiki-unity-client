@@ -353,7 +353,7 @@ public class MenuController : MonoBehaviour
 
         /*
          * redraw the grid
-         *
+         */
         
         foreach (Transform child in grid.transform) Destroy(child.gameObject);
         grid.GetComponent<GridController>().GenerateGrid(_game.Tiles);

@@ -10178,10 +10178,10 @@ MonoBehaviour:
   - {fileID: 1801673449}
   - {fileID: 165693455}
   numbersSprites:
-  - {fileID: 21300000, guid: ed3f7f2829b7c1e4eb5f3a0579233cda, type: 3}
-  - {fileID: 21300000, guid: f2fb60da6571bb04e9e000d11207e681, type: 3}
-  - {fileID: 21300000, guid: 0a0efa67b6cb67e418bacc0303d946d1, type: 3}
-  - {fileID: 21300000, guid: 7106f13b30a8e464682dcedf10c3dbe5, type: 3}
+  - {fileID: 21300000, guid: b59ace7f847909943a78772979185cb6, type: 3}
+  - {fileID: 21300000, guid: 1876c7635959cb74eafb2fe74c904306, type: 3}
+  - {fileID: 21300000, guid: 752fb3a9b7efd3d4fb6ec28397615df3, type: 3}
+  - {fileID: 21300000, guid: 2757077acda088e42b9729360e394cfb, type: 3}
   unselectedSprite: {fileID: 21300000, guid: ae34b7571a375754d86480f587c5d576, type: 3}
   closeButtonSprite: {fileID: 21300000, guid: 28f10292b85333a4093d63d6c55de696, type: 3}
   description: {fileID: 2125643363245379157}

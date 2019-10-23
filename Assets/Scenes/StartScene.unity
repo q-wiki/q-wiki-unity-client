@@ -1438,7 +1438,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 903923124}
-        m_MethodName: Send
+        m_MethodName: WaitForOpponent
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

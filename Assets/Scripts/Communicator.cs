@@ -111,6 +111,7 @@ public class Communicator : MonoBehaviour
     public static async Task CreateOrJoinGame()
     {
         var gameInfo = await _gameApi.CreateNewGameAsync(8, 8, 50);
+        Debug.Log(gameInfo);
         _currentGameId = gameInfo.GameId;
         Debug.Log($"Initialized new game with id: {_currentGameId}");
         PlayerPrefs.SetString(CURRENT_GAME_ID, _currentGameId);

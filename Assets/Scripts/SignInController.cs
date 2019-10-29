@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-using GooglePlayGames;
-using GooglePlayGames.BasicApi;
-using GooglePlayGames.BasicApi.Multiplayer;
-using UnityEngine.SocialPlatforms;
+//using GooglePlayGames;
+//using GooglePlayGames.BasicApi;
+//using GooglePlayGames.BasicApi.Multiplayer;
+//using UnityEngine.SocialPlatforms;
 using System;
 
 public class SignInController : MonoBehaviour
@@ -41,10 +41,10 @@ public class SignInController : MonoBehaviour
         //// Activate the Google Play Games platform
         //PlayGamesPlatform.Activate();
 
-        PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder().RequestServerAuthCode(false).Build();
-        PlayGamesPlatform.InitializeInstance(config);
-        PlayGamesPlatform.DebugLogEnabled = true;
-        PlayGamesPlatform.Activate();
+        //PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder().RequestServerAuthCode(false).Build();
+        //PlayGamesPlatform.InitializeInstance(config);
+        //PlayGamesPlatform.DebugLogEnabled = true;
+        //PlayGamesPlatform.Activate();
 
 
     }
@@ -58,25 +58,25 @@ public class SignInController : MonoBehaviour
 
     public void SignIn()
     {
-        // authenticate user:
-        Social.localUser.Authenticate((bool success) => {
+        //// authenticate user:
+        //Social.localUser.Authenticate((bool success) => {
 
-            Debug.Log(success);
-            Debug.Log(Social.localUser.userName);
-            // handle success or failure
-        });
+        //    Debug.Log(success);
+        //    Debug.Log(Social.localUser.userName);
+        //    // handle success or failure
+        //});
 
     }
 
     public void SignIn2()
     {
-        // authenticate user:
-        Social.localUser.Authenticate((bool success) => {
+        //// authenticate user:
+        //Social.localUser.Authenticate((bool success) => {
 
-            Debug.Log(success);
-            Debug.Log(Social.localUser.userName);
-            // handle success or failure
-        });
+        //    Debug.Log(success);
+        //    Debug.Log(Social.localUser.userName);
+        //    // handle success or failure
+        //});
 
     }
 

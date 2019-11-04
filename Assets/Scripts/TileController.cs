@@ -33,14 +33,14 @@ public class TileController : MonoBehaviour
     public string ownerId;
     public Material[] tileMaterials;
 
-    private MenuController menuController => GameObject.Find("MenuController").GetComponent<MenuController>();
+    private GameController GameController => GameObject.Find("GameController").GetComponent<GameController>();
 
     /// <summary>
     ///     When a TileController is instantiated, its material is set.
     /// </summary>
     private void Start()
     {
-        _myId = menuController.PlayerId();
+        _myId = GameController.PlayerId();
         _circleRenderer = transform
             .Find("TileBase/OuterCircle")
             .GetComponent<MeshRenderer>();
@@ -96,10 +96,10 @@ public class TileController : MonoBehaviour
         if (!gridController.IsPossibleMove(this))
             return;
 
-        var previousTile = menuController.selectedTile;
+        var previousTile = GameController.selectedTile;
         if (previousTile != null)
         {
-            var circleRenderer = menuController.selectedTile.transform.Find("TileBase/OuterCircle")
+            var circleRenderer = GameController.selectedTile.transform.Find("TileBase/OuterCircle")
                 .GetComponent<MeshRenderer>();
 
             if (string.IsNullOrEmpty(previousTile.GetComponent<TileController>().ownerId))
@@ -110,7 +110,7 @@ public class TileController : MonoBehaviour
                 circleRenderer.material = tileMaterials[1];
         }
 
-        menuController.selectedTile = gameObject;
+        GameController.selectedTile = gameObject;
 
         gameObject.transform.Find("TileBase/OuterCircle").GetComponent<MeshRenderer>().material = tileMaterials[2];
 
@@ -127,7 +127,7 @@ public class TileController : MonoBehaviour
                 gridController.attackButton.SetActive(false);
             }
 
-            menuController.levelText.text = "Tile Level: " + (difficulty + 1);
+            GameController.levelText.text = "Tile Level: " + (difficulty + 1);
         }
         //Enemy
         else if (ownerId != _myId && !string.IsNullOrEmpty(ownerId))
@@ -141,7 +141,7 @@ public class TileController : MonoBehaviour
                 gridController.levelUpButton.SetActive(false);
             }
 
-            menuController.levelText.text = "Tile Level: " + (difficulty + 1);
+            GameController.levelText.text = "Tile Level: " + (difficulty + 1);
         }
         //Empty
         else if (string.IsNullOrEmpty(ownerId))
@@ -156,7 +156,7 @@ public class TileController : MonoBehaviour
                 gridController.levelUpButton.SetActive(false);
             }
 
-            menuController.levelText.text = "Tile Level: " + (difficulty + 1);
+            GameController.levelText.text = "Tile Level: " + (difficulty + 1);
         }
         else
         {

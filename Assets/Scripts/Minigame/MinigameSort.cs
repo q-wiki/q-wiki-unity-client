@@ -40,7 +40,7 @@ namespace Minigame
         public Timer timerPrefab;
 
         private List<GameObject> sortedChoices = new List<GameObject>();
-        private MenuController menuController => GameObject.Find("MenuController").GetComponent<MenuController>();
+        private GameController GameController => GameObject.Find("GameController").GetComponent<GameController>();
         private GameObject ClosePanel => transform.Find("ClosePanel").gameObject;
 
         /// <summary>
@@ -209,9 +209,9 @@ namespace Minigame
         /// </summary>
         public void Close()
         {
-            menuController.GetComponent<MenuController>().RefreshGameState(false);
+            GameController.GetComponent<GameController>().RefreshGameState(false);
             transform.Find("BlockPanel").GetComponentInChildren<CanvasGroup>().blocksRaycasts = false;
-            menuController.ToggleCameraBehaviour();
+            GameController.ToggleCameraBehaviour();
             gameObject.SetActive(false);
             foreach(var c in choices)
             {

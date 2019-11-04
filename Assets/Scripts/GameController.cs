@@ -9,7 +9,7 @@ using WikidataGame.Models;
 ///     This is the game controller for QWiki, containing important functions for user interaction
 ///     as well as functionality for frontend and backend
 /// </summary>
-public class MenuController : MonoBehaviour
+public class GameController : MonoBehaviour
 {
     
     
@@ -65,7 +65,7 @@ public class MenuController : MonoBehaviour
     ///     They can only be accessed from within the class.
     /// </summary>
 
-    private static MenuController Instance;
+    private static GameController Instance;
 
     private static Game _game;
     private GameObject _startPanel;

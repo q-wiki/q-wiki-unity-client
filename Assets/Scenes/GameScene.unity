@@ -6330,7 +6330,7 @@ GameObject:
   - component: {fileID: 1262909489}
   - component: {fileID: 504752064}
   m_Layer: 0
-  m_Name: MenuController
+  m_Name: GameController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

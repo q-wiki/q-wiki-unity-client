@@ -38,13 +38,13 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641258, b: 0.5748172, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657838, g: 0.49641234, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 11
-  m_GIWorkflowMode: 1
+  m_GIWorkflowMode: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -2444,11 +2444,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 494171858}
   m_CullTransparentMesh: 0
---- !u!114 &504752064 stripped
+--- !u!114 &504752064
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-    type: 3}
-  m_PrefabInstance: {fileID: 1262909487}
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1262909488}
   m_Enabled: 1
@@ -2456,6 +2456,56 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5de54a7666ecfa44b04a65ff6ba1867, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  grid: {fileID: 1682791522}
+  clickSound: {fileID: 8300000, guid: 70e02441ad3cd8f488092b6a4933e446, type: 3}
+  audioSource: {fileID: 0}
+  soundButtonIcon: {fileID: 0}
+  notificationButtonIcon: {fileID: 0}
+  vibrationButtonIcon: {fileID: 0}
+  miniGameCanvases:
+  - {fileID: 2125643362763452242}
+  - {fileID: 9167687158840624971}
+  - {fileID: 9167687158840624971}
+  categoryCanvas: {fileID: 880238774}
+  buttonPrefab: {fileID: 0}
+  menuGrid: {fileID: 0}
+  blockActionPanel: {fileID: 2037066007}
+  newGameButton: {fileID: 0}
+  abortGameButton: {fileID: 0}
+  settingsButton: {fileID: 0}
+  soundOff: {fileID: 21300000, guid: 9e2dc28492c4b454186d1bbdff766143, type: 3}
+  soundOn: {fileID: 21300000, guid: 8f9190f1a5ee6214383cc402858ee8f3, type: 3}
+  notificationOff: {fileID: 21300000, guid: 3b8792cf77854614586ca34c3291fba4, type: 3}
+  notificationOn: {fileID: 21300000, guid: 33f407bcea8f0c04f83b8c889fda8db9, type: 3}
+  vibrationOff: {fileID: 21300000, guid: 3b8792cf77854614586ca34c3291fba4, type: 3}
+  vibrationOn: {fileID: 21300000, guid: 33f407bcea8f0c04f83b8c889fda8db9, type: 3}
+  opponentImage: {fileID: 0}
+  myImage: {fileID: 0}
+  newGameButtonGrey: {fileID: 0}
+  newGameIconGrey: {fileID: 0}
+  awaitingOpponentToJoin: 0
+  camera: {fileID: 197591555}
+  tileMaterials:
+  - {fileID: 2100000, guid: d78f5cd650004b849a2606c48bf01956, type: 2}
+  - {fileID: 2100000, guid: 0f7ee53bdbd330d4381ca3f0d1baf271, type: 2}
+  - {fileID: 2100000, guid: 5ed55bd1ef975ac4cb6f718e170d0520, type: 2}
+  - {fileID: 2100000, guid: b8f98e1db92d9be46a1185a35ba0c647, type: 2}
+  categoryPanel: {fileID: 880238774}
+  actionPanel: {fileID: 1345315749}
+  settingsPanel: {fileID: 736936267}
+  confirmationPanel: {fileID: 4162761224347545710}
+  settingsPanelContainerGame: {fileID: 808307915}
+  settingsPanelStart: {fileID: 0}
+  startPanelStart: {fileID: 0}
+  levelText: {fileID: 993841876735473010}
+  selectedTile: {fileID: 0}
+  gameOverCanvas: {fileID: 6204374056921464808}
+  gameOverText: {fileID: 6204374056624807584}
+  legalNoticePanel: {fileID: 0}
+  creditsPanel: {fileID: 0}
+  c1: {fileID: 1286088332}
+  c2: {fileID: 2100267813}
+  c3: {fileID: 391283947}
 --- !u!1 &505697470
 GameObject:
   m_ObjectHideFlags: 0
@@ -6269,252 +6319,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1262220118}
   m_CullTransparentMesh: 0
---- !u!1001 &1262909487
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4312400960762222767, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: m_Name
-      value: MenuController
-      objectReference: {fileID: 0}
-    - target: {fileID: 4312400960762222767, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: miniGameCanvases.Array.size
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: tileMaterials.Array.size
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: audioSource
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: settingsPanel
-      value: 
-      objectReference: {fileID: 736936267}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: startPanel
-      value: 
-      objectReference: {fileID: 736936267}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: vibrationButtonIcon
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: notificationButtonIcon
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: soundButtonIcon
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: miniGameCanvas
-      value: 
-      objectReference: {fileID: 9167687158840624971}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: categoryCanvas
-      value: 
-      objectReference: {fileID: 880238774}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: _grid
-      value: 
-      objectReference: {fileID: 1682791522}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: notificationOff
-      value: 
-      objectReference: {fileID: 21300000, guid: 3b8792cf77854614586ca34c3291fba4,
-        type: 3}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: grid
-      value: 
-      objectReference: {fileID: 1682791522}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: camera
-      value: 
-      objectReference: {fileID: 197591555}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: categoryPanel
-      value: 
-      objectReference: {fileID: 880238774}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: actionPanel
-      value: 
-      objectReference: {fileID: 1345315749}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: c1
-      value: 
-      objectReference: {fileID: 1286088332}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: c2
-      value: 
-      objectReference: {fileID: 2100267813}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: c3
-      value: 
-      objectReference: {fileID: 391283947}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: miniGameCanvases.Array.data[0]
-      value: 
-      objectReference: {fileID: 2125643362763452242}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: miniGameCanvases.Array.data[1]
-      value: 
-      objectReference: {fileID: 9167687158840624971}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: miniGameCanvases.Array.data[2]
-      value: 
-      objectReference: {fileID: 9167687158840624971}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: blockActionPanel
-      value: 
-      objectReference: {fileID: 2037066007}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: confirmationPanel
-      value: 
-      objectReference: {fileID: 4162761224347545710}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: settingsPanelGame
-      value: 
-      objectReference: {fileID: 808307915}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: gameOverCanvas
-      value: 
-      objectReference: {fileID: 6204374056921464808}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: gameOverText
-      value: 
-      objectReference: {fileID: 6204374056624807584}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: levelText
-      value: 
-      objectReference: {fileID: 993841876735473010}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: tileMaterials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: d78f5cd650004b849a2606c48bf01956, type: 2}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: tileMaterials.Array.data[1]
-      value: 
-      objectReference: {fileID: 2100000, guid: 0f7ee53bdbd330d4381ca3f0d1baf271, type: 2}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: tileMaterials.Array.data[2]
-      value: 
-      objectReference: {fileID: 2100000, guid: 5ed55bd1ef975ac4cb6f718e170d0520, type: 2}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: tileMaterials.Array.data[3]
-      value: 
-      objectReference: {fileID: 2100000, guid: b8f98e1db92d9be46a1185a35ba0c647, type: 2}
-    - target: {fileID: 4312400960762222760, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: settingsPanelContainerGame
-      value: 
-      objectReference: {fileID: 808307915}
-    - target: {fileID: 4312400960762222761, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.40935802
-      objectReference: {fileID: 0}
-    - target: {fileID: 4312400960762222761, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.6202612
-      objectReference: {fileID: 0}
-    - target: {fileID: 4312400960762222761, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -3.0651283
-      objectReference: {fileID: 0}
-    - target: {fileID: 4312400960762222761, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4312400960762222761, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4312400960762222761, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4312400960762222761, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4312400960762222761, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 4312400960762222761, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4312400960762222761, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4312400960762222761, guid: 21d8f64ae92bc924dabe21a5130318ef,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 21d8f64ae92bc924dabe21a5130318ef, type: 3}
---- !u!1 &1262909488 stripped
+--- !u!1 &1262909488
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 4312400960762222767, guid: 21d8f64ae92bc924dabe21a5130318ef,
-    type: 3}
-  m_PrefabInstance: {fileID: 1262909487}
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1262909489}
+  - component: {fileID: 504752064}
+  m_Layer: 0
+  m_Name: MenuController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1262909489
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1262909488}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.40935802, y: 1.6202612, z: -3.0651283}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1270285195
 GameObject:
   m_ObjectHideFlags: 0

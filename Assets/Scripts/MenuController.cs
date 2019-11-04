@@ -447,8 +447,8 @@ public class MenuController : MonoBehaviour
             {
                 Debug.Log("Waiting for Opponent.");
 
-                // wait for 10 milliseconds
-                await Task.Delay(10);
+                // wait for 3 seconds
+                await Task.Delay(3000);
                 _game = await Communicator.GetCurrentGameState();
             }
             else

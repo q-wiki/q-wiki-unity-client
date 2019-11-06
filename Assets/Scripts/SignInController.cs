@@ -81,7 +81,7 @@ public class SignInController : MonoBehaviour
 
     public void UnlockAchievements()
     {
-        Social.ReportProgress("CgkI-f_-2q4eEAIQAg", 10.0f, (bool success) => {
+        PlayGamesPlatform.Instance.IncrementAchievement("CgkI-f_-2q4eEAIQAg", 10, (bool success) => {
             // handle success or failure
         });
     }

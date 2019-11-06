@@ -26,6 +26,8 @@ namespace QWiki
 public static class GPGSIds
 {
         public const string leaderboard_highscores = "CgkI-f_-2q4eEAIQAQ"; // <GPGSID>
+        public const string achievement_test = "CgkI-f_-2q4eEAIQAg"; // <GPGSID>
+        public const string event_test = "CgkI-f_-2q4eEAIQAw"; // <GPGSID>
 
 }
 }

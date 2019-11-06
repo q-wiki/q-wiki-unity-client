@@ -1,52 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+////using Firebase;
 
-//using GooglePlayGames;
-//using GooglePlayGames.BasicApi;
-//using GooglePlayGames.BasicApi.Multiplayer;
-//using UnityEngine.SocialPlatforms;
+using GooglePlayGames;
+using GooglePlayGames.BasicApi;
+using GooglePlayGames.BasicApi.Multiplayer;
+using UnityEngine.SocialPlatforms;
 using System;
 
 public class SignInController : MonoBehaviour
 {
+    public Text GoogleAuthButtonText;
+
+    private string SIGNED_IN_TEXT = "Sign Out";
+    private string SIGNED_OUT_TEXT = "Sign In With Google";
     // Start is called before the first frame update
     void Start()
     {
-        //Action OnSendNotification = () => SendNotification();
-
-        //PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder()
-        //// enables saving game progress.
-        //.EnableSavedGames()
-        //// registers a callback to handle game invitations received while the game is not running.
-        //.WithInvitationDelegate((Invitation invitation, bool shouldAutoAccept) => { SendNotification(); })
-        //// registers a callback for turn based match notifications received while the
-        //// game is not running.
-        //.WithMatchDelegate((TurnBasedMatch match, bool shouldAutoLaunch) => { MatchDelegate(); })
-        //// requests the email address of the player be available.
-        //// Will bring up a prompt for consent.
-        //.RequestEmail()
-        //// requests a server auth code be generated so it can be passed to an
-        ////  associated back end server application and exchanged for an OAuth token.
-        //.RequestServerAuthCode(false)
-        //// requests an ID token be generated.  This OAuth token can be used to
-        ////  identify the player to other services such as Firebase.
-        //.RequestIdToken()
-        //.Build();
-
-        //PlayGamesPlatform.InitializeInstance(config);
-        //// recommended for debugging:
-        //PlayGamesPlatform.DebugLogEnabled = true;
-
-        //// Activate the Google Play Games platform
-        //PlayGamesPlatform.Activate();
-
-        //PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder().RequestServerAuthCode(false).Build();
-        //PlayGamesPlatform.InitializeInstance(config);
-        //PlayGamesPlatform.DebugLogEnabled = true;
-        //PlayGamesPlatform.Activate();
-
-
+        // recommended for debugging:
+        PlayGamesPlatform.DebugLogEnabled = true;
+        PlayGamesPlatform.Activate();
     }
 
     // Update is called once per frame
@@ -58,36 +33,63 @@ public class SignInController : MonoBehaviour
 
     public void SignIn()
     {
-        //// authenticate user:
-        //Social.localUser.Authenticate((bool success) => {
-
-        //    Debug.Log(success);
-        //    Debug.Log(Social.localUser.userName);
-        //    // handle success or failure
-        //});
-
-    }
-
-    public void SignIn2()
-    {
-        //// authenticate user:
-        //Social.localUser.Authenticate((bool success) => {
-
-        //    Debug.Log(success);
-        //    Debug.Log(Social.localUser.userName);
-        //    // handle success or failure
-        //});
-
-    }
-
-    void SendNotification()
-    {
+        Debug.Log("UDEBUG: Authentication Status: " + PlayGamesPlatform.Instance.IsAuthenticated());
+        if (!PlayGamesPlatform.Instance.IsAuthenticated())
+        {
+            // authenticate user:
+            Social.localUser.Authenticate((bool success) =>
+            {
+                Debug.Log("UDEBUG: Authentication success: " + success);
+                Debug.Log("UDEBUG: Username: " + Social.localUser.userName);
+                GoogleAuthButtonText.text = success ? SIGNED_IN_TEXT : SIGNED_OUT_TEXT;
+                if (success)
+                {
+                    OnSuccess();
+                }
+                // handle success or failure
+            });
+        }
+        else
+        {
+            SignOut();
+        }
 
     }
 
-
-    void MatchDelegate()
+    private void OnSuccess()
     {
+        Debug.Log("Successfully Signed In");
+    }
 
+    public void SignOut()
+    {
+        // sign out
+        PlayGamesPlatform.Instance.SignOut();
+        GoogleAuthButtonText.text = SIGNED_OUT_TEXT;
+        Debug.Log("Signing out of Google Play");
+    }
+
+    public void ShowLeaderboard()
+    {
+        Social.ShowLeaderboardUI();
+    }
+
+    public void ShowAchievements()
+    {
+        Social.ShowAchievementsUI();
+    }
+
+    public void UnlockAchievements()
+    {
+        Social.ReportProgress("CgkI-f_-2q4eEAIQAg", 10.0f, (bool success) => {
+            // handle success or failure
+        });
+    }
+
+    public void PostScore()
+    {
+        Social.ReportScore(4, "CgkI-f_-2q4eEAIQAQ", (bool success) => {
+            // handle success or failure
+        });
     }
 }

@@ -735,6 +735,10 @@ PlayerSettings:
       daydreamIconForeground: {fileID: 0}
       daydreamIconBackground: {fileID: 0}
   cloudServicesEnabled:
+    Build: 0
+    Collab: 1
+    ErrorHub: 0
+    Hub: 0
     UNet: 1
   luminIcon:
     m_Name: 
@@ -755,10 +759,10 @@ PlayerSettings:
   facebookXfbml: 0
   facebookFrictionlessRequests: 1
   apiCompatibilityLevel: 6
-  cloudProjectId: c9a1f472-a17d-4764-a97e-cca13423528c
+  cloudProjectId: f86abd8c-827b-4177-a655-1e428d63096f
   framebufferDepthMemorylessMode: 0
   projectName: Q-Wiki
-  organizationId: m_eteora
+  organizationId: jonas_f
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0
   disableOldInputManagerSupport: 0

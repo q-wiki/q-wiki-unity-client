@@ -117,7 +117,7 @@ public class ActionPointHandler : MonoBehaviour
     }
 
     /// <summary>
-    ///     This function is called in the MenuController.
+    ///     This function is called in the GameController.
     ///     It is only called after a MiniGame on this client side is finished.
     ///     Resetting the state has to be handled elsewhere (not sure where).
     /// </summary>

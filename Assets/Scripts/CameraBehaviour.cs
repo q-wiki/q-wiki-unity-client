@@ -3,7 +3,7 @@
 /// <summary>
 ///     This class is used to handle the special camera movement used in the game.
 /// </summary>
-public class CameraBehavior : MonoBehaviour
+public class CameraBehaviour : Singleton<CameraBehaviour>
 {
     /*
      * private fields
@@ -28,6 +28,7 @@ public class CameraBehavior : MonoBehaviour
      * public fields 
      */
 
+    public bool active = true;
     public float yTranslocation = 0.5f;
     private bool zoomedIn = true;
     private float zoomModifier;
@@ -39,6 +40,8 @@ public class CameraBehavior : MonoBehaviour
     /// </summary>
     private void Update()
     {
+        if (!active) return;
+        
         // Key Movement
         if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
             transform.position +=
@@ -107,5 +110,10 @@ public class CameraBehavior : MonoBehaviour
         posCur.z = Mathf.Clamp(transform.position.z, MIN_Z, MAX_Z);
 
         transform.position = new Vector3(posCur.x, transform.position.y, posCur.z);
+    }
+
+    public void Toggle()
+    {
+        active = !active;
     }
 }

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 /// <summary>
 ///     This class handles all action point behaviour.
 /// </summary>
-public class ActionPointHandler : MonoBehaviour
+public class ActionPointHandler : Singleton<ActionPointHandler>
 {
     /**
      * constant fields
@@ -14,12 +14,6 @@ public class ActionPointHandler : MonoBehaviour
 
     private const int TOTAL_ACTION_POINTS = 3;
     private const string REMAINING_ACTION_POINTS = "REMAINING_ACTION_POINTS";
-
-    /**
-     * static fields
-     */
-
-    public static ActionPointHandler Instance;
 
     /**
      * private fields
@@ -42,7 +36,6 @@ public class ActionPointHandler : MonoBehaviour
     /// </summary>
     public void Awake()
     {
-        Instance = this;
         resetFailedCount = 0;
         Reset();
     }

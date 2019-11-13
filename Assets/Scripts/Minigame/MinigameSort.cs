@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Controllers;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-
 
 namespace Minigame
 {
@@ -38,9 +38,7 @@ namespace Minigame
         public Image sendButtonImage;
         public Sprite sendButtonSprite;
         public Timer timerPrefab;
-
         private List<GameObject> sortedChoices = new List<GameObject>();
-        private GameController GameController => GameObject.Find("GameController").GetComponent<GameController>();
         private GameObject ClosePanel => transform.Find("ClosePanel").gameObject;
 
         /// <summary>
@@ -209,9 +207,10 @@ namespace Minigame
         /// </summary>
         public void Close()
         {
-            GameController.GetComponent<GameController>().RefreshGameState(false);
+            GameManager.Instance.RefreshGameState(false);
+            CameraBehaviour.Instance.Toggle();
+            
             transform.Find("BlockPanel").GetComponentInChildren<CanvasGroup>().blocksRaycasts = false;
-            GameController.ToggleCameraBehaviour();
             gameObject.SetActive(false);
             foreach(var c in choices)
             {

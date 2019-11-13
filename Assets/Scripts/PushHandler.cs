@@ -1,17 +1,13 @@
-﻿using Firebase;
+﻿using System;
+using Firebase;
 using Firebase.Messaging;
 using UnityEngine;
 
 /// <summary>
 ///     This class handles communication with the Google Firebase API to enable push notifications.
 /// </summary>
-public class PushHandler : MonoBehaviour
+public class PushHandler : Singleton<PushHandler>
 {
-    /**
-     * static fields
-     */
-
-    public static PushHandler Instance;
 
     /**
      * public fields
@@ -19,20 +15,6 @@ public class PushHandler : MonoBehaviour
 
     public bool isUsable;
     public string pushToken;
-
-    /// <summary>
-    ///     The awake function is used to make sure the PushHandler acts as a singleton.
-    /// </summary>
-    public void Awake()
-    {
-        var objs = GameObject.FindGameObjectsWithTag("PushHandler");
-        if (objs.Length > 1)
-            Destroy(gameObject);
-
-        DontDestroyOnLoad(gameObject);
-
-        Instance = this;
-    }
 
     /// <summary>
     ///     Dependencies are checked and the app is registered within the Firebase API.
@@ -48,6 +30,10 @@ public class PushHandler : MonoBehaviour
             FirebaseMessaging.MessageReceived += OnMessageReceived;
 
             var app = FirebaseApp.DefaultInstance;
+
+            if(app == null)
+                throw new Exception("FirebaseApp is not allowed to be null at this point.");
+            
             Debug.Log($"Firebase: Registered app name is {app.Name}");
             Debug.Log($"Firebase: Registered database URL is {app.Options.DatabaseUrl}");
 
@@ -82,5 +68,9 @@ public class PushHandler : MonoBehaviour
     private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
     {
         Debug.Log("Received a new message from: " + e.Message.From);
+        
+        // TODO: Silent push (test with smartphone build)
+        Debug.Log($"Raw data:{e.Message.RawData}");
+        Debug.Log($"data:{e.Message.Data}");
     }
 }

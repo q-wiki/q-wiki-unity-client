@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Controllers;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -30,8 +31,7 @@ namespace Minigame
         /**
          * public fields
          */
-
-        [FormerlySerializedAs("menuController")] public GameObject gameController;
+        
         public GameObject sendButton;
         public Image sendButtonImage;
         public Sprite sendButtonSprite;
@@ -87,9 +87,10 @@ namespace Minigame
         /// </summary>
         public void Close()
         {
-            gameController.GetComponent<GameController>().RefreshGameState(false);
+            GameManager.Instance.RefreshGameState(false);
+            CameraBehaviour.Instance.Toggle();
+            
             transform.Find("BlockPanel").GetComponentInChildren<CanvasGroup>().blocksRaycasts = false;
-            gameController.GetComponent<GameController>().ToggleCameraBehaviour();
             gameObject.SetActive(false);
             ClosePanel.SetActive(false);
         }

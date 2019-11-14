@@ -27,6 +27,7 @@ namespace Controllers.Map
         public async void StartMinigame(string categoryId)
         {
             LoadingIndicator.Instance.Show();
+            categoryCanvas.GetComponent<CanvasGroup>().interactable = false;
 
             var selectedTile = GameManager.GridController().selectedTile;
             if (selectedTile == null)
@@ -65,6 +66,7 @@ namespace Controllers.Map
             ActionPointHandler.Instance.Hide();
             ScoreHandler.Instance.Hide();
             miniGameCanvas.SetActive(true);
+            categoryCanvas.GetComponent<CanvasGroup>().interactable = true;
             categoryCanvas.SetActive(false);
         }
         

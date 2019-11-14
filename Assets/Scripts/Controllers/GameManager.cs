@@ -359,12 +359,21 @@ namespace Controllers
         /// </summary>
         public async Task LeaveGame()
         {
-            Debug.Log($"Trying to delete game {_game.Id}.");
             LoadingIndicator.Instance.Show();
-            await Communicator.AbortCurrentGame();
+            if (_game == null)
+            {
+                Debug.Log("Game was already deleted.");
+            }
+            else
+            {
+                Debug.Log($"Trying to delete game {_game.Id}.");
+                await Communicator.AbortCurrentGame();
+                Debug.Log("Game was successfully deleted.");
+            }
+
             LoadingIndicator.Instance.Hide();
             _isWaitingState = false;
-            Debug.Log("Game was successfully deleted.");
+            Debug.Log("Returning to start scene...");
             ChangeToStartScene();
         }
 

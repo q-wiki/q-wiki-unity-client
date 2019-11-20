@@ -31,8 +31,6 @@ public class MenuController : MonoBehaviour
     public GameObject menuGrid;
     public CanvasGroup blockActionPanel;
     public Button newGameButton;
-    public Button abortGameButton;
-    public Button settingsButton;
     public Sprite soundOff;
     public Sprite soundOn;
     public Sprite notificationOff;
@@ -59,6 +57,7 @@ public class MenuController : MonoBehaviour
     public Text gameOverText;
     public GameObject legalNoticePanel;
     public GameObject creditsPanel;
+    public GameObject usernamePanel;
 
     /// <summary>
     ///     These are private fields of the game controller.
@@ -70,17 +69,17 @@ public class MenuController : MonoBehaviour
     private static Game _game;
     private GameObject _startPanel;
     private GameObject _settingsPanel;
+    private GameObject _loginPanel;
     public Button c1, c2, c3;
     private bool _soundToggle;
     private bool _notificationToggle;
     private bool _vibrationToggle;
     private bool _settingsToggle;
+    private bool _loginToggle;
     private bool _isWaitingState;
     private bool _isHandling;
-    private bool _isWaitingForOpponent;
     private Scene currentScene;
     private readonly string CURRENT_GAME_BLOCK_TURN_UPDATE = "CURRENT_GAME_BLOCK_TURN_UPDATE";
-    private readonly string IS_WAITING_FOR_OPPONENT = "IS_WAITING_FOR_OPPONENT";
     private AudioSource Source => GetComponent<AudioSource>();
 
 
@@ -89,9 +88,7 @@ public class MenuController : MonoBehaviour
     /// </summary>
     public void Update()
     {
-        // player is waiting for their turn
         if (_isWaitingState && !_isHandling) HandleWaitingState();
-
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (!_settingsToggle)
@@ -158,11 +155,6 @@ public class MenuController : MonoBehaviour
 
             PlayerPrefs.DeleteKey("REMAINING_ACTION_POINTS");
             PlayerPrefs.DeleteKey("CURRENT_GAME_TURNS_PLAYED");
-
-            if (PlayerPrefs.GetInt(IS_WAITING_FOR_OPPONENT, 0) == 1)
-            {
-                WaitForOpponent(false);
-            }
         }
         else if (sceneName == "GameScene")
         {
@@ -402,16 +394,17 @@ public class MenuController : MonoBehaviour
     /// <summary>
     ///     This function is called when the client wants to start a new game.
     /// </summary>
-    public async void WaitForOpponent(bool createNewGame)
+    public async void Send()
     {
         // disable all buttons so we don't initialize multiple games
         var startGameText = newGameButton.GetComponentInChildren<Text>().text;
         newGameButton.GetComponentInChildren<Text>().text = "Searching for Opponent...";
         newGameButton.GetComponentInChildren<Text>().fontSize = 56;
 
-        LoadingIndicator.Instance.ShowWithoutBlockingUI();
+        LoadingIndicator.Instance.Show();
         newGameButton.enabled = false;
-        
+
+
         if (!Communicator.IsConnected())
         {
             Debug.Log("You are not connected to any game");
@@ -421,80 +414,25 @@ public class MenuController : MonoBehaviour
             return;
         }
 
-        if(createNewGame) 
-            await Communicator.CreateOrJoinGame();
-        else
-            await Communicator.RestorePreviousGame();
-
+        await Communicator.CreateOrJoinGame();
         _game = await Communicator.GetCurrentGameState();
-        
-        // show button to abort the game initialization
-        abortGameButton.GetComponent<CanvasGroup>().alpha = 1;
-        abortGameButton.GetComponent<CanvasGroup>().blocksRaycasts = true;
-
-        // prevent user from hitting settings button (because loading indicator overlays that panel)
-        settingsButton.interactable = false;
-
-        // indicate that client waits for an opponent
-        _isWaitingForOpponent = true;
-        PlayerPrefs.SetInt(IS_WAITING_FOR_OPPONENT, 1);
 
         // we'll be checking the game state until another player joins
         while (_game.AwaitingOpponentToJoin ?? true)
         {
+            Debug.Log("Waiting for Opponent.");
 
-            if (_isWaitingForOpponent)
-            {
-                Debug.Log("Waiting for Opponent.");
-
-                // wait for 10 milliseconds
-                await Task.Delay(10);
-                _game = await Communicator.GetCurrentGameState();
-            }
-            else
-            {
-                Debug.Log("Stop connection to game...");
-                
-                // delete game from backend
-                await Communicator.AbortCurrentGame();
-                _game = null;
-                
-                // reset the interface so we can try initializing a game again
-                newGameButton.GetComponentInChildren<Text>().text = startGameText;
-                newGameButton.enabled = true;
-                
-                // make the abort button invisible again
-                abortGameButton.GetComponent<CanvasGroup>().alpha = 0;
-                abortGameButton.GetComponent<CanvasGroup>().blocksRaycasts = false;
-                
-                // settings button needs to be made interactable again
-                settingsButton.interactable = true;
-                
-                LoadingIndicator.Instance.Hide();
-                
-                PlayerPrefs.SetInt(IS_WAITING_FOR_OPPONENT, 0);
-                Debug.Log("Game initialization successfully stopped.");
-                
-                return;
-            }
+            // wait for 5 seconds
+            await Task.Delay(5000);
+            _game = await Communicator.GetCurrentGameState();
         }
 
         // another player joined :)
         Debug.Log("Found opponent, starting game.");
-        
-        PlayerPrefs.SetInt(IS_WAITING_FOR_OPPONENT, 0);
-        
-        // settings button needs to be made interactable again
-        settingsButton.interactable = true;
 
         // 🚀
         LoadingIndicator.Instance.Hide();
         ChangeToGameScene();
-    }
-
-    public void StopSearchingForOpponent()
-    {
-        _isWaitingForOpponent = false;
     }
 
     /// <summary>
@@ -668,6 +606,26 @@ public class MenuController : MonoBehaviour
         _settingsPanel.GetComponent<CanvasGroup>().blocksRaycasts = false;
     }
 
+    /// <summary>
+    ///     This function is used to open the UsernamePanel from the LoginPanel.
+    /// </summary>
+    public void OpenUsernamePanel()
+    {
+        usernamePanel.SetActive(true);
+        _loginPanel.GetComponent<CanvasGroup>().alpha = 0;
+        _loginPanel.GetComponent<CanvasGroup>().blocksRaycasts = false;
+    }
+
+    /// <summary>
+    ///     This function is used to close the UsernamePanel and return to the LoginPanel.
+    /// </summary>
+    public void CloseUsernamePanel()
+    {
+        usernamePanel.SetActive(false);
+        _loginPanel.GetComponent<CanvasGroup>().alpha = 1;
+        _loginPanel.GetComponent<CanvasGroup>().blocksRaycasts = true;
+    }
+
 
     /// <summary>
     ///     This function is used to show or hide the settings panel while being in-game.
@@ -705,13 +663,19 @@ public class MenuController : MonoBehaviour
         if (_startPanel == null)
             _startPanel = GameObject.Find("StartPanel");
 
+        if (_loginPanel == null)
+            _loginPanel = GameObject.Find("LoginPanel");
+
         if (_settingsToggle)
         {
             _settingsPanel.GetComponent<CanvasGroup>().alpha = 0;
             _settingsPanel.GetComponent<CanvasGroup>().blocksRaycasts = false;
             _startPanel.GetComponent<CanvasGroup>().alpha = 1;
             _startPanel.GetComponent<CanvasGroup>().blocksRaycasts = true;
+            _loginPanel.GetComponent<CanvasGroup>().alpha = 0;
+            _loginPanel.GetComponent<CanvasGroup>().blocksRaycasts = false;
 
+            usernamePanel.SetActive(false);
             creditsPanel.SetActive(false);
             legalNoticePanel.SetActive(false);
         }
@@ -722,6 +686,25 @@ public class MenuController : MonoBehaviour
             _startPanel.GetComponent<CanvasGroup>().alpha = 0;
             _startPanel.GetComponent<CanvasGroup>().blocksRaycasts = false;
         }
+    }
+
+    /// <summary>
+    ///     This function is used to show the login panel while being in the settings menu.
+    /// </summary>
+
+    public void DisplayLoginStart()
+    {
+
+        if (_settingsPanel == null)
+            _settingsPanel = GameObject.Find("SettingsPanel");
+
+        if (_loginPanel == null)
+            _loginPanel = GameObject.Find("LoginPanel");
+
+            _loginPanel.GetComponent<CanvasGroup>().alpha = 1;
+            _loginPanel.GetComponent<CanvasGroup>().blocksRaycasts = true;
+            _settingsPanel.GetComponent<CanvasGroup>().alpha = 0;
+            _settingsPanel.GetComponent<CanvasGroup>().blocksRaycasts = false;
     }
 
     /// <summary>

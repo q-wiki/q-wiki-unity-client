@@ -3,7 +3,7 @@ guid: 3db0783b58c2429b9bc1f560ba323d05
 labels:
 - gvh
 - gvh_dotnet-4.5
-- gvh_version-6.2.0
+- gvh_version-6.7.0
 PluginImporter:
   externalObjects: {}
   serializedVersion: 2
@@ -15,11 +15,6 @@ PluginImporter:
   isExplicitlyReferenced: 0
   validateReferences: 1
   platformData:
-  - first:
-      '': 
-    second:
-      enabled: 1
-      settings: {}
   - first:
       '': OSXIntel
     second:
@@ -51,7 +46,7 @@ PluginImporter:
   - first:
       Any: 
     second:
-      enabled: 0
+      enabled: 1
       settings: {}
   - first:
       Editor: Editor
@@ -71,16 +66,6 @@ PluginImporter:
       enabled: 1
       settings:
         CPU: AnyCPU
-  - first:
-      Nintendo Switch: Switch
-    second:
-      enabled: 1
-      settings: {}
-  - first:
-      PS4: PS4
-    second:
-      enabled: 1
-      settings: {}
   - first:
       Standalone: Linux
     second:
@@ -118,21 +103,11 @@ PluginImporter:
       settings:
         CPU: AnyCPU
   - first:
-      WebGL: WebGL
-    second:
-      enabled: 1
-      settings: {}
-  - first:
       Windows Store Apps: WindowsStoreApps
     second:
       enabled: 1
       settings:
         CPU: AnyCPU
-  - first:
-      XboxOne: XboxOne
-    second:
-      enabled: 1
-      settings: {}
   - first:
       iPhone: iOS
     second:
@@ -140,11 +115,6 @@ PluginImporter:
       settings:
         CompileFlags: 
         FrameworkDependencies: 
-  - first:
-      tvOS: tvOS
-    second:
-      enabled: 1
-      settings: {}
   userData: 
   assetBundleName: 
   assetBundleVariant: 

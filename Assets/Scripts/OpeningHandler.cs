@@ -34,6 +34,9 @@ public class OpeningHandler : MonoBehaviour
             if (previousGame.AwaitingOpponentToJoin == true)
             {
                 scene = "StartScene";
+                await Communicator.AbortCurrentGame();
+                PlayerPrefs.DeleteKey("CURRENT_GAME_ID");
+                Debug.Log("Deleted previous game");
             }
             else
             {

@@ -111,7 +111,6 @@ public class SignInController : MonoBehaviour
             menuController.ToggleSettingsStart();
             menuController.DisplayLoginStart();
             settingsButton.gameObject.SetActive(false);
-            Debug.Log("FOOBA");
         }
     }
 

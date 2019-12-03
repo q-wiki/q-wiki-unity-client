@@ -136,3 +136,6 @@ $RECYCLE.BIN/
 [Aa]ssets/Plugins/Editor*
 [Aa]ssets/Plugins/Editor/JetBrains*
 [Aa]ssets/Plugins/Editor.meta*
+
+# All kinds of keystores
+*.keystore

@@ -24,7 +24,7 @@ public class PushHandler : Singleton<PushHandler>
         var dependencyStatus = await FirebaseApp.CheckAndFixDependenciesAsync();
         if (dependencyStatus == DependencyStatus.Available)
         {
-            Debug.Log("Firebase was setup succesfully - you should receive a token soon");
+            Debug.Log("Firebase was setup successfully - you should receive a token soon");
 
             FirebaseMessaging.TokenReceived += OnTokenReceived;
             FirebaseMessaging.MessageReceived += OnMessageReceived;
@@ -42,8 +42,7 @@ public class PushHandler : Singleton<PushHandler>
         }
         else
         {
-            Debug.LogError(string.Format(
-                "Could not resolve all Firebase dependencies: {0}", dependencyStatus));
+            Debug.LogError($"Could not resolve all Firebase dependencies: {dependencyStatus}");
             isUsable = false;
         }
     }
@@ -55,7 +54,7 @@ public class PushHandler : Singleton<PushHandler>
     /// <param name="token">Arguments related to the received token</param>
     private async void OnTokenReceived(object sender, TokenReceivedEventArgs token)
     {
-        Debug.Log("Received Registration Token: " + token.Token);
+        Debug.Log("Firebase: Received Registration Token: " + token.Token);
         pushToken = token.Token;
         await Communicator.UpdateApiConnection(pushToken);
     }
@@ -67,10 +66,30 @@ public class PushHandler : Singleton<PushHandler>
     /// <param name="e">Arguments related to the received message</param>
     private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
     {
-        Debug.Log("Received a new message from: " + e.Message.From);
+        Debug.Log($"Firebase: Received a new message from: {e.Message.From}");
         
-        // TODO: Silent push (test with smartphone build)
-        Debug.Log($"Raw data:{e.Message.RawData}");
-        Debug.Log($"data:{e.Message.Data}");
+        var data = e.Message.Data;
+        
+        foreach (var entry in data)
+        {
+            Debug.Log($"Firebase: (Key: {entry.Key} / Value: {entry.Key})");
+            
+            if (entry.Key == "refresh" && 
+                entry.Value == "true")
+            {
+                Debug.Log("Firebase: Refreshing game state of the client...");
+                // GameManager.Instance.RefreshGameState(true);
+                return;
+            }
+            
+            if (entry.Key == "delete" && 
+                entry.Value == "true")
+            {
+                Debug.Log("Firebase: Deleting game state of the client...");
+                // GameManager.Instance.RefreshGameState(true);
+                return;
+            }
+
+        }
     }
 }

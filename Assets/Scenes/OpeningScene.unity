@@ -150,6 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b2de3fb4d7514205aa8471e5bebedaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _persistent: 1
   isUsable: 0
   pushToken: 
 --- !u!4 &10493721
@@ -510,11 +511,6 @@ MonoBehaviour:
   _persistent: 1
   gridPrefab: {fileID: 4765952590582975946, guid: a9c940b3555a9490eb13957e0ca1a139,
     type: 3}
-  tileMaterials:
-  - {fileID: 2100000, guid: d78f5cd650004b849a2606c48bf01956, type: 2}
-  - {fileID: 2100000, guid: 0f7ee53bdbd330d4381ca3f0d1baf271, type: 2}
-  - {fileID: 2100000, guid: 5ed55bd1ef975ac4cb6f718e170d0520, type: 2}
-  - {fileID: 2100000, guid: b8f98e1db92d9be46a1185a35ba0c647, type: 2}
 --- !u!4 &650212056
 Transform:
   m_ObjectHideFlags: 0
@@ -637,6 +633,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1074114966
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1074114968}
+  - component: {fileID: 1074114967}
+  m_Layer: 0
+  m_Name: Configuration
+  m_TagString: Untagged
+  m_Icon: {fileID: 7250588514170254948, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1074114967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1074114966}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dde944350dc047cfa20a6411ca37aa8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _persistent: 1
+  serverURL: https://wikidatagame.azurewebsites.net/
+--- !u!4 &1074114968
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1074114966}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 4.41, z: -8.06}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1398557755
 GameObject:

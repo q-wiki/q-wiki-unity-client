@@ -162,7 +162,7 @@ PlayerSettings:
     Android: com.wikidatagame.team
   buildNumber: {}
   AndroidBundleVersionCode: 4
-  AndroidMinSdkVersion: 23
+  AndroidMinSdkVersion: 16
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1
   aotOptions: 

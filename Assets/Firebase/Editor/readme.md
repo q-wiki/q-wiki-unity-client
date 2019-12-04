@@ -162,6 +162,125 @@ Support
 
 Release Notes
 -------------
+### 6.7.0
+  - Overview
+    - Updated dependencies, fixed issues in Analytics, Database, Dynamic Links,
+      Crashlytics, and Storage.
+  - Changes
+    - Storage (iOS/Android): Fixed an issue where
+      FirebaseStorage.GetReferenceFromUrl would return an invalid
+      StorageReference.
+    - Dynamic Links: Fixed an issue where removing delegate from
+      DynamicLinks.DynamicLinkReceived does not stop the delegate from being
+      called.
+    - Database: Fixed an issue causing timestamps to not be populated correctly
+      when using DatabaseReference.UpdateChildren().
+    - Database (Desktop): Fixed an issue preventing listener events from being
+      triggered after DatabaseReference.UpdateChildren() is called.
+    - Database (Desktop): Functions that take string parameters will now
+      fail gracefully if passed a null pointer.
+    - Database (Desktop): Fixed an issue that could result in an incorrect
+      snapshot being passed to listeners under specific circumstances.
+    - Database (Desktop): Fixed an issue causing
+      DatabaseReference.RunTransaction() to fail due to datastale when the
+      location previously stored a list with more than 10 items or a dictionary
+      with integer keys.
+    - Crashlytics: Fixed an [issue](https://github.com/firebase/quickstart-unity/issues/493)
+      on iOS with Unity 2019.3 beta where the plugin fails to create a XCode run
+      script to upload symbols.
+    - Analytics (iOS): Fixed the racy behavior of
+      `FirebaseAnalytics.GetAnalyticsInstanceId()` after calling
+      `FirebaseAnalytics.ResetAnalyticsData()`.
+
+### 6.6.0
+  - Overview
+    - Updated dependencies, fixed issues in Auth & Database.
+  - Changes
+    - Auth (Desktop): Fixed not loading provider list from cached user data.
+    - Database (Desktop): Fixed a crash that could occur when trying to keep a
+      location in the database synced when you do not have permission.
+    - Database (Desktop): Queries on locations in the database with query rules
+      now function properly, instead of always returning "Permission denied".
+    - Database (Desktop): Fixed the map-to-vector conversion when firing events
+      that have maps containing enitrely integer keys.
+
+### 6.5.0
+  - Overview
+    - Updated dependencies, improved logging for Auth and Database, and fixed
+      the freeze in the editor.
+  - Changes
+    - General: The instance of FirebaseApp, FirebaseAuth, FirebaseDatabase,
+      FirebaseFunctions, FirebaseInstanceId and FirebaseStorage will be kept
+      alive after creation until explicitly disposed.
+    - Auth (Linux): Improved error logging if libsecret (required for login
+      persistence) is not installed on Linux.
+    - Database: The database now supports setting the log level independently of
+      the system level logger.
+    - Auth/Database (Desktop): Fixed the freeze when playing in the editor for
+      the more than once or when closing the editor, when keeping a static
+      reference to either FirebaseAuth or FirebaseDatabase instances.
+
+### 6.4.0
+  - Overview
+    - Updated dependencies, improved error handling in the iOS build logic,
+      improved error handling with deleted objects, fixed an issue with Auth
+      persistence, and fixed a crash in Database.
+  - Changes
+    - General: Added more underlying null checks when accessing objects that can
+      potentially be deleted, throwing exceptions instead of crashing.
+    - General (iOS): Handle malformed Info.plist files when patching Xcode
+      projects.
+    - Auth (Desktop): Fixed an issue with updated user info not being persisted.
+    - Database (Desktop): Fixed a crash with saving a ServerTimestamp during
+      a transaction.
+
+### 6.3.0
+  - Overview
+    - Auth (iOS): Fixed an exception in Firebase.AuthVerifyPhoneNumber.
+  - Changes
+    - General (Editor): Fixed spurious errors about missing google-services.json
+      file.
+    - General (iOS/Android): Fixed a bug that allows custom FirebaseApp
+      instances to be created after the app has been restarted
+    - Auth (Desktop): Changed destruction behavior. Instead of waiting for all
+      async operations to finish, now Auth will cancel all async operations and
+      quit. For callbacks that are already running, this will protect against
+      cases where auth instances might not exist anymore.
+    - Auth (iOS): Fixed an exception in PhoneAuthProvider.verifyPhoneNumber.
+    - Auth (iOS): Stopped Auth from hanging on destruction if any local tasks
+      remain in scope.
+    - Database (Desktop): Fixed an issue that could cause a crash when updating
+      the descendant of a location with a listener attached.
+
+### 6.2.2
+  - Overview
+    - Bug fixes.
+  - Changes
+    - General (Editor): Worked around regression in Unity 2019.2 and 2019.3
+      which caused DllNotFoundException.
+    - General (Editor, macOS): Add support for macOS 10.11.x.
+    - Auth (Editor): After loading a persisted user data, ensure token is
+      not expired.
+    - Auth (desktop): Ensure Database, Storage and Functions do not use an
+      expired token after it's loaded from persistent storage.
+    - Database (Editor): Fixed a crash when calling UpdateChildrenAsync.
+    - Database (Editor): Deprecated service account authentication.
+    - Database (Editor): Fixed DatabaseReference.RunTransaction() sending
+      invalid data to the server which causes error message "Error on
+      incoming message" and freeze.
+  - Known Issues
+    - Database/Storage/Functions may fail to send authentication token to server
+      if FirebaseAuth is garbage-collected. If you are unable to access to
+      the server due to "Permission Denied", please try to keep FirebaseAuth
+      alive.
+
+### 6.2.1
+  - Overview
+    - Fixed Crashlytics on Android not working correctly.
+  - Changes
+    - Crashlytics (Android): Fixed an issue causing Crashlytics to believe it
+      was shut down, blocking all functionality.
+
 ### 6.2.0
   - Overview
     - Moved Realtime Database to a C++ implementation on desktop, added support

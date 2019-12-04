@@ -8,15 +8,27 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1043331006457:android:ad44715bd6d63335740728",
+        "mobilesdk_app_id": "1:1043331006457:android:9ee578d6e10c4398740728",
         "android_client_info": {
           "package_name": "com.wikidatagame.team"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1043331006457-l00s1bm15b650e9suq0g70i3m4g29u40.apps.googleusercontent.com",
-          "client_type": 3
+          "client_id": "1043331006457-6uohp2isv8kf3ankbna8cmjlej9pb0it.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wikidatagame.team",
+            "certificate_hash": "f197799490716e9ee860addc5e31f472af09ce3b"
+          }
+        },
+        {
+          "client_id": "1043331006457-ebpchci0p5elavvn5lv8jnsism7bphjc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wikidatagame.team",
+            "certificate_hash": "8019ead5217d661301131caae58950f4377d3d0f"
+          }
         }
       ],
       "api_key": [
@@ -26,12 +38,7 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "1043331006457-l00s1bm15b650e9suq0g70i3m4g29u40.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

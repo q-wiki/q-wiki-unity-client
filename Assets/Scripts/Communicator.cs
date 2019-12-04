@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Rest;
@@ -13,13 +14,13 @@ using WikidataGame.Models;
 /// </summary>
 public class Communicator : MonoBehaviour
 {
-    private const string SERVER_URL = "https://wikidatagame.azurewebsites.net/";
     private const string AUTH_TOKEN = "AUTH_TOKEN";
     private const string CURRENT_GAME_ID = "CURRENT_GAME_ID";
 
     private static WikidataGameAPI _gameApi;
     private static string _currentGameId;
     private static string _authToken { get; set; }
+    private static string SERVER_URL => Configuration.Instance.ServerURL;
 
     /// <summary>
     ///     Indicates if client is connected to WikiData API

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Controllers;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Minigame
@@ -27,14 +29,16 @@ namespace Minigame
          */
 
         public List<GameObject> choices;
+        public List<Sprite> numbersSprites;
+        public List<Sprite> numbersSpritesCorrect;
+        public Sprite unselectedSprite;
         public Sprite closeButtonSprite;
         public GameObject description;
         public Button sendButton;
         public Image sendButtonImage;
         public Sprite sendButtonSprite;
         public Timer timerPrefab;
-
-        private MenuController menuController => GameObject.Find("MenuController").GetComponent<MenuController>();
+        private List<GameObject> sortedChoices = new List<GameObject>();
         private GameObject ClosePanel => transform.Find("ClosePanel").gameObject;
 
         /// <summary>
@@ -80,13 +84,43 @@ namespace Minigame
         }
 
         /// <summary>
+        ///     Visual representation of selected choice, when a new choice is clicked.
+        ///     Updating sorted list to relfect changes.
+        /// </summary>
+        public void ChoiceSortOnClick()
+        {
+            GameObject clickedChoice = EventSystem.current.currentSelectedGameObject;  
+
+            if (sortedChoices.Contains(clickedChoice))
+            {
+                clickedChoice.transform.GetChild(0).GetComponent<Image>().sprite = null;
+                sortedChoices.Remove(clickedChoice);
+                clickedChoice.transform.GetChild(0).GetComponent<Image>().sprite = unselectedSprite;
+
+                foreach (GameObject choice in sortedChoices)
+                {
+                    choice.transform.GetChild(0).GetComponent<Image>().sprite = numbersSprites[sortedChoices.IndexOf(choice)];
+                }
+            }
+            else
+            {
+                sortedChoices.Add(clickedChoice);
+                clickedChoice.transform.GetChild(0).GetComponent<Image>().sprite = numbersSprites[sortedChoices.IndexOf(clickedChoice)];
+            }
+
+        }
+
+        /// <summary>
         ///     This is used to force a shutdown of the MiniGame when timer reaches null
         /// </summary>
         public async void ForceQuit()
         {
             Debug.Log("Sorry, you were too slow");
-            var result = await Communicator.AnswerMinigame(_id, new List<string>());
-            ClosePanel.SetActive(true);
+            transform.Find("BlockPanel").GetComponentInChildren<CanvasGroup>().blocksRaycasts = true;
+            sendButton.GetComponent<Image>().color = new Color32(195, 98, 98, 255);
+            sendButton.GetComponentInChildren<Text>().text = "Close Minigame";
+            sendButtonImage.sprite = closeButtonSprite;
+            Send();
         }
 
         /// <summary>
@@ -105,7 +139,18 @@ namespace Minigame
 
             Debug.Log("Handling minigame result");
             var answers = new List<string>();
-            foreach (var choice in choices)
+            // if not all answers selected : fill sorted list with missing answers
+            if (sortedChoices.Count < 4)
+            {
+                foreach(var choice in choices)
+                {
+                    if (!sortedChoices.Contains(choice))
+                    {
+                        sortedChoices.Add(choice);
+                    }
+                }
+            }
+            foreach (var choice in sortedChoices)
             {
                 var text = choice.GetComponentInChildren<Text>();
                 answers.Add(text.text);
@@ -132,19 +177,28 @@ namespace Minigame
                 choices.ForEach(c => c.GetComponentInChildren<Text>().color = correctAnswerColor);
             else
                 // sequence has wrong elements => highlight right and wrong elements
-                for (var i = 0; i < choices.Count; i++)
+                for (var i = 0; i < sortedChoices.Count; i++)
                 {
-                    var c = choices[i];
+                    var c = sortedChoices[i];
                     var text = c.GetComponentInChildren<Text>();
-                    if (answers[i] == correctAnswer[i])
+                    int index = correctAnswer.IndexOf(text.text);
+                    var child = c.transform.GetChild(2).gameObject;
+                    child.SetActive(true);
+                    child.GetComponent<Image>().sprite = numbersSpritesCorrect[correctAnswer.IndexOf(text.text)];
+
+                    if (text.text == correctAnswer[i])
+                    {
                         text.color = correctAnswerColor;
+                    }
                     else
+                    {
                         text.color = Color.red;
+                    }
                 }
 
             ClosePanel.SetActive(true);
             sendButton.GetComponent<Image>().color = new Color32(195, 98, 98, 255);
-            sendButton.GetComponentInChildren<Text>().text = "Close";
+            sendButton.GetComponentInChildren<Text>().text = "Close Minigame";
             sendButtonImage.sprite = closeButtonSprite;
         }
 
@@ -153,10 +207,15 @@ namespace Minigame
         /// </summary>
         public void Close()
         {
-            menuController.GetComponent<MenuController>().RefreshGameState(false);
+            GameManager.Instance.RefreshGameState(false);
+            CameraBehaviour.Instance.Toggle();
+            
             transform.Find("BlockPanel").GetComponentInChildren<CanvasGroup>().blocksRaycasts = false;
-            menuController.ToggleCameraBehaviour();
             gameObject.SetActive(false);
+            foreach(var c in choices)
+            {
+                c.transform.GetChild(2).gameObject.SetActive(false);
+            }
             ClosePanel.SetActive(false);
         }
 
@@ -168,8 +227,16 @@ namespace Minigame
             sendButton.GetComponent<Image>().color = new Color32(80, 158, 158, 255);
             sendButton.GetComponentInChildren<Text>().text = "Send";
             sendButtonImage.sprite = sendButtonSprite;
+            sortedChoices.Clear();
 
-            foreach (var item in choices) item.GetComponentInChildren<Text>().color = Color.black;
+            foreach (var item in choices)
+
+            {
+                item.transform.GetChild(0).GetComponent<Image>().sprite = null;
+                item.transform.GetChild(0).GetComponent<Image>().sprite = unselectedSprite;
+                item.GetComponentInChildren<Text>().color = Color.white;
+            }
+
         }
 
         /// <summary>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Controllers.Map;
 using Minigame;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -475,10 +476,10 @@ public class MenuController : MonoBehaviour
     /// </summary>
     public void ToggleCameraBehaviour()
     {
-        if (camera.GetComponent<CameraBehavior>().enabled)
-            camera.GetComponent<CameraBehavior>().enabled = false;
+        if (camera.GetComponent<CameraBehaviour>().enabled)
+            camera.GetComponent<CameraBehaviour>().enabled = false;
         else
-            camera.GetComponent<CameraBehavior>().enabled = true;
+            camera.GetComponent<CameraBehaviour>().enabled = true;
     }
 
     /// <summary>

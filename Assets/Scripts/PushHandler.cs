@@ -1,17 +1,13 @@
-﻿using Firebase;
+﻿using System;
+using Firebase;
 using Firebase.Messaging;
 using UnityEngine;
 
 /// <summary>
 ///     This class handles communication with the Google Firebase API to enable push notifications.
 /// </summary>
-public class PushHandler : MonoBehaviour
+public class PushHandler : Singleton<PushHandler>
 {
-    /**
-     * static fields
-     */
-
-    public static PushHandler Instance;
 
     /**
      * public fields
@@ -21,20 +17,6 @@ public class PushHandler : MonoBehaviour
     public string pushToken;
 
     /// <summary>
-    ///     The awake function is used to make sure the PushHandler acts as a singleton.
-    /// </summary>
-    public void Awake()
-    {
-        var objs = GameObject.FindGameObjectsWithTag("PushHandler");
-        if (objs.Length > 1)
-            Destroy(gameObject);
-
-        DontDestroyOnLoad(gameObject);
-
-        Instance = this;
-    }
-
-    /// <summary>
     ///     Dependencies are checked and the app is registered within the Firebase API.
     /// </summary>
     public async void Start()
@@ -42,12 +24,16 @@ public class PushHandler : MonoBehaviour
         var dependencyStatus = await FirebaseApp.CheckAndFixDependenciesAsync();
         if (dependencyStatus == DependencyStatus.Available)
         {
-            Debug.Log("Firebase was setup succesfully - you should receive a token soon");
+            Debug.Log("Firebase was setup successfully - you should receive a token soon");
 
             FirebaseMessaging.TokenReceived += OnTokenReceived;
             FirebaseMessaging.MessageReceived += OnMessageReceived;
 
             var app = FirebaseApp.DefaultInstance;
+
+            if(app == null)
+                throw new Exception("FirebaseApp is not allowed to be null at this point.");
+            
             Debug.Log($"Firebase: Registered app name is {app.Name}");
             Debug.Log($"Firebase: Registered database URL is {app.Options.DatabaseUrl}");
 
@@ -56,8 +42,7 @@ public class PushHandler : MonoBehaviour
         }
         else
         {
-            Debug.LogError(string.Format(
-                "Could not resolve all Firebase dependencies: {0}", dependencyStatus));
+            Debug.LogError($"Could not resolve all Firebase dependencies: {dependencyStatus}");
             isUsable = false;
         }
     }
@@ -69,7 +54,7 @@ public class PushHandler : MonoBehaviour
     /// <param name="token">Arguments related to the received token</param>
     private async void OnTokenReceived(object sender, TokenReceivedEventArgs token)
     {
-        Debug.Log("Received Registration Token: " + token.Token);
+        Debug.Log("Firebase: Received Registration Token: " + token.Token);
         pushToken = token.Token;
         await Communicator.UpdateApiConnection(pushToken);
     }
@@ -81,6 +66,30 @@ public class PushHandler : MonoBehaviour
     /// <param name="e">Arguments related to the received message</param>
     private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
     {
-        Debug.Log("Received a new message from: " + e.Message.From);
+        Debug.Log($"Firebase: Received a new message from: {e.Message.From}");
+        
+        var data = e.Message.Data;
+        
+        foreach (var entry in data)
+        {
+            Debug.Log($"Firebase: (Key: {entry.Key} / Value: {entry.Key})");
+            
+            if (entry.Key == "refresh" && 
+                entry.Value == "true")
+            {
+                Debug.Log("Firebase: Refreshing game state of the client...");
+                // GameManager.Instance.RefreshGameState(true);
+                return;
+            }
+            
+            if (entry.Key == "delete" && 
+                entry.Value == "true")
+            {
+                Debug.Log("Firebase: Deleting game state of the client...");
+                // GameManager.Instance.RefreshGameState(true);
+                return;
+            }
+
+        }
     }
 }

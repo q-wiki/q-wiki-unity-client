@@ -8,22 +8,16 @@ using WikidataGame.Models;
 ///     This class is used to handle the score of the client.
 ///     It also handles the number of remaining turns and shows it to the user.
 /// </summary>
-public class ScoreHandler : MonoBehaviour
+public class ScoreHandler : Singleton<ScoreHandler>
 {
     private const string CURRENT_GAME_TURNS_PLAYED = "CURRENT_GAME_TURNS_PLAYED";
-
-    /**
-     * static fields
-     */
-
-    public static ScoreHandler Instance;
-    private long _opponentScore;
-    private Text _opponentScoreText;
 
     /**
      * private fields
      */
 
+    private long _opponentScore;
+    private Text _opponentScoreText;
     private long _playerScore;
     private Text _playerScoreText;
     private int _turnsPlayed;
@@ -35,7 +29,6 @@ public class ScoreHandler : MonoBehaviour
     /// </summary>
     public void Awake()
     {
-        Instance = this;
         _playerScoreText = transform.Find("You").GetComponentInChildren<Text>();
         _opponentScoreText = transform.Find("They").GetComponentInChildren<Text>();
         _turnsPlayedText = transform.Find("Turns").GetComponentInChildren<Text>();

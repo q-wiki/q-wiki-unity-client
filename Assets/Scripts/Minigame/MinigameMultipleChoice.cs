@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Controllers;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Minigame
@@ -29,8 +31,7 @@ namespace Minigame
         /**
          * public fields
          */
-
-        public GameObject menuController;
+        
         public GameObject sendButton;
         public Image sendButtonImage;
         public Sprite sendButtonSprite;
@@ -86,9 +87,10 @@ namespace Minigame
         /// </summary>
         public void Close()
         {
-            menuController.GetComponent<MenuController>().RefreshGameState(false);
+            GameManager.Instance.RefreshGameState(false);
+            CameraBehaviour.Instance.Toggle();
+            
             transform.Find("BlockPanel").GetComponentInChildren<CanvasGroup>().blocksRaycasts = false;
-            menuController.GetComponent<MenuController>().ToggleCameraBehaviour();
             gameObject.SetActive(false);
             ClosePanel.SetActive(false);
         }
@@ -99,8 +101,34 @@ namespace Minigame
         public async void ForceQuit()
         {
             Debug.Log("Sorry, you were too slow");
-            var result = await Communicator.AnswerMinigame(_id, new List<string>());
-            ClosePanel.SetActive(true);
+            transform.Find("BlockPanel").GetComponentInChildren<CanvasGroup>().blocksRaycasts = true;
+
+            sendButton.GetComponent<Image>().color = new Color32(195, 98, 98, 255);
+            sendButton.GetComponentInChildren<Text>().text = "Close Minigame";
+            sendButtonImage.sprite = closeButtonSprite;
+
+            if (_checkedChoice == null)
+            {
+                var result = await Communicator.AnswerMinigame(_id, new List<string>());
+                var correctAnswer = result.CorrectAnswer[0];
+                var correctAnswerColor = new Color32(0x11, 0xA0, 0x4F, 0xFF);
+
+                foreach (var choice in choices)
+                {
+                    var text = choice
+                        .transform
+                        .Find("Text")
+                        .gameObject;
+                    if (text.GetComponent<Text>().text == correctAnswer)
+                        text.GetComponent<Text>().color = correctAnswerColor;
+                }
+
+
+            }
+            else
+            {
+                Send();
+            }
         }
 
         /// <summary>
@@ -156,7 +184,7 @@ namespace Minigame
 
             ClosePanel.SetActive(true);
             sendButton.GetComponent<Image>().color = new Color32(195, 98, 98, 255);
-            sendButton.GetComponentInChildren<Text>().text = "Close";
+            sendButton.GetComponentInChildren<Text>().text = "Close Minigame";
             sendButtonImage.sprite = closeButtonSprite;
         }
 

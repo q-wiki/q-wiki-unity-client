@@ -126,8 +126,16 @@ $RECYCLE.BIN/
 # build info
 [Aa]ssets/StreamingAssets/build_info.txt
 
+# google-services
+/[Aa]ssets/google-services.json*
+/[Aa]ssets/StreamingAssets/google-services-desktop.json*
+/[Aa]ssets/Plugins/Android/Firebase/res/values/google-services.xml*
+
 # Jetbrain Rider Cache
 .idea/
 [Aa]ssets/Plugins/Editor*
 [Aa]ssets/Plugins/Editor/JetBrains*
 [Aa]ssets/Plugins/Editor.meta*
+
+# All kinds of keystores
+*.keystore

@@ -12,10 +12,34 @@ namespace Controllers.UI
         public Hideable legalNoticePanel;
         public Hideable settingsPanel;
         public Hideable startPanel;
+        public GameObject usernamePanel;
+        private GameObject _loginPanel;
 
         private bool _settingsToggle;
 
+        public InputField usernameInput;
+        public Text googleAuthButtonText;
+        public Text anonAuthButtonText;
+        public Text usernameTakenMessage;
+
+        public const string SIGNED_IN_TEXT_GOOGLE = "Sign Out";
+        public const string SIGNED_OUT_TEXT_GOOGLE = "Sign In With Google";
+        public const string SIGNED_IN_TEXT_ANON = "Change Username";
+        public const string SIGNED_OUT_TEXT_ANON = "Sign in Anonymously";
+
         private static GameManager GameManager => GameManager.Instance;
+
+
+        public void Start()
+        {
+            if (usernamePanel == null) usernamePanel = GameObject.Find("UsernamePanel");
+            if (_loginPanel == null) _loginPanel = GameObject.Find("LoginPanel");
+            if (googleAuthButtonText == null) googleAuthButtonText = GameObject.Find("SignInText").GetComponent<Text>();
+            if (anonAuthButtonText == null) anonAuthButtonText = GameObject.Find("SignInAnonText").GetComponent<Text>();
+            if (usernameTakenMessage == null) usernameTakenMessage = GameObject.Find("UsernameTakenMessage").GetComponent<Text>();
+            if (settingsButton == null) settingsButton = GameObject.Find("SettingsButton").GetComponent<Button>();
+            if (usernameInput == null) usernameInput = GameObject.Find("UsernameInputField").GetComponent<InputField>();
+        }
 
         /// <summary>
         ///     This function is used to initialize a new game.
@@ -92,6 +116,10 @@ namespace Controllers.UI
                 startPanel.Hide();
                 creditsPanel.Hide();
                 legalNoticePanel.Hide();
+                _loginPanel.GetComponent<CanvasGroup>().alpha = 0;
+                _loginPanel.GetComponent<CanvasGroup>().blocksRaycasts = false;
+
+                usernamePanel.SetActive(false);
             }
             else
             {
@@ -117,7 +145,18 @@ namespace Controllers.UI
         {
             Debug.LogWarning("This function is not implemented yet.");
         }
-        
+
+        /// <summary>
+        ///     This function is used to show the login panel while being in the settings menu.
+        /// </summary>
+
+        public void DisplayLoginStart()
+        {
+            _loginPanel.GetComponent<CanvasGroup>().alpha = 1;
+            _loginPanel.GetComponent<CanvasGroup>().blocksRaycasts = true;
+            settingsPanel.Hide();
+        }
+
         /// <summary>
         ///     This function is used to open the CreditsPanel in the settings.
         /// </summary>
@@ -125,6 +164,28 @@ namespace Controllers.UI
         {
             creditsPanel.Show();
             settingsPanel.Hide();
+        }
+
+        /// <summary>
+        ///     This function is used to open the UsernamePanel from the LoginPanel.
+        /// </summary>
+        public void OpenUsernamePanel()
+        {
+            usernameTakenMessage.gameObject.SetActive(false);
+            usernamePanel.SetActive(true);
+            _loginPanel.GetComponent<CanvasGroup>().alpha = 0;
+            _loginPanel.GetComponent<CanvasGroup>().blocksRaycasts = false;
+        }
+
+        /// <summary>
+        ///     This function is used to close the UsernamePanel and return to the LoginPanel.
+        /// </summary>
+        public void CloseUsernamePanel()
+        {
+            usernamePanel.SetActive(false);
+            _loginPanel.GetComponent<CanvasGroup>().alpha = 1;
+            _loginPanel.GetComponent<CanvasGroup>().blocksRaycasts = true;
+            settingsButton.gameObject.SetActive(true);
         }
 
         /// <summary>

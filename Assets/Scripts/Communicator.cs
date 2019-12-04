@@ -46,21 +46,21 @@ public class Communicator : MonoBehaviour
         Debug.Log("Trying to restore previously saved auth token…");
         var authToken = PlayerPrefs.GetString(AUTH_TOKEN);
 
-        //if (string.IsNullOrEmpty(authToken))
-        //{
-        //    Debug.Log("No auth token in PlayerPrefs, fetching new token from server");
-        //    var apiClient = new WikidataGameAPI(new Uri(SERVER_URL), new TokenCredentials("auth"));
-        //    // CancellationTokenSource cts = new CancellationTokenSource(); // <-- Cancellation Token if you want to cancel the request, user quits, etc. [cts.Cancel()]
-        //    var pushToken = PushHandler.Instance.pushToken ?? "";
-        //    var authResponse = await apiClient.AuthenticateAsync(SystemInfo.deviceUniqueIdentifier, pushToken);
-        //    authToken = authResponse.Bearer;
-        //    PlayerPrefs.SetString(AUTH_TOKEN, authToken);
-        //}
+        if (string.IsNullOrEmpty(authToken))
+        {
+            Debug.Log("No auth token in PlayerPrefs, fetching new token from server");
+            var apiClient = new WikidataGameAPI(new Uri(SERVER_URL), new TokenCredentials("auth"));
+            // CancellationTokenSource cts = new CancellationTokenSource(); // <-- Cancellation Token if you want to cancel the request, user quits, etc. [cts.Cancel()]
+            var pushToken = PushHandler.Instance.pushToken ?? "";
+            var authResponse = await apiClient.AuthenticateAsync(SystemInfo.deviceUniqueIdentifier, pushToken);
+            authToken = authResponse.Bearer;
+            PlayerPrefs.SetString(AUTH_TOKEN, authToken);
+        }
 
-        //Debug.Log($"Auth token: {authToken}");
+        Debug.Log($"Auth token: {authToken}");
 
-        //// this _gameApi can now be used by all other methods
-        //_gameApi = new WikidataGameAPI(new Uri(SERVER_URL), new TokenCredentials(authToken));
+        // this _gameApi can now be used by all other methods
+        _gameApi = new WikidataGameAPI(new Uri(SERVER_URL), new TokenCredentials(authToken));
     }
 
     /// <summary>

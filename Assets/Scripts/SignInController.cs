@@ -10,11 +10,11 @@ using GooglePlayGames.BasicApi.Multiplayer;
 using UnityEngine.SocialPlatforms;
 using System;
 using System.Threading.Tasks;
+using Controllers.UI;
+using Controllers;
 
 public class SignInController : MonoBehaviour
 {
-    public MenuController menuController;
-    public PushHandler pushHandler;
 
     private Firebase.Auth.FirebaseAuth auth = null;
     private Firebase.Auth.FirebaseUser user = null;
@@ -25,15 +25,12 @@ public class SignInController : MonoBehaviour
     private bool isLoggedIn = false;
     private bool isLoggedInAnon = false;
 
-
+    private StartUIController _uiController => (StartUIController) GameManager.Instance.UIController();
 
 
     // Start is called before the first frame update
     void Start()
     {
-
-        if (menuController == null) menuController = GameObject.Find("MenuController").GetComponent<MenuController>();
-        if (pushHandler == null) pushHandler = GameObject.Find("PushHandler").GetComponent<PushHandler>();
         GameObject.Find("UsernamePanel").SetActive(false);
 
 
@@ -74,21 +71,21 @@ public class SignInController : MonoBehaviour
         //});
 
 
-        menuController.googleAuthButtonText.text = PlayGamesPlatform.Instance.IsAuthenticated() ? MenuController.SIGNED_IN_TEXT_GOOGLE : MenuController.SIGNED_OUT_TEXT_GOOGLE;
+        _uiController.googleAuthButtonText.text = PlayGamesPlatform.Instance.IsAuthenticated() ? StartUIController.SIGNED_IN_TEXT_GOOGLE : StartUIController.SIGNED_OUT_TEXT_GOOGLE;
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (firebaseNotInitialized && pushHandler.isUsable) {
+        if (firebaseNotInitialized && PushHandler.Instance.isUsable) {
             firebaseNotInitialized = false;
             InitializeFirebase();
             if (auth.CurrentUser == null && !PlayGamesPlatform.Instance.IsAuthenticated()) {
                 forceLogin = true;
             }
 
-            menuController.anonAuthButtonText.text = (auth.CurrentUser != null) ? MenuController.SIGNED_IN_TEXT_ANON : MenuController.SIGNED_OUT_TEXT_ANON;
+            _uiController.anonAuthButtonText.text = (auth.CurrentUser != null) ? StartUIController.SIGNED_IN_TEXT_ANON : StartUIController.SIGNED_OUT_TEXT_ANON;
 
             if (forceLogin)
             {
@@ -104,9 +101,9 @@ public class SignInController : MonoBehaviour
         if (auth != null && auth.CurrentUser == null && !PlayGamesPlatform.Instance.IsAuthenticated())
         {
             Debug.Log("User is asked to chose a SignIn Method");
-            menuController.ToggleSettingsStart();
-            menuController.DisplayLoginStart();
-            menuController.settingsButton.gameObject.SetActive(false);
+            _uiController.ToggleSettings();
+            _uiController.DisplayLoginStart();
+            _uiController.settingsButton.gameObject.SetActive(false);
         }
     }
 
@@ -167,14 +164,14 @@ public class SignInController : MonoBehaviour
         //        });
         //    });
         //}
-        menuController.OpenUsernamePanel();
+        _uiController.OpenUsernamePanel();
 
     }
 
 
     public async void SetUsername(){
-        menuController.usernameTakenMessage.gameObject.SetActive(false);
-        string newUserName = menuController.usernameInput.text;
+        _uiController.usernameTakenMessage.gameObject.SetActive(false);
+        string newUserName = _uiController.usernameInput.text;
         if (newUserName == "") { newUserName = "Anonymous User"; }
         //Firebase.Auth.FirebaseUser user = auth.CurrentUser;
         //if (user != null)
@@ -214,7 +211,7 @@ public class SignInController : MonoBehaviour
                     //handle failure
                 }
                 else {
-                    menuController.CloseUsernamePanel();
+                    _uiController.CloseUsernamePanel();
                 }
             }
             else {
@@ -226,15 +223,15 @@ public class SignInController : MonoBehaviour
                 else {
                     isLoggedIn = true;
                     isLoggedInAnon = true;
-                    menuController.CloseUsernamePanel();
+                    _uiController.CloseUsernamePanel();
                 }
             }
         }
         else {
-            menuController.usernameTakenMessage.gameObject.SetActive(true);
+            _uiController.usernameTakenMessage.gameObject.SetActive(true);
         }
 
-        menuController.anonAuthButtonText.text = (isLoggedInAnon) ? MenuController.SIGNED_IN_TEXT_ANON : MenuController.SIGNED_OUT_TEXT_ANON;
+        _uiController.anonAuthButtonText.text = (isLoggedInAnon) ? StartUIController.SIGNED_IN_TEXT_ANON : StartUIController.SIGNED_OUT_TEXT_ANON;
     }
 
     private Task CreateAnonUserAsync(string newUserName) {
@@ -266,7 +263,7 @@ public class SignInController : MonoBehaviour
                 Debug.Log("UDEBUG: Username: " + Social.localUser.userName);
                 Debug.Log("UDEBUG: ID: " + Social.localUser.id);
 
-                menuController.googleAuthButtonText.text = success ? MenuController.SIGNED_IN_TEXT_GOOGLE : MenuController.SIGNED_OUT_TEXT_GOOGLE;
+                _uiController.googleAuthButtonText.text = success ? StartUIController.SIGNED_IN_TEXT_GOOGLE : StartUIController.SIGNED_OUT_TEXT_GOOGLE;
                 if (success)
                 {
                     OnSuccess();
@@ -284,7 +281,7 @@ public class SignInController : MonoBehaviour
     private void OnSuccess()
     {
         Debug.Log("Successfully Signed In");
-        menuController.settingsButton.gameObject.SetActive(true);
+        _uiController.settingsButton.gameObject.SetActive(true);
         Debug.Log("UDEBUG: AuthCode: " + PlayGamesPlatform.Instance.GetServerAuthCode());
         PlayGamesPlatform.Instance.GetAnotherServerAuthCode(true, (string code) => {
             Debug.Log("UDEBUG: AuthCodeAsync: " + code);
@@ -296,7 +293,7 @@ public class SignInController : MonoBehaviour
     {
         // sign out
         PlayGamesPlatform.Instance.SignOut();
-        menuController.googleAuthButtonText.text = MenuController.SIGNED_OUT_TEXT_GOOGLE;
+        _uiController.googleAuthButtonText.text = StartUIController.SIGNED_OUT_TEXT_GOOGLE;
         Debug.Log("Signing out of Google Play");
     }
 
@@ -305,7 +302,7 @@ public class SignInController : MonoBehaviour
         // sign out
         auth.SignOut();
         isLoggedInAnon = false;
-        menuController.anonAuthButtonText.text = (isLoggedInAnon) ? MenuController.SIGNED_IN_TEXT_ANON : MenuController.SIGNED_OUT_TEXT_ANON;
+        _uiController.anonAuthButtonText.text = (isLoggedInAnon) ? StartUIController.SIGNED_IN_TEXT_ANON : StartUIController.SIGNED_OUT_TEXT_ANON;
         Debug.Log("Signing out of Firebase");
     }
 

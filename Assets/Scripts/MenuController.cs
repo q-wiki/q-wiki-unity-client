@@ -59,18 +59,8 @@ public class MenuController : MonoBehaviour
     public Text gameOverText;
     public GameObject legalNoticePanel;
     public GameObject creditsPanel;
-    public GameObject usernamePanel;
 
-    public InputField usernameInput;
-    public Button settingsButton;
-    public Text googleAuthButtonText;
-    public Text anonAuthButtonText;
-    public Text usernameTakenMessage;
 
-    public const string SIGNED_IN_TEXT_GOOGLE = "Sign Out";
-    public const string SIGNED_OUT_TEXT_GOOGLE = "Sign In With Google";
-    public const string SIGNED_IN_TEXT_ANON = "Change Username";
-    public const string SIGNED_OUT_TEXT_ANON = "Sign in Anonymously";
 
     /// <summary>
     ///     These are private fields of the game controller.
@@ -82,7 +72,6 @@ public class MenuController : MonoBehaviour
     private static Game _game;
     private GameObject _startPanel;
     private GameObject _settingsPanel;
-    private GameObject _loginPanel;
     public Button c1, c2, c3;
     private bool _soundToggle;
     private bool _notificationToggle;
@@ -147,11 +136,6 @@ public class MenuController : MonoBehaviour
     /// </summary>
     private async void Start()
     {
-        if (googleAuthButtonText == null) googleAuthButtonText = GameObject.Find("SignInText").GetComponent<Text>();
-        if (anonAuthButtonText == null) anonAuthButtonText = GameObject.Find("SignInAnonText").GetComponent<Text>();
-        if (usernameTakenMessage == null) usernameTakenMessage = GameObject.Find("UsernameTakenMessage").GetComponent<Text>();
-        if (settingsButton == null) settingsButton = GameObject.Find("SettingsButton").GetComponent<Button>();
-        if (usernameInput == null) usernameInput = GameObject.Find("UsernameInputField").GetComponent<InputField>();
 
         gameObject.AddComponent<AudioSource>();
         Source.clip = clickSound;
@@ -625,26 +609,7 @@ public class MenuController : MonoBehaviour
         _settingsPanel.GetComponent<CanvasGroup>().blocksRaycasts = false;
     }
 
-    /// <summary>
-    ///     This function is used to open the UsernamePanel from the LoginPanel.
-    /// </summary>
-    public void OpenUsernamePanel()
-    {
-        usernameTakenMessage.gameObject.SetActive(false);
-        usernamePanel.SetActive(true);
-        _loginPanel.GetComponent<CanvasGroup>().alpha = 0;
-        _loginPanel.GetComponent<CanvasGroup>().blocksRaycasts = false;
-    }
 
-    /// <summary>
-    ///     This function is used to close the UsernamePanel and return to the LoginPanel.
-    /// </summary>
-    public void CloseUsernamePanel()
-    {
-        usernamePanel.SetActive(false);
-        _loginPanel.GetComponent<CanvasGroup>().alpha = 1;
-        _loginPanel.GetComponent<CanvasGroup>().blocksRaycasts = true;
-    }
 
 
     /// <summary>
@@ -675,56 +640,7 @@ public class MenuController : MonoBehaviour
     /// </summary>
     public void ToggleSettingsStart()
     {
-        _settingsToggle = !_settingsToggle;
 
-        if (_settingsPanel == null)
-            _settingsPanel = GameObject.Find("SettingsPanel");
-
-        if (_startPanel == null)
-            _startPanel = GameObject.Find("StartPanel");
-
-        if (_loginPanel == null)
-            _loginPanel = GameObject.Find("LoginPanel");
-
-        if (_settingsToggle)
-        {
-            _settingsPanel.GetComponent<CanvasGroup>().alpha = 0;
-            _settingsPanel.GetComponent<CanvasGroup>().blocksRaycasts = false;
-            _startPanel.GetComponent<CanvasGroup>().alpha = 1;
-            _startPanel.GetComponent<CanvasGroup>().blocksRaycasts = true;
-            _loginPanel.GetComponent<CanvasGroup>().alpha = 0;
-            _loginPanel.GetComponent<CanvasGroup>().blocksRaycasts = false;
-
-            usernamePanel.SetActive(false);
-            creditsPanel.SetActive(false);
-            legalNoticePanel.SetActive(false);
-        }
-        else
-        {
-            _settingsPanel.GetComponent<CanvasGroup>().alpha = 1;
-            _settingsPanel.GetComponent<CanvasGroup>().blocksRaycasts = true;
-            _startPanel.GetComponent<CanvasGroup>().alpha = 0;
-            _startPanel.GetComponent<CanvasGroup>().blocksRaycasts = false;
-        }
-    }
-
-    /// <summary>
-    ///     This function is used to show the login panel while being in the settings menu.
-    /// </summary>
-
-    public void DisplayLoginStart()
-    {
-
-        if (_settingsPanel == null)
-            _settingsPanel = GameObject.Find("SettingsPanel");
-
-        if (_loginPanel == null)
-            _loginPanel = GameObject.Find("LoginPanel");
-
-            _loginPanel.GetComponent<CanvasGroup>().alpha = 1;
-            _loginPanel.GetComponent<CanvasGroup>().blocksRaycasts = true;
-            _settingsPanel.GetComponent<CanvasGroup>().alpha = 0;
-            _settingsPanel.GetComponent<CanvasGroup>().blocksRaycasts = false;
     }
 
     /// <summary>

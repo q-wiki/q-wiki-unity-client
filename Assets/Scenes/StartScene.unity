@@ -770,7 +770,7 @@ PrefabInstance:
     - target: {fileID: 1354328823466374122, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 112
+      value: 0.018426374
       objectReference: {fileID: 0}
     - target: {fileID: 1354328824511089168, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
@@ -801,15 +801,17 @@ PrefabInstance:
     - target: {fileID: 1354328823524678509, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 3534.1
+      value: 4000
       objectReference: {fileID: 0}
     - target: {fileID: 1354328823524678508, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
       propertyPath: m_Text
       value: "Q-Wiki\nStrategic wiki-data based knowledge game\n\nStudents: Antonia
-        Berger, Malte G\xF6tz, Jennifer Lindner, David M\xFCller, Arne Sch\xFCtz,
+        Berger, Malte G\xF6tz, Jennifer Lindner, David M\xFCller, Arne Schl\xFCter,
         \ Laura W\xF6lbeling\n\nProject Supervisor: Alaa Sarhan, Lucas Werkmeister
-        (Wikidata)\n\nMaster Program International Media and Computing\n\nAssets:\r\n\r\nDeveloper3.5Pro:\r\nRocket:
+        (Wikidata)\n\nMaster Program International Media and Computing\n\nAssets:\r\n\nLunar
+        Mobile Console \nhttps://github.com/SpaceMadness/lunar-unity-console\nLicensed
+        under Apache License, v2\nhttp://www.apache.org/licenses/LICENSE-2.0\n\r\nDeveloper3.5Pro:\r\nRocket:
         https://sketchfab.com/3d-models/rocket-f266c4284e8344a08c41eff1aa81c9e0\r\n\r\nKorveen:\r\nLowPoly
         Environment Pack: https://assetstore.unity.com/packages/3d/environments/landscapes/lowpoly-environment-pack-99479\r\n\r\nUrsa
         Rigler:\r\nDinosaur Puzzle Toy: https://www.cgtrader.com/free-3d-models/animals/dinosaur/dinosaur-puzzle-toy\r\n\r\njuhemarten:\r\nLowPoly

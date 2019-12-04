@@ -328,7 +328,8 @@ MonoBehaviour:
   legalNoticePanel: {fileID: 102734141}
   settingsPanel: {fileID: 1335742357}
   startPanel: {fileID: 1644052701}
-  usernamePanel: {fileID: 82277954}
+  usernamePanel: {fileID: 82277955}
+  loginPanel: {fileID: 429043679}
   usernameInput: {fileID: 82277953}
   googleAuthButtonText: {fileID: 429043677}
   anonAuthButtonText: {fileID: 429043676}
@@ -542,6 +543,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5969126507550577908, guid: c7821263fb7962d4186ee07e1bb708c4,
         type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5969126507550577908, guid: c7821263fb7962d4186ee07e1bb708c4,
+        type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 2127467198}
@@ -629,9 +635,9 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 82277954}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 1
-  m_BlocksRaycasts: 1
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
 --- !u!1001 &102734138
 PrefabInstance:
@@ -1050,7 +1056,7 @@ PrefabInstance:
     - target: {fileID: 1354328823466374122, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 112
+      value: 0.018426374
       objectReference: {fileID: 0}
     - target: {fileID: 1354328823524678509, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
@@ -1075,15 +1081,17 @@ PrefabInstance:
     - target: {fileID: 1354328823524678509, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 3534.1
+      value: 4000
       objectReference: {fileID: 0}
     - target: {fileID: 1354328823524678508, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
       propertyPath: m_Text
       value: "Q-Wiki\nStrategic wiki-data based knowledge game\n\nStudents: Antonia
-        Berger, Malte G\xF6tz, Jennifer Lindner, David M\xFCller, Arne Sch\xFCtz,
+        Berger, Malte G\xF6tz, Jennifer Lindner, David M\xFCller, Arne Schl\xFCter,
         \ Laura W\xF6lbeling\n\nProject Supervisor: Alaa Sarhan, Lucas Werkmeister
-        (Wikidata)\n\nMaster Program International Media and Computing\n\nAssets:\r\n\r\nDeveloper3.5Pro:\r\nRocket:
+        (Wikidata)\n\nMaster Program International Media and Computing\n\nAssets:\r\n\nLunar
+        Mobile Console \nhttps://github.com/SpaceMadness/lunar-unity-console\nLicensed
+        under Apache License, v2\nhttp://www.apache.org/licenses/LICENSE-2.0\n\r\nDeveloper3.5Pro:\r\nRocket:
         https://sketchfab.com/3d-models/rocket-f266c4284e8344a08c41eff1aa81c9e0\r\n\r\nKorveen:\r\nLowPoly
         Environment Pack: https://assetstore.unity.com/packages/3d/environments/landscapes/lowpoly-environment-pack-99479\r\n\r\nUrsa
         Rigler:\r\nDinosaur Puzzle Toy: https://www.cgtrader.com/free-3d-models/animals/dinosaur/dinosaur-puzzle-toy\r\n\r\njuhemarten:\r\nLowPoly
@@ -1095,7 +1103,8 @@ PrefabInstance:
         Studios:\r\nPolygon Nature Pack: https://assetstore.unity.com/packages/3d/vegetation/trees/polygon-nature-pack-120152\r\n\r\nDropGames:\r\nLow
         Poly Campament 3D: https://www.turbosquid.com/3d-models/ready-assets-unity3d-3d-model-1316022
         \n\nFont:\nBD Cartoon Shout\nhttp://allfont.net/download/bd-cartoon-shout/\n\nQuestion
-        Mark Icon:\nhttps://www.flaticon.com/free-icon/question-mark_36601"
+        Mark Icon:\nhttps://www.flaticon.com/free-icon/question-mark_36601\n\nVolleyball
+        by Rocket Sales Studio:\nhttps://www.turbosquid.com/FullPreview/Index.cfm/ID/763175"
       objectReference: {fileID: 0}
     - target: {fileID: 1354328823524678508, guid: defde44b1f8049e4ead3869242afe94e,
         type: 3}
@@ -2807,6 +2816,8 @@ GameObject:
   - component: {fileID: 1073984370}
   - component: {fileID: 1073984368}
   - component: {fileID: 1073984369}
+  - component: {fileID: 1073984372}
+  - component: {fileID: 1073984371}
   m_Layer: 5
   m_Name: SettingsButton
   m_TagString: Untagged
@@ -2926,6 +2937,31 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1073984366}
   m_CullTransparentMesh: 0
+--- !u!114 &1073984371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1073984366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb16c69e504e4e0bbd35cfa25ad2c987, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IsShownInitially: 1
+--- !u!225 &1073984372
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1073984366}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1231897136
 GameObject:
   m_ObjectHideFlags: 0
@@ -5345,6 +5381,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 544976b70f1c1c3408abb39cc7944b17, type: 3}
+  m_Script: {fileID: 11500000, guid: 7dbb3ca1a8d0e3246827575b45192c22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

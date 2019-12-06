@@ -1,4 +1,5 @@
 ﻿using System;
+using Controllers;
 using Firebase;
 using Firebase.Messaging;
 using UnityEngine;
@@ -78,7 +79,7 @@ public class PushHandler : Singleton<PushHandler>
                 entry.Value == "true")
             {
                 Debug.Log("Firebase: Refreshing game state of the client...");
-                // GameManager.Instance.RefreshGameState(true);
+                GameManager.Instance.UpdateGameStateManually();
                 return;
             }
             
@@ -86,7 +87,7 @@ public class PushHandler : Singleton<PushHandler>
                 entry.Value == "true")
             {
                 Debug.Log("Firebase: Deleting game state of the client...");
-                // GameManager.Instance.RefreshGameState(true);
+                GameManager.Instance.LeaveGame();
                 return;
             }
 

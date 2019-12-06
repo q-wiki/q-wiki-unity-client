@@ -18,7 +18,7 @@ public class Communicator : MonoBehaviour
     private const string CURRENT_GAME_ID = "CURRENT_GAME_ID";
 
     private static WikidataGameAPI _gameApi;
-    private static string _currentGameId;
+    private static Guid? _currentGameId;
     private static string _authToken { get; set; }
     private static string SERVER_URL => Configuration.Instance.ServerURL;
 
@@ -48,19 +48,31 @@ public class Communicator : MonoBehaviour
 
         if (string.IsNullOrEmpty(authToken))
         {
+            
+            const string password = "password";
+            
             Debug.Log("No auth token in PlayerPrefs, fetching new token from server");
             var apiClient = new WikidataGameAPI(new Uri(SERVER_URL), new TokenCredentials("auth"));
             // CancellationTokenSource cts = new CancellationTokenSource(); // <-- Cancellation Token if you want to cancel the request, user quits, etc. [cts.Cancel()]
             var pushToken = PushHandler.Instance.pushToken ?? "";
-            var authResponse = await apiClient.AuthenticateAsync(SystemInfo.deviceUniqueIdentifier, pushToken);
+            
+            Debug.Log($"Push token is {pushToken}");
+            Debug.Log($"Password is {password}");
+            Debug.Log($"Username is {Configuration.Instance.UserName}");
+            
+            var authResponse = await apiClient.AuthenticateAsync(
+                Configuration.Instance.UserName, password, pushToken);
             authToken = authResponse.Bearer;
             PlayerPrefs.SetString(AUTH_TOKEN, authToken);
         }
 
         Debug.Log($"Auth token: {authToken}");
+        
+        
 
         // this _gameApi can now be used by all other methods
         _gameApi = new WikidataGameAPI(new Uri(SERVER_URL), new TokenCredentials(authToken));
+        
     }
 
     /// <summary>
@@ -111,11 +123,11 @@ public class Communicator : MonoBehaviour
     /// <returns>asynchronous Task</returns>
     public static async Task CreateOrJoinGame()
     {
-        var gameInfo = await _gameApi.CreateNewGameAsync(8, 8, 50);
+        var gameInfo = await _gameApi.CreateNewGameAsync();
         Debug.Log(gameInfo);
         _currentGameId = gameInfo.GameId;
         Debug.Log($"Initialized new game with id: {_currentGameId}");
-        PlayerPrefs.SetString(CURRENT_GAME_ID, _currentGameId);
+        PlayerPrefs.SetString(CURRENT_GAME_ID, _currentGameId.ToString());
     }
 
     /// <summary>
@@ -128,7 +140,7 @@ public class Communicator : MonoBehaviour
         if (!string.IsNullOrEmpty(previousGameId))
             try
             {
-                _currentGameId = previousGameId;
+                _currentGameId = Guid.Parse(previousGameId);
                 var state = await GetCurrentGameState();
                 return state;
             }
@@ -150,13 +162,16 @@ public class Communicator : MonoBehaviour
     /// <param name="tileId">ID of current tile</param>
     /// <param name="categoryId">ID of selected category</param>
     /// <returns>new MiniGame</returns>
-    public static async Task<MiniGame> InitializeMinigame(string tileId, string categoryId)
+    public static async Task<MiniGame> InitializeMinigame(Guid? tileId, Guid? categoryId)
     {
+        if (_currentGameId == null)
+            throw new Exception("Client is not part of any game.");
+        
         var init = new MiniGameInit(tileId, categoryId);
-        var _minigame = await _gameApi.InitalizeMinigameAsync(_currentGameId, init);
-        Debug.Log($"TASK:{_minigame.TaskDescription}");
-        Debug.Log($"Started minigame with id {_minigame.Id} on tile {tileId} with category {categoryId}");
-        return _minigame;
+        var minigame = await _gameApi.InitalizeMinigameAsync(_currentGameId.Value, init);
+        Debug.Log($"TASK:{minigame.TaskDescription}");
+        Debug.Log($"Started minigame with id {minigame.Id} on tile {tileId} with category {categoryId}");
+        return minigame;
     }
 
     /// <summary>
@@ -164,10 +179,13 @@ public class Communicator : MonoBehaviour
     /// </summary>
     /// <param name="minigameId">ID of the current MiniGame</param>
     /// <returns>MiniGame reference</returns>
-    public static async Task<MiniGame> RetrieveMinigameInfo(string minigameId)
+    public static async Task<MiniGame> RetrieveMinigameInfo(Guid minigameId)
     {
+        if (_currentGameId == null)
+            throw new Exception("Client is not part of any game.");
+        
         var cts = new CancellationTokenSource();
-        var miniGame = await _gameApi.RetrieveMinigameInfoAsync(_currentGameId, minigameId, cts.Token);
+        var miniGame = await _gameApi.RetrieveMinigameInfoAsync(_currentGameId.Value, minigameId, cts.Token);
         return miniGame;
     }
 
@@ -178,9 +196,12 @@ public class Communicator : MonoBehaviour
     /// <param name="minigameId">ID of the current MiniGame</param>
     /// <param name="answers">One or more answers</param>
     /// <returns>result of the MiniGame</returns>
-    public static async Task<MiniGameResult> AnswerMinigame(string minigameId, IList<string> answers)
+    public static async Task<MiniGameResult> AnswerMinigame(Guid minigameId, IList<string> answers)
     {
-        var result = await _gameApi.AnswerMinigameAsync(_currentGameId, minigameId, answers);
+        if (_currentGameId == null)
+            throw new Exception("Client is not part of any game.");
+        
+        var result = await _gameApi.AnswerMinigameAsync(_currentGameId.Value, minigameId, answers);
         return result;
     }
 
@@ -190,8 +211,11 @@ public class Communicator : MonoBehaviour
     /// <returns>asynchronous Task</returns>
     public static async Task AbortCurrentGame()
     {
+        if (_currentGameId == null)
+            throw new Exception("Client is not part of any game.");
+        
         PlayerPrefs.DeleteKey(CURRENT_GAME_ID);
-        await _gameApi.DeleteGameAsync(_currentGameId);
+        await _gameApi.DeleteGameAsync(_currentGameId.Value);
     }
 
     /// <summary>
@@ -200,6 +224,9 @@ public class Communicator : MonoBehaviour
     /// <returns>state of the current game</returns>
     public static async Task<Game> GetCurrentGameState()
     {
-        return await _gameApi.RetrieveGameStateAsync(_currentGameId);
+        if (_currentGameId == null)
+            throw new Exception("Client is not part of any game.");
+        
+        return await _gameApi.RetrieveGameStateAsync(_currentGameId.Value);
     }
 }

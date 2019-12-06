@@ -16,6 +16,8 @@ namespace Obsolete
     [Obsolete("This game controller is not in use anymore and just remains here for historic purposes.", true)]
     public class ObsoleteGameController : MonoBehaviour
     {
+        
+        /*
         /// <summary>
         ///     These are private fields of the game controller.
         ///     They can only be accessed from within the class.
@@ -97,7 +99,7 @@ namespace Obsolete
 
                 /**
                 * delete action point indicator from player prefs to prevent inconsistencies
-                */
+                #1#
 
                 PlayerPrefs.DeleteKey("REMAINING_ACTION_POINTS");
                 PlayerPrefs.DeleteKey("CURRENT_GAME_TURNS_PLAYED");
@@ -113,24 +115,24 @@ namespace Obsolete
 
                 _game = await Communicator.GetCurrentGameState();
 
-                /* when in gamescene, check game over state */
+                /* when in gamescene, check game over state #1#
 
                 HandleGameOverState();
 
                 /**
                 * generate grid by reading tiles from game object
-                */
+                #1#
                 grid.GetComponent<GridController>().GenerateGrid(_game.Tiles);
 
                 /**
                 * update points to show an updated state
-                */
+                #1#
 
                 ScoreHandler.Instance.UpdatePoints(_game.Tiles, _game.Me.Id, _game.Opponent.Id);
 
                 /**
                 * if current player is not me, go to loop / block interaction
-                */
+                #1#
 
                 if (_game.NextMovePlayerId != _game.Me.Id)
                 {
@@ -140,22 +142,22 @@ namespace Obsolete
 
                 /**
                  * show action point indicator in UI
-                */
+                #1#
 
                 if (PlayerPrefs.GetInt("REMAINING_ACTION_POINTS", -1) == 0)
-                    ActionPointHandler.Instance.UpdateState(_game.Me.Id, _game.NextMovePlayerId, true);
+                    ActionPointHandler.Instance.UpdateState(PlayerId(), _game.NextMovePlayerId, true);
                 ActionPointHandler.Instance.Show();
 
                 /**
                 * update turn UI when it is the player's move directly after opening the app
-                */
+                #1#
 
                 if (PlayerPrefs.GetInt(CURRENT_GAME_BLOCK_TURN_UPDATE, 0) == 0)
                     ScoreHandler.Instance.UpdateTurns();
 
                 /*
                 * highlight possible moves for current player
-                */
+                #1#
 
                 grid.GetComponent<GridController>().ShowPossibleMoves(_game.Me.Id);
             }
@@ -256,7 +258,7 @@ namespace Obsolete
             /**
          * check if game is over
          * if game is deleted, we assume for now, that the other player deleted it and show the winning screen
-         */
+         #1#
             if (_game == null)
             {
                 Debug.Log("Game is null - the other player probably deleted it");
@@ -269,7 +271,7 @@ namespace Obsolete
 
             /**
          * check if game is over
-         */
+         #1#
             HandleGameOverState();
 
             if (_game.NextMovePlayerId == _game.Me.Id)
@@ -326,27 +328,27 @@ namespace Obsolete
 
             /*
          * this is called whenever something happens (MiniGame finished, player made a turn, etc.)
-         */
+         #1#
 
             _game = await Communicator.GetCurrentGameState();
 
             /*
          * redraw the grid
-         */
+         #1#
 
             foreach (Transform child in grid.transform) Destroy(child.gameObject);
             grid.GetComponent<GridController>().GenerateGrid(_game.Tiles);
 
             /**
             * adjust UI to new score
-            */
+            #1#
 
             ScoreHandler.Instance.Show();
             ScoreHandler.Instance.UpdatePoints(_game.Tiles, _game.Me.Id, _game.Opponent.Id);
 
             /**
             * if current update happens in a new turn, update turn count
-            */
+            #1#
 
             if (isNewTurn)
                 ScoreHandler.Instance.UpdateTurns();
@@ -354,26 +356,26 @@ namespace Obsolete
 
             /**
             * simple function to update action points in game controller
-            */
+            #1#
 
             ActionPointHandler.Instance.UpdateState(_game.Me.Id, _game.NextMovePlayerId, isNewTurn);
 
             /**
             * check for game over
-            */
+            #1#
 
             HandleGameOverState();
 
             /*
             * highlight possible moves for current player
-            * */
+            * #1#
 
             grid.GetComponent<GridController>().ShowPossibleMoves(_game.Me.Id);
 
 
             /**
             * if current player is not me, go to loop / block interaction
-            */
+            #1#
 
             if (_game.NextMovePlayerId != _game.Me.Id) _isWaitingState = true;
         }
@@ -535,7 +537,7 @@ namespace Obsolete
 
             /**
             * extended logging to check for string length issues
-            */
+            #1#
 
             Debug.Log($"miniGame.task: {miniGame.TaskDescription}");
             foreach (var answer in miniGame.AnswerOptions) Debug.Log($"answerOption: {answer}");
@@ -543,7 +545,7 @@ namespace Obsolete
 
             /**
             * get difficulty level from tile controller and initialize miniGame with it
-            */
+            #1#
 
             var tile = selectedTile.GetComponentInChildren<TileController>();
 
@@ -795,6 +797,7 @@ namespace Obsolete
         {
             SceneManager.LoadScene("StartScene");
         }
-    
+    */
+
     }
 }

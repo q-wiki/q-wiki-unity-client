@@ -20,18 +20,18 @@ namespace Controllers.Map
         private bool _direction;
         private Game _game;
         private bool _isHighlight;
-        private string _myId;
+        private Guid? _myId;
     
         /**
         * public fields
         */
         
         public IList<Category> availableCategories;
-        public string chosenCategoryId;
+        public Guid? chosenCategoryId;
         public int difficulty;
-        public string id;
+        public Guid? id;
         public long internalId;
-        public string ownerId;
+        public Guid? ownerId;
         public Material[] tileMaterials;
 
         private static GameManager GameManager => GameManager.Instance;
@@ -126,13 +126,13 @@ namespace Controllers.Map
             }
         
             /* Tile belongs to opponent */
-            else if (ownerId != _myId && !string.IsNullOrEmpty(ownerId))
+            else if (ownerId.HasValue && ownerId != _myId)
             {
                 interactionController.HandleOpponentTileSelected(difficulty);
             }
         
             /* Tile is empty */
-            else if (string.IsNullOrEmpty(ownerId))
+            else if (!ownerId.HasValue)
             {
                 interactionController.HandleEmptyTileSelected(difficulty);
             }
@@ -151,7 +151,7 @@ namespace Controllers.Map
                 .Find("TileBase/OuterCircle")
                 .GetComponent<MeshRenderer>();
         
-            if (string.IsNullOrEmpty(ownerId))
+            if (!ownerId.HasValue)
                 circleRenderer.material = tileMaterials[3];
             else if (ownerId == _myId)
                 circleRenderer.material = tileMaterials[0];

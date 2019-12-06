@@ -254,7 +254,7 @@ PlayerSettings:
   AndroidTargetArchitectures: 7
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
-  AndroidKeystoreName: C:/Users/Jonas/Desktop/Uni/QWiki/Q-Wiki.keystore
+  AndroidKeystoreName: '{inproject}: Q-Wiki.keystore'
   AndroidKeyaliasName: q-wiki
   AndroidBuildApkPerCpuArchitecture: 0
   AndroidTVCompatibility: 0

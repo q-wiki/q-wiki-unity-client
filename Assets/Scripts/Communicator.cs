@@ -32,15 +32,48 @@ public class Communicator : MonoBehaviour
     }
 
     /// <summary>
+    ///     This function is used to authenticate the client within the API.
+    ///     If something goes wrong, an error message is printed to the console.
+    /// </summary>
+    /// <param name="userName">Provided user name</param>
+    /// <param name="password">Provided password</param>
+    /// <param name="pushToken">Provided pushToken</param>
+    /// <returns>AuthToken of the client</returns>
+    private static async Task<string> Authenticate(string userName, string password, string pushToken)
+    {
+        Debug.Log($"Push token is {pushToken}");
+        Debug.Log($"Password is {password}");
+        Debug.Log($"Username is {userName}");
+        
+        var apiClient = new WikidataGameAPI(new Uri(SERVER_URL), new TokenCredentials("auth"));
+        
+        try
+        {
+            var response = await apiClient.AuthenticateWithHttpMessagesAsync(
+                userName, password, pushToken);
+            var authResponse = response.Body;
+            return authResponse.Bearer;
+        }
+        catch (HttpOperationException e)
+        {
+            var response = e.Response;
+            Debug.LogError(
+                $"Error while trying to connect to API: {response.StatusCode} ({(int) response.StatusCode}) / {e.Response.Content}");
+            Debug.LogError(e.StackTrace);
+            return null;
+        }
+    }
+
+    /// <summary>
     ///     This function checks whether we have an auth token and restores it;
     ///     if not, it will request a new token from the server
     ///     This means: Before you do anything else, call this method.
     /// </summary>
-    /// <returns>asynchronous Task</returns>
-    public static async Task SetupApiConnection()
+    /// <returns>if client is successfully connected to the API</returns>
+    public static async Task<bool> SetupApiConnection()
     {
         // have we already set up the api connection?
-        if (_gameApi != null) return;
+        if (_gameApi != null) return true;
 
         // do we have an auth token that's saved?
         Debug.Log("Trying to restore previously saved auth token…");
@@ -48,39 +81,32 @@ public class Communicator : MonoBehaviour
 
         if (string.IsNullOrEmpty(authToken))
         {
-            
             const string password = "password";
-            
             Debug.Log("No auth token in PlayerPrefs, fetching new token from server");
-            var apiClient = new WikidataGameAPI(new Uri(SERVER_URL), new TokenCredentials("auth"));
-            // CancellationTokenSource cts = new CancellationTokenSource(); // <-- Cancellation Token if you want to cancel the request, user quits, etc. [cts.Cancel()]
             var pushToken = PushHandler.Instance.pushToken ?? "";
-            
-            Debug.Log($"Push token is {pushToken}");
-            Debug.Log($"Password is {password}");
-            Debug.Log($"Username is {Configuration.Instance.UserName}");
-            
-            var authResponse = await apiClient.AuthenticateAsync(
-                Configuration.Instance.UserName, password, pushToken);
-            authToken = authResponse.Bearer;
+            authToken = await Authenticate(
+                Configuration.Instance.UserName,
+                password,
+                pushToken);
+            if (authToken == null) return false;
             PlayerPrefs.SetString(AUTH_TOKEN, authToken);
         }
-
+        
         Debug.Log($"Auth token: {authToken}");
-        
-        
 
         // this _gameApi can now be used by all other methods
         _gameApi = new WikidataGameAPI(new Uri(SERVER_URL), new TokenCredentials(authToken));
-        
+
+        return true;
+
     }
 
     /// <summary>
     ///     This function updates the auth token when a push token is received
     /// </summary>
     /// <param name="token">Authentication token</param>
-    /// <returns>asynchronous Task</returns>
-    public static async Task UpdateApiConnection(string token)
+    /// <returns>if client is successfully connected to the API</returns>
+    public static async Task<bool> UpdateApiConnection(string token)
     {
         /**
          * set current auth token to null to prevent inconsistencies
@@ -92,8 +118,7 @@ public class Communicator : MonoBehaviour
          */
         if (_gameApi == null)
         {
-            await SetupApiConnection();
-            return;
+            return await SetupApiConnection();
         }
 
         Debug.Log("Rebuilding auth token with newly generated push token");
@@ -101,11 +126,15 @@ public class Communicator : MonoBehaviour
         /**
          * regenerate API and auth process
          */
+        
+        const string password = "password";
 
-        var apiClient = new WikidataGameAPI(new Uri(SERVER_URL), new TokenCredentials("auth"));
-        var pushToken = token;
-        var authResponse = await apiClient.AuthenticateAsync(SystemInfo.deviceUniqueIdentifier, pushToken);
-        var authToken = authResponse.Bearer;
+        var authToken = await Authenticate(
+            Configuration.Instance.UserName,
+            password,
+            token);
+
+        if (authToken == null) return false;
 
         Debug.Log($"Saving new auth token {authToken} in Player Prefs");
         PlayerPrefs.SetString(AUTH_TOKEN, authToken);
@@ -115,19 +144,32 @@ public class Communicator : MonoBehaviour
          */
 
         _gameApi = new WikidataGameAPI(new Uri(SERVER_URL), new TokenCredentials(authToken));
+        return true;
     }
 
     /// <summary>
     ///     Creates a game when no previous game was found or joins a game
     /// </summary>
     /// <returns>asynchronous Task</returns>
-    public static async Task CreateOrJoinGame()
+    public static async Task<bool> CreateOrJoinGame()
     {
-        var gameInfo = await _gameApi.CreateNewGameAsync();
-        Debug.Log(gameInfo);
-        _currentGameId = gameInfo.GameId;
-        Debug.Log($"Initialized new game with id: {_currentGameId}");
-        PlayerPrefs.SetString(CURRENT_GAME_ID, _currentGameId.ToString());
+        try
+        {
+            var response = await _gameApi.CreateNewGameWithHttpMessagesAsync();
+            var gameInfo = response.Body;
+            _currentGameId = gameInfo.GameId;
+            Debug.Log($"Initialized new game with id: {_currentGameId}");
+            PlayerPrefs.SetString(CURRENT_GAME_ID, _currentGameId.ToString());
+            return true;
+        }
+        catch (HttpOperationException e)
+        {
+            var response = e.Response;
+            Debug.LogError(
+                $"Error while trying to create or join a game: {response.StatusCode} ({(int) response.StatusCode}) / {e.Response.Content}");
+            Debug.LogError(e.StackTrace);
+            return false;
+        }
     }
 
     /// <summary>

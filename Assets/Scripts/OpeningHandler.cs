@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -18,7 +19,13 @@ public class OpeningHandler : MonoBehaviour
         /* initialize server session and restore previous game if there is one */
         Debug.Log("Trying to restore previous game…");
         
-        await Communicator.SetupApiConnection();
+        var isConnected = await Communicator.SetupApiConnection();
+        Debug.Log($"isConnected: {isConnected}");
+
+        if (!isConnected)
+            return;
+        
+        
         var previousGame = await Communicator.RestorePreviousGame();
 
         string scene;

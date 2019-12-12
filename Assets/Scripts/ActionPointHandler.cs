@@ -117,7 +117,7 @@ public class ActionPointHandler : Singleton<ActionPointHandler>
     /// <param name="myId">ID of the player.</param>
     /// <param name="otherId">ID of the other player.</param>
     /// <param name="isNewTurn">Indicates if a new turn has just started.</param>
-    public void UpdateState(string myId, string otherId, bool isNewTurn)
+    public void UpdateState(Guid? myId, Guid? otherId, bool isNewTurn)
     {
         if (!isNewTurn)
             RemoveActionPoint();

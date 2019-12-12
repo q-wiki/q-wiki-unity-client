@@ -6,8 +6,10 @@ using UnityEngine.Serialization;
 public class Configuration : Singleton<Configuration>
 {
     [SerializeField] private string serverURL;
+    [SerializeField] private string userName;
 
     public string ServerURL => serverURL;
+    public string UserName => userName;
 
     /// <summary>
     /// Check if server URL was set, otherwise force quit the app.

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Minigame
@@ -14,7 +15,7 @@ namespace Minigame
         /// <param name="taskDescription">Description of the task</param>
         /// <param name="answerOptions">Provided answer options</param>
         /// <param name="difficulty">Given difficulty</param>
-        void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions, int difficulty);
+        void Initialize(Guid? miniGameId, string taskDescription, IList<string> answerOptions, int difficulty);
 
         /// <summary>
         ///     Use this to send answers to the backend

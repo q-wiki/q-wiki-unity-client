@@ -19,7 +19,7 @@ namespace Minigame
          * private fields
          */
 
-        private string _id;
+        private Guid? _id;
         private string _taskDescription;
         private Timer _timer;
 
@@ -49,7 +49,7 @@ namespace Minigame
         /// <param name="answerOptions">Provided answer options</param>
         /// <param name="difficulty">Provided difficulty</param>
         /// <exception cref="Exception">Timer could not be set properly</exception>
-        public async void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions,
+        public async void Initialize(Guid? miniGameId, string taskDescription, IList<string> answerOptions,
             int difficulty)
         {
             Reset();
@@ -133,6 +133,9 @@ namespace Minigame
                 Debug.Log("You are not connected to any game");
                 return;
             }
+            
+            if(_id == null)
+                throw new Exception("Id cannot be null at this point.");
 
             _timer.isInterrupted = true;
             Destroy(_timer.gameObject);
@@ -157,7 +160,7 @@ namespace Minigame
             }
 
             LoadingIndicator.Instance.Show();
-            var result = await Communicator.AnswerMinigame(_id, answers);
+            var result = await Communicator.AnswerMinigame(_id.Value, answers);
             LoadingIndicator.Instance.Hide();
 
             /**

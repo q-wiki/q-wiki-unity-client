@@ -21,6 +21,7 @@ namespace Controllers.UI
         public Text googleAuthButtonText;
         public Text anonAuthButtonText;
         public Text usernameTakenMessage;
+        public Text invalidCharactersMessage;
 
         private static GameManager GameManager => GameManager.Instance;
 
@@ -156,6 +157,7 @@ namespace Controllers.UI
         public void OpenUsernamePanel()
         {
             usernameTakenMessage.gameObject.SetActive(false);
+            invalidCharactersMessage.gameObject.SetActive(false);
             usernamePanel.Show();
             loginPanel.Hide();
         }

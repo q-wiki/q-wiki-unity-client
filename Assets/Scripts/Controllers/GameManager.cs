@@ -355,7 +355,7 @@ namespace Controllers
         /// <param name="categoryId">The respective category ID</param>
         /// <returns>The initialized MiniGame</returns>
 
-        public async Task<MiniGame> InitializeMinigame(Guid? tileId, Guid? categoryId)
+        public async Task<MiniGame> InitializeMinigame(string tileId, string categoryId)
         {
             return await Communicator.InitializeMinigame(tileId, categoryId);
         }
@@ -439,7 +439,7 @@ namespace Controllers
         ///     Return the player id of the client if existent.
         /// </summary>
         /// <returns>The id of the client.</returns>
-        public Guid? PlayerId()
+        public string PlayerId()
         {
             return _game?.Me.Id;
         }

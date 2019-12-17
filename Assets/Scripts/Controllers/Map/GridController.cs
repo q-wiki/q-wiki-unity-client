@@ -218,7 +218,7 @@ namespace Controllers.Map
         /// </summary>
         /// <param name="ownerId">ID of the user</param>
 
-        public void ShowPossibleMoves(Guid? ownerId)
+        public void ShowPossibleMoves(string ownerId)
         {
             var possibleMoves = new List<TileController>();
 

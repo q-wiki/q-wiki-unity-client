@@ -50,7 +50,7 @@ public class ScoreHandler : Singleton<ScoreHandler>
     /// <param name="t">The grid as a two-dimensional array of tiles</param>
     /// <param name="myId">The ID of the client</param>
     /// <param name="opponentId">The ID of the opponent</param>
-    public void UpdatePoints(IList<IList<Tile>> t, Guid? myId, Guid? opponentId)
+    public void UpdatePoints(IList<IList<Tile>> t, string myId, string opponentId)
     {
         /**
          * reset player scores before counting again
@@ -73,7 +73,7 @@ public class ScoreHandler : Singleton<ScoreHandler>
             var ownerId = tile.OwnerId;
             long difficulty = tile.Difficulty + 1 ?? 0;
 
-            if (!ownerId.HasValue)
+            if (string.IsNullOrEmpty(ownerId))
                 continue;
 
             if (tile.OwnerId == myId)

@@ -19,7 +19,7 @@ namespace Minigame
          */
 
         private GameObject _checkedChoice;
-        private Guid? _id;
+        private string _id;
         private string _taskDescription;
         private Timer _timer;
         public Sprite boxSprite;
@@ -47,7 +47,7 @@ namespace Minigame
         /// <param name="answerOptions">Provided answer options</param>
         /// <param name="difficulty">Provided difficulty</param>
         /// <exception cref="Exception">Timer could not be set properly</exception>
-        public async void Initialize(Guid? miniGameId, string taskDescription, IList<string> answerOptions,
+        public async void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions,
             int difficulty)
         {
             Reset();
@@ -113,7 +113,7 @@ namespace Minigame
 
             if (_checkedChoice == null)
             {
-                var result = await Communicator.AnswerMinigame(_id.Value, new List<string>());
+                var result = await Communicator.AnswerMinigame(_id, new List<string>());
                 var correctAnswer = result.CorrectAnswer[0];
                 var correctAnswerColor = new Color32(0x11, 0xA0, 0x4F, 0xFF);
 
@@ -155,7 +155,7 @@ namespace Minigame
             var chosenAnswer = _checkedChoice.GetComponentInChildren<Text>();
 
             LoadingIndicator.Instance.Show();
-            var result = await Communicator.AnswerMinigame(_id.Value, new List<string> {chosenAnswer.text});
+            var result = await Communicator.AnswerMinigame(_id, new List<string> {chosenAnswer.text});
             LoadingIndicator.Instance.Hide();
 
             /**

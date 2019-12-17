@@ -5,8 +5,6 @@ using GooglePlayGames;
 using GooglePlayGames.BasicApi;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Security.Cryptography;
-using System.Text;
 using WikidataGame.Models;
 
 namespace Controllers.Authentication

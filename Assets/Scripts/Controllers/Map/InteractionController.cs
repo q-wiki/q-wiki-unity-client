@@ -25,7 +25,7 @@ namespace Controllers.Map
         /// </summary>
         /// <param name="categoryId">The ID of the chosen category</param>
 
-        public async void StartMinigame(Guid? categoryId)
+        public async void StartMinigame(string categoryId)
         {
             LoadingIndicator.Instance.Show();
             categoryCanvas.GetComponent<CanvasGroup>().interactable = false;
@@ -153,7 +153,7 @@ namespace Controllers.Map
             
             /* if the user selected their start tile, the category panel has to be shown to the client. */
 
-            if (!chosenCategoryId.HasValue) ShowCategoryPanel();
+            if (string.IsNullOrEmpty(chosenCategoryId)) ShowCategoryPanel();
             else
             {
                 actionCanvas.SetActive(false);

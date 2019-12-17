@@ -24,7 +24,7 @@ public class Communicator : MonoBehaviour
     public const string PLAYERPREFS_SIGNIN_METHOD = "SIGNIN_METHOD";
     private const string PLAYERPREFS_CURRENT_GAME_ID = "CURRENT_GAME_ID";
     private static WikidataGameAPI _gameApi;
-    private static Guid? _currentGameId;
+    private static string _currentGameId;
     private static string _authToken { get; set; }
     private static string SERVER_URL => Configuration.Instance.ServerURL;
 
@@ -249,7 +249,7 @@ public class Communicator : MonoBehaviour
     ///     Adds user as a friend
     /// </summary>
     /// <returns>asynchronous Task</returns>
-    internal static async Task<Player> AddFriend(Guid? userID) {
+    internal static async Task<Player> AddFriend(string userID) {
         Debug.Log("Retrieving Friend List");
 
         try {
@@ -272,12 +272,12 @@ public class Communicator : MonoBehaviour
     ///     Adds user as a friend
     /// </summary>
     /// <returns>asynchronous Task</returns>
-    internal static async Task<Player> DeleteFriend(Guid? userID) {
+    internal static async Task<Player> DeleteFriend(string userID) {
         Debug.Log("Retrieving Friend List");
 
         try {
             HttpOperationResponse<Player> response = null;
-            response = await _gameApi.DeleteFriendWithHttpMessagesAsync((Guid)userID);
+            response = await _gameApi.DeleteFriendWithHttpMessagesAsync(userID);
             var player = response.Body;
 
             return player;
@@ -326,7 +326,7 @@ public class Communicator : MonoBehaviour
         if (!string.IsNullOrEmpty(previousGameId))
             try
             {
-                _currentGameId = Guid.Parse(previousGameId);
+                _currentGameId = previousGameId;
                 var state = await GetCurrentGameState();
                 return state;
             }
@@ -348,13 +348,13 @@ public class Communicator : MonoBehaviour
     /// <param name="tileId">ID of current tile</param>
     /// <param name="categoryId">ID of selected category</param>
     /// <returns>new MiniGame</returns>
-    public static async Task<MiniGame> InitializeMinigame(Guid? tileId, Guid? categoryId)
+    public static async Task<MiniGame> InitializeMinigame(string tileId, string categoryId)
     {
         if (_currentGameId == null)
             throw new Exception("Client is not part of any game.");
         
         var init = new MiniGameInit(tileId, categoryId);
-        var minigame = await _gameApi.InitalizeMinigameAsync(_currentGameId.Value, init);
+        var minigame = await _gameApi.InitalizeMinigameAsync(_currentGameId, init);
         Debug.Log($"TASK:{minigame.TaskDescription}");
         Debug.Log($"Started minigame with id {minigame.Id} on tile {tileId} with category {categoryId}");
         return minigame;
@@ -365,13 +365,13 @@ public class Communicator : MonoBehaviour
     /// </summary>
     /// <param name="minigameId">ID of the current MiniGame</param>
     /// <returns>MiniGame reference</returns>
-    public static async Task<MiniGame> RetrieveMinigameInfo(Guid minigameId)
+    public static async Task<MiniGame> RetrieveMinigameInfo(string minigameId)
     {
         if (_currentGameId == null)
             throw new Exception("Client is not part of any game.");
         
         var cts = new CancellationTokenSource();
-        var miniGame = await _gameApi.RetrieveMinigameInfoAsync(_currentGameId.Value, minigameId, cts.Token);
+        var miniGame = await _gameApi.RetrieveMinigameInfoAsync(_currentGameId, minigameId, cts.Token);
         return miniGame;
     }
 
@@ -382,12 +382,12 @@ public class Communicator : MonoBehaviour
     /// <param name="minigameId">ID of the current MiniGame</param>
     /// <param name="answers">One or more answers</param>
     /// <returns>result of the MiniGame</returns>
-    public static async Task<MiniGameResult> AnswerMinigame(Guid minigameId, IList<string> answers)
+    public static async Task<MiniGameResult> AnswerMinigame(string minigameId, IList<string> answers)
     {
         if (_currentGameId == null)
             throw new Exception("Client is not part of any game.");
         
-        var result = await _gameApi.AnswerMinigameAsync(_currentGameId.Value, minigameId, answers);
+        var result = await _gameApi.AnswerMinigameAsync(_currentGameId, minigameId, answers);
         return result;
     }
 
@@ -401,7 +401,7 @@ public class Communicator : MonoBehaviour
             throw new Exception("Client is not part of any game.");
         
         PlayerPrefs.DeleteKey(PLAYERPREFS_CURRENT_GAME_ID);
-        await _gameApi.DeleteGameAsync(_currentGameId.Value);
+        await _gameApi.DeleteGameAsync(_currentGameId);
     }
 
     /// <summary>
@@ -413,6 +413,6 @@ public class Communicator : MonoBehaviour
         if (_currentGameId == null)
             throw new Exception("Client is not part of any game.");
         
-        return await _gameApi.RetrieveGameStateAsync(_currentGameId.Value);
+        return await _gameApi.RetrieveGameStateAsync(_currentGameId);
     }
 }

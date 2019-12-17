@@ -18,6 +18,7 @@ namespace Controllers.UI
         private bool _settingsToggle;
 
         public InputField usernameInput;
+        public InputField findUserInput;
         public Text googleAuthButtonText;
         public Text anonAuthButtonText;
         public Text usernameTakenMessage;

@@ -178,12 +178,13 @@ public class Communicator : MonoBehaviour
         /**
          * regenerate API and auth process
          */
-        
-        const string password = "password";
+
+        string username = PlayerPrefs.GetString(PLAYERPREFS_USERNAME);
         string method = PlayerPrefs.GetString(PLAYERPREFS_SIGNIN_METHOD);
+        string password = PlayerPrefs.GetString(PLAYERPREFS_PASSWORD);
 
         var authToken = await Authenticate(
-            Configuration.Instance.UserName,
+            username,
             password,
             token,
             method);
@@ -196,6 +197,98 @@ public class Communicator : MonoBehaviour
 
         _gameApi = new WikidataGameAPI(new Uri(SERVER_URL), new TokenCredentials(authToken));
         return true;
+    }
+
+    /// <summary>
+    ///     Retrieves users (limit 10) with a username similar to the query string
+    /// </summary>
+    /// <returns>asynchronous Task</returns>
+    public static async Task<IList<Player>> FindUsers(string userName) {
+        Debug.Log($"Searching for user: {userName}");
+
+        try {
+            HttpOperationResponse<IList<Player>> response = null;
+            response = await _gameApi.GetFindFriendsWithHttpMessagesAsync(userName);
+            var userResponse = response.Body;
+
+            return userResponse;
+        }
+        catch (HttpOperationException e) {
+            var response = e.Response;
+            Debug.LogError(
+                $"Error while trying to connect to API: {response.StatusCode} ({(int)response.StatusCode}) / {e.Response.Content}");
+            Debug.LogError(e.StackTrace);
+            return null;
+        }
+    }
+
+    /// <summary>
+    ///     Retrieves all friends of the player that is currently logged in
+    /// </summary>
+    /// <returns>asynchronous Task</returns>
+    internal static async Task<IList<Player>> RetrieveFriends() {
+        Debug.Log("Retrieving Friend List");
+
+        try {
+            HttpOperationResponse<IList<Player>> response = null;
+            response = await _gameApi.GetFriendsWithHttpMessagesAsync();
+            var friendList = response.Body;
+
+            return friendList;
+        }
+        catch (HttpOperationException e) {
+            var response = e.Response;
+            Debug.LogError(
+                $"Error while trying to connect to API: {response.StatusCode} ({(int)response.StatusCode}) / {e.Response.Content}");
+            Debug.LogError(e.StackTrace);
+            return null;
+        }
+    }
+
+    /// <summary>
+    ///     Adds user as a friend
+    /// </summary>
+    /// <returns>asynchronous Task</returns>
+    internal static async Task<Player> AddFriend(Guid? userID) {
+        Debug.Log("Retrieving Friend List");
+
+        try {
+            HttpOperationResponse<Player> response = null;
+            response = await _gameApi.PostFriendWithHttpMessagesAsync(userID);
+            var player = response.Body;
+
+            return player;
+        }
+        catch (HttpOperationException e) {
+            var response = e.Response;
+            Debug.LogError(
+                $"Error while trying to connect to API: {response.StatusCode} ({(int)response.StatusCode}) / {e.Response.Content}");
+            Debug.LogError(e.StackTrace);
+            return null;
+        }
+    }
+
+    /// <summary>
+    ///     Adds user as a friend
+    /// </summary>
+    /// <returns>asynchronous Task</returns>
+    internal static async Task<Player> DeleteFriend(Guid? userID) {
+        Debug.Log("Retrieving Friend List");
+
+        try {
+            HttpOperationResponse<Player> response = null;
+            response = await _gameApi.DeleteFriendWithHttpMessagesAsync((Guid)userID);
+            var player = response.Body;
+
+            return player;
+        }
+        catch (HttpOperationException e) {
+            var response = e.Response;
+            Debug.LogError(
+                $"Error while trying to connect to API: {response.StatusCode} ({(int)response.StatusCode}) / {e.Response.Content}");
+            Debug.LogError(e.StackTrace);
+            return null;
+        }
     }
 
     /// <summary>

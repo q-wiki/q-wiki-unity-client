@@ -133,6 +133,9 @@ namespace Minigame
                 Debug.Log("You are not connected to any game");
                 return;
             }
+            
+            if(_id == null)
+                throw new Exception("Id cannot be null at this point.");
 
             _timer.isInterrupted = true;
             Destroy(_timer.gameObject);

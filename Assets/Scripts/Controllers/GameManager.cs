@@ -1,5 +1,7 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
+using Controllers.Authentication;
 using Controllers.Map;
 using Controllers.UI;
 using UnityEngine;
@@ -20,7 +22,6 @@ namespace Controllers
         private bool _isWaitingState;
         private bool _isHandling;
         private Scene _currentScene;
-        
         private static ScoreHandler ScoreHandler => ScoreHandler.Instance;
         private static ActionPointHandler ActionPointHandler => ActionPointHandler.Instance;
 
@@ -37,7 +38,7 @@ namespace Controllers
             SceneManager.sceneLoaded += OnSceneLoaded;
             Debug.Log("Event handler successfully attached to SceneManager.sceneLoaded.");
         }
-        
+
         /// <summary>
         ///     Update method listens for changes in the game state when it's currently not your turn
         /// </summary>
@@ -97,7 +98,11 @@ namespace Controllers
         private async void InitializeGameScene()
         {
 
+            
             Debug.Log("Game scene was successfully set up.");
+            
+            /* setting handling indicator false to prevent inconsistencies */
+            _isHandling = false;
             
             /* setting up grid */
 
@@ -120,8 +125,8 @@ namespace Controllers
             /**
              * update points to show an updated state
              */
-
-            ScoreHandler.UpdatePoints(_game.Tiles, _game.Me.Id, _game.Opponent.Id);
+             
+            ScoreHandler.UpdatePoints(_game.Tiles, PlayerId(), _game.Opponent.Id);
 
             /**
              * if current player is not me, go to loop / block interaction
@@ -138,7 +143,7 @@ namespace Controllers
              */
 
             if (PlayerPrefs.GetInt(REMAINING_ACTION_POINTS, -1) == 0)
-                ActionPointHandler.UpdateState(_game.Me.Id, _game.NextMovePlayerId, true);
+                ActionPointHandler.UpdateState(PlayerId(), _game.NextMovePlayerId, true);
             ActionPointHandler.Show();
 
             /**
@@ -152,8 +157,7 @@ namespace Controllers
              * highlight possible moves for current player
              */
 
-            _gridController.ShowPossibleMoves(_game.Me.Id);
-            
+            _gridController.ShowPossibleMoves(PlayerId());         
         }
         
         /// <summary>
@@ -218,14 +222,16 @@ namespace Controllers
             if(gameUiController == null)
                 throw new Exception("User has to be in-game for this function to work.");
 
-
-            // make blockActionPanel visible and prevent user from selecting anything in the game
+            /* make blockActionPanel visible and prevent user from selecting anything in the game */
             gameUiController.Block();
 
+#if UNITY_EDITOR           
             Debug.Log("Wait for 10 seconds");
             await Task.Delay(10000);
 
             _game = await Communicator.GetCurrentGameState();
+            
+#endif
 
             /**
              * check if game is over
@@ -282,7 +288,7 @@ namespace Controllers
              */
 
             ScoreHandler.Instance.Show();
-            ScoreHandler.Instance.UpdatePoints(_game.Tiles, _game.Me.Id, _game.Opponent.Id);
+            ScoreHandler.Instance.UpdatePoints(_game.Tiles, PlayerId(), _game.Opponent.Id);
 
             /**
              * if current update happens in a new turn, update turn count
@@ -295,8 +301,7 @@ namespace Controllers
             /**
              * simple function to update action points in game controller
              */
-
-            ActionPointHandler.Instance.UpdateState(_game.Me.Id, _game.NextMovePlayerId, isNewTurn);
+            ActionPointHandler.Instance.UpdateState(PlayerId(), _game.NextMovePlayerId, isNewTurn);
 
             /**
             * check for game over
@@ -308,7 +313,7 @@ namespace Controllers
              * highlight possible moves for current player
              * */
 
-            _gridController.ShowPossibleMoves(_game.Me.Id);
+            _gridController.ShowPossibleMoves(PlayerId());
 
 
             /**
@@ -349,6 +354,7 @@ namespace Controllers
         /// <param name="tileId">The respective tile ID</param>
         /// <param name="categoryId">The respective category ID</param>
         /// <returns>The initialized MiniGame</returns>
+
         public async Task<MiniGame> InitializeMinigame(string tileId, string categoryId)
         {
             return await Communicator.InitializeMinigame(tileId, categoryId);
@@ -476,6 +482,15 @@ namespace Controllers
 #endif
 
 #if UNITY_ANDROID
+        
+        /// <summary>
+        ///     This function can be called on adroid phones to manually update the game state in the game manager.
+        /// </summary>
+        public async void UpdateGameStateManually()
+        {
+            _game = await Communicator.GetCurrentGameState();
+        }
+        
         /// <summary>
         ///     On an Android phone:
         ///     Reset turn update values when application is shut down.

@@ -24,6 +24,7 @@ namespace Controllers.Map
         ///     This is used to initialize a MiniGame and display it on-screen.
         /// </summary>
         /// <param name="categoryId">The ID of the chosen category</param>
+
         public async void StartMinigame(string categoryId)
         {
             LoadingIndicator.Instance.Show();
@@ -151,6 +152,7 @@ namespace Controllers.Map
                 .chosenCategoryId;
             
             /* if the user selected their start tile, the category panel has to be shown to the client. */
+
             if (string.IsNullOrEmpty(chosenCategoryId)) ShowCategoryPanel();
             else
             {

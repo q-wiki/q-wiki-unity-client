@@ -126,7 +126,7 @@ namespace Controllers.Map
             }
         
             /* Tile belongs to opponent */
-            else if (ownerId != _myId && !string.IsNullOrEmpty(ownerId))
+            else if (!string.IsNullOrEmpty(ownerId) && ownerId != _myId)
             {
                 interactionController.HandleOpponentTileSelected(difficulty);
             }

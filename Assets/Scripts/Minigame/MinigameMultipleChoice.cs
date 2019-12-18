@@ -100,6 +100,10 @@ namespace Minigame
         /// </summary>
         public async void ForceQuit()
         {
+            
+            if(_id == null)
+                throw new Exception("Id cannot be null at this point.");
+            
             Debug.Log("Sorry, you were too slow");
             transform.Find("BlockPanel").GetComponentInChildren<CanvasGroup>().blocksRaycasts = true;
 
@@ -139,6 +143,9 @@ namespace Minigame
         {
             if (_checkedChoice == null)
                 throw new Exception("It should not be possible to press the send button.");
+            
+            if(_id == null)
+                throw new Exception("Id cannot be null at this point.");
 
             _timer.isInterrupted = true;
             Destroy(_timer.gameObject);

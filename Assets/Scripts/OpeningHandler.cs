@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using Controllers.Authentication;
+using System.Collections;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -15,9 +17,16 @@ public class OpeningHandler : MonoBehaviour
     /// </summary>
     private async void Start()
     {
-        // initialize server session and restore previous game if there is one
+        /* initialize server session and restore previous game if there is one */
         Debug.Log("Trying to restore previous game…");
-        await Communicator.SetupApiConnection();
+        
+        var isAuthenticated = await Communicator.SetupApiConnection();
+        Debug.Log($"isAuthenticated: {isAuthenticated}");
+
+        if (!isAuthenticated) SignInController.forceLogin = true;
+
+        
+        
         var previousGame = await Communicator.RestorePreviousGame();
 
         string scene;

@@ -217,6 +217,7 @@ namespace Controllers.Map
         ///     This function is used to show all possible moves to a user.
         /// </summary>
         /// <param name="ownerId">ID of the user</param>
+
         public void ShowPossibleMoves(string ownerId)
         {
             var possibleMoves = new List<TileController>();

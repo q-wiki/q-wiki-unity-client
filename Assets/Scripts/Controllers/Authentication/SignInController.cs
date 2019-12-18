@@ -4,6 +4,8 @@ using Controllers.UI;
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
 using UnityEngine;
+using UnityEngine.UI;
+using WikidataGame.Models;
 
 namespace Controllers.Authentication
 {
@@ -11,32 +13,36 @@ namespace Controllers.Authentication
     /// The SignIn Controller handles Firebase and Google Play authentication for the app.
     /// </summary>
     public class SignInController : MonoBehaviour
-    {
+    {    
+        public Image testImage;
+        public static bool forceLogin;
+        public static AuthInfo authInfo { get; set; }
+        public const string method_google = "Google";
+        public const string method_anonymous = "Anonymous";
+
+        public static bool isLoggedInGoogle;
+        public static bool isLoggedInAnon;
+        public static bool reauthenticateWithGoogle = false;
 
         /* private fields */
-        private Firebase.Auth.FirebaseAuth auth;
-        private Firebase.Auth.FirebaseUser user;
-        private bool forceLogin;
-        private bool firebaseNotInitialized = true;
-        private bool isLoggedIn;
-        private bool isLoggedInAnon;
-        private string authCode;
-    
+        private bool isLoggedIn {
+            get { return isLoggedInAnon || isLoggedInGoogle; }
+        }
         private StartUIController _uiController => (StartUIController) GameManager.Instance.UIController();
 
         /* private constants */
-        private const string SIGNED_IN_TEXT_GOOGLE = "Sign Out";
+        private const string SIGNED_IN_TEXT_GOOGLE = "Sign Out of Google Play";
         private const string SIGNED_OUT_TEXT_GOOGLE = "Sign In With Google";
         private const string SIGNED_IN_TEXT_ANON = "Change Username";
         private const string SIGNED_OUT_TEXT_ANON = "Sign in Anonymously";
-    
+        private const string PLAYERPREFS_PASSWORD = "PASSWORD";
+        private const string PLAYERPREFS_USERNAME = "USERNAME";
+
         /// <summary>
         /// Start is called before the first frame update.
         /// When the SignInController is initialized, the play games API is constructed.
         /// </summary>
-        void Start()
-        {
-
+        void Start(){
             var config = new PlayGamesClientConfiguration.Builder()
                 .RequestServerAuthCode(true)
                 .Build();
@@ -46,58 +52,32 @@ namespace Controllers.Authentication
             PlayGamesPlatform.DebugLogEnabled = true;
             PlayGamesPlatform.Activate();
 
-            //// Check if Google Play Service is up-to-date
-            //FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
-            //    var dependencyStatus = task.Result;
-            //    if (dependencyStatus == DependencyStatus.Available)
-            //    {
-            //        // Create and hold a reference to your FirebaseApp,
-            //        // where app is a Firebase.FirebaseApp property of your application class.
-            //        //   app = Firebase.FirebaseApp.DefaultInstance;
-
-            //        // Set a flag here to indicate whether Firebase is ready to use by your app.
-            //        InitializeFirebase();
-            //        Debug.Log(auth);
-            //        if (auth.CurrentUser == null && !PlayGamesPlatform.Instance.IsAuthenticated())
-            //        {
-            //            forceLogin = true;
-            //        }
-
-            //        anonAuthButtonText.text = (auth.CurrentUser != null) ? SIGNED_IN_TEXT_ANON : SIGNED_OUT_TEXT_ANON;
-            //    }
-            //    else
-            //    {
-            //        Debug.LogError(System.String.Format(
-            //          "Could not resolve all Firebase dependencies: {0}", dependencyStatus));
-            //        // Firebase Unity SDK is not safe to use here.
-            //    }
-            //});
-        
-            _uiController.googleAuthButtonText.text = PlayGamesPlatform.Instance.IsAuthenticated() ? SIGNED_IN_TEXT_GOOGLE : SIGNED_OUT_TEXT_GOOGLE;
+            isLoggedInGoogle = PlayGamesPlatform.Instance.IsAuthenticated();
+            _uiController.googleAuthButtonText.text = isLoggedInGoogle ? SIGNED_IN_TEXT_GOOGLE : SIGNED_OUT_TEXT_GOOGLE;
+            _uiController.anonAuthButtonText.text = isLoggedInAnon ? SIGNED_IN_TEXT_ANON : SIGNED_OUT_TEXT_ANON;
 
         }
 
         /// <summary>
         /// Update is called once per frame.
         /// </summary>
-        void Update()
+
+        private void Update()
         {
-            if (firebaseNotInitialized && PushHandler.Instance.isUsable) {
-                firebaseNotInitialized = false;
-                InitializeFirebase();
-                if (auth.CurrentUser == null && !PlayGamesPlatform.Instance.IsAuthenticated()) {
+            if (PushHandler.Instance.isUsable) {
+                if ( !isLoggedIn && !(_uiController.loginPanel.IsVisible || _uiController.usernamePanel.IsVisible )) {
                     forceLogin = true;
                 }
 
-                _uiController.anonAuthButtonText.text = (auth.CurrentUser != null) ? 
-                    SIGNED_IN_TEXT_ANON : SIGNED_OUT_TEXT_ANON;
-
-                if (forceLogin)
-                {
+                if (forceLogin){
                     ForceLogin();
                     forceLogin = false;
                 }
 
+            }
+            if (reauthenticateWithGoogle) {
+                reauthenticateWithGoogle = false;
+                SignIn();
             }
         }
 
@@ -106,158 +86,118 @@ namespace Controllers.Authentication
         /// </summary>
         private void ForceLogin()
         {
-            if (auth != null && auth.CurrentUser == null && !PlayGamesPlatform.Instance.IsAuthenticated())
-            {
-                Debug.Log("User is asked to choose a SignIn Method");
-                _uiController.ToggleSettings();
-                _uiController.DisplayLoginStart();
-                _uiController.ShowSettingsButton(false);
-            }
+            Debug.Log("User is asked to choose a SignIn Method");
+            _uiController.ToggleSettings();
+            _uiController.DisplayLoginStart();
+            _uiController.ShowSettingsButton(false);
         }
 
-        /// <summary>
-        /// Handle initialization of the necessary firebase modules.
-        /// </summary>
-        private void InitializeFirebase()
-        {
-            Debug.Log("Setting up Firebase Auth");
-            auth = Firebase.Auth.FirebaseAuth.DefaultInstance;
-            auth.StateChanged += AuthStateChanged;
-            AuthStateChanged(this, null);
-        }
-
-        /// <summary>
-        /// Track state changes of the auth object.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="eventArgs"></param>
-        private void AuthStateChanged(object sender, EventArgs eventArgs)
-        {
-            if (auth.CurrentUser != user)
-            {
-                bool signedIn = user != auth.CurrentUser && auth.CurrentUser != null;
-                if (!signedIn && user != null)
-                {
-                    Debug.Log("Signed out " + user.UserId);
-                }
-                user = auth.CurrentUser;
-                if (signedIn)
-                {
-                    Debug.Log("Signed in " + user.UserId);
-                }
-            }
-        }
-
-        /// <summary>
-        /// This is called when the object is destroyed.
-        /// </summary>
-        private void OnDestroy(){
-            auth.StateChanged -= AuthStateChanged;
-            auth = null;
-        }
 
         /// <summary>
         /// Sign in client anonymously.
         /// </summary>
         public void SignInAnonymously(){
-            ////TODO remove block
-            //if(false && auth.CurrentUser == null)
-            //{
-            //    auth.SignInAnonymouslyAsync().ContinueWith(task => {
-            //        if (task.IsCanceled)
-            //        {
-            //            Debug.LogError("SignInAnonymouslyAsync was canceled.");
-            //            return;
-            //        }
-            //        if (task.IsFaulted)
-            //        {
-            //            Debug.LogError("SignInAnonymouslyAsync encountered an error: " + task.Exception);
-            //            return;
-            //        }
-
-            //        Firebase.Auth.FirebaseUser newUser = task.Result;
-            //        user = newUser;
-            //        Debug.LogFormat("User signed in successfully: {0} ({1})",
-            //            newUser.DisplayName, newUser.UserId);
-            //        auth.CurrentUser.TokenAsync(false).ContinueWith((task2) => {
-            //            Debug.Log(task2.Result);
-            //        });
-            //    });
-            //}
             _uiController.OpenUsernamePanel();
-
         }
 
+
+        ///// <summary>
+        ///// Set user name of client according to input.
+        ///// </summary>
+        //public async void SetUsername(){
+        //    _uiController.usernameTakenMessage.gameObject.SetActive(false);
+        //    string newUserName = _uiController.usernameInput.text;
+        //    if (newUserName == "") { newUserName = "Anonymous User"; }
+
+        //    bool usernameAvailable = false;
+        //    var checkIfTaken = CheckUsernameAvailabilityAsync(newUserName);
+        //    usernameAvailable = await checkIfTaken;
+
+        //    if (usernameAvailable) {
+        //        if (isLoggedInAnon) {
+        //            Task changeUsernameAsync = ChangeUsernameAsync(newUserName);
+        //            await changeUsernameAsync;
+        //            if(changeUsernameAsync.Status == TaskStatus.Faulted) {
+        //                //handle failure
+        //            }
+        //            else {
+        //                _uiController.CloseUsernamePanel();
+        //            }
+        //        }
+        //        else {
+        //            Task createAnonUserAsync = CreateAnonUserAsync(newUserName);
+        //            await createAnonUserAsync;
+        //            if (createAnonUserAsync.Status == TaskStatus.Faulted) {
+        //                //handle failure
+        //            }
+        //            else {
+        //                isLoggedIn = true;
+        //                isLoggedInAnon = true;
+        //                _uiController.CloseUsernamePanel();
+        //            }
+        //        }
+        //    }
+        //    else {
+        //        _uiController.usernameTakenMessage.gameObject.SetActive(true);
+        //    }
+
+        //    _uiController.anonAuthButtonText.text = (isLoggedInAnon) ? 
+        //        SIGNED_IN_TEXT_ANON : SIGNED_OUT_TEXT_ANON;
+        //}
 
         /// <summary>
         /// Set user name of client according to input.
         /// </summary>
-        public async void SetUsername(){
+        public async void SetUsername() {
             _uiController.usernameTakenMessage.gameObject.SetActive(false);
-            string newUserName = _uiController.usernameInput.text;
-            if (newUserName == "") { newUserName = "Anonymous User"; }
-        
-            //Firebase.Auth.FirebaseUser user = auth.CurrentUser;
-            //if (user != null)
-            //{
-            //    Firebase.Auth.UserProfile profile = new Firebase.Auth.UserProfile
-            //    {
-            //        DisplayName = newUserName,
-            //    };
-            //    user.UpdateUserProfileAsync(profile).ContinueWith(task =>
-            //    {
-            //        if (task.IsCanceled)
-            //        {
-            //            Debug.LogError("UpdateUserProfileAsync was canceled.");
-            //            return;
-            //        }
-            //        if (task.IsFaulted)
-            //        {
-            //            Debug.LogError("UpdateUserProfileAsync encountered an error: " + task.Exception);
-            //            return;
-            //        }
+            _uiController.invalidCharactersMessage.gameObject.SetActive(false);
+            string newUserName = (_uiController.usernameInput.text == "") ? "Anonymous User" : _uiController.usernameInput.text;
 
-            //        Debug.Log("User profile updated successfully.");
-            //        Debug.Log("New Username: " + profile.DisplayName);
-            //    });
-            //    anonAuthButtonText.text = (auth.CurrentUser != null) ? SIGNED_IN_TEXT_ANON : SIGNED_OUT_TEXT_ANON;
-            //    menuController.CloseUsernamePanel();
-            //}
-        
-            bool usernameAvailable = false;
-            var checkIfTaken = CheckUsernameAvailabilityAsync(newUserName);
-            usernameAvailable = await checkIfTaken;
+            //If the user tries to log in with it's previously used username, use the stored password
+            string password = (PlayerPrefs.GetString(PLAYERPREFS_USERNAME) != null && newUserName == PlayerPrefs.GetString(PLAYERPREFS_USERNAME)) ? 
+                PlayerPrefs.GetString(PLAYERPREFS_PASSWORD) : CreatePassword(32);
+            string pushToken = PushHandler.Instance.pushToken ?? "";
+            
+            //Tries to authenticate by either logging in with the stored credentials or by trying to create a new user
+            Task<string> authenticate = Communicator.Authenticate(newUserName, password, pushToken, method_anonymous);
+            string response = await authenticate;
 
-            if (usernameAvailable) {
-                if (isLoggedInAnon) {
-                    Task changeUsernameAsync = ChangeUsernameAsync(newUserName);
-                    await changeUsernameAsync;
-                    if(changeUsernameAsync.Status == TaskStatus.Faulted) {
-                        //handle failure
-                    }
-                    else {
-                        _uiController.CloseUsernamePanel();
-                    }
-                }
-                else {
-                    Task createAnonUserAsync = CreateAnonUserAsync(newUserName);
-                    await createAnonUserAsync;
-                    if (createAnonUserAsync.Status == TaskStatus.Faulted) {
-                        //handle failure
-                    }
-                    else {
-                        isLoggedIn = true;
-                        isLoggedInAnon = true;
-                        _uiController.CloseUsernamePanel();
-                    }
-                }
-            }
-            else {
+            if (response == Communicator.USERNAME_TAKEN_ERROR_MESSAGE) {
                 _uiController.usernameTakenMessage.gameObject.SetActive(true);
             }
+            else if (response == Communicator.INVALID_CHARACTERS_ERROR_MESSAGE) {
+                _uiController.invalidCharactersMessage.gameObject.SetActive(true);
+            }
+            else if (response == null) {
+                throw new Exception("An unknown error occurred");
+            }
+            else {
+                string authToken = response;
+                PlayerPrefs.SetString(Communicator.PLAYERPREFS_AUTH_TOKEN, authToken);
+                PlayerPrefs.SetString(PLAYERPREFS_USERNAME, newUserName);
+                PlayerPrefs.SetString(PLAYERPREFS_PASSWORD, password);
+                PlayerPrefs.SetString(Communicator.PLAYERPREFS_SIGNIN_METHOD, method_anonymous);
+                isLoggedInAnon = true;
+                _uiController.CloseUsernamePanel();
+                Debug.Log($"Auth token received: {authToken}");
+                Debug.Log($"Avatar: {authInfo.User.ProfileImage}");
+            }
 
-            _uiController.anonAuthButtonText.text = (isLoggedInAnon) ? 
+            _uiController.anonAuthButtonText.text = (isLoggedInAnon) ?
                 SIGNED_IN_TEXT_ANON : SIGNED_OUT_TEXT_ANON;
+        }
+
+
+        /// <summary>
+        /// Generates a password of the specified length.
+        /// </summary>
+        public static string CreatePassword(int length) {
+            const string valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+            string pw = "";
+            while (pw.Length < length) {
+                pw += valid[UnityEngine.Random.Range(0,valid.Length)];
+            }
+            return pw;
         }
 
         /// <summary>
@@ -265,9 +205,11 @@ namespace Controllers.Authentication
         /// </summary>
         /// <param name="newUserName">Provided user name</param>
         /// <returns></returns>
-        private Task CreateAnonUserAsync(string newUserName) {
-            return Task.FromResult(true);
-        }
+        //private async Task<string> CreateAnonUserAsync(string newUserName) {
+        //    Task<string> authenticate = Communicator.Authenticate(newUserName, "12345678", "");
+        //    string response = await authenticate;
+        //    return response;
+        //}
 
         /// <summary>
         /// Change the name of an user.
@@ -304,6 +246,11 @@ namespace Controllers.Authentication
                     Debug.Log("UDEBUG: Authentication success: " + success);
                     Debug.Log("UDEBUG: Username: " + Social.localUser.userName);
                     Debug.Log("UDEBUG: ID: " + Social.localUser.id);
+                    Debug.Log("UDEBUG: Avatar: " + Social.localUser.image.ToString());
+                    Texture2D texture = Social.localUser.image;
+                    testImage.sprite = Sprite.Create(texture, new Rect(0,0,texture.width,texture.height), new Vector2(0.5f, 0.5f));
+
+
 
                     _uiController.googleAuthButtonText.text = success ? SIGNED_IN_TEXT_GOOGLE : SIGNED_OUT_TEXT_GOOGLE;
                     if (success)
@@ -321,17 +268,52 @@ namespace Controllers.Authentication
         }
 
         /// <summary>
-        /// This is called when user sign-in was successfully.
+        /// This is called when Google Play sign-in was successful.
         /// </summary>
-        private void OnSuccess()
+        private async void OnSuccess()
         {
             Debug.Log("Successfully Signed In");
             _uiController.ShowSettingsButton(true);
             Debug.Log("UDEBUG: AuthCode: " + PlayGamesPlatform.Instance.GetServerAuthCode());
             PlayGamesPlatform.Instance.GetAnotherServerAuthCode(true, (string code) => {
                 Debug.Log("UDEBUG: AuthCodeAsync: " + code);
-                authCode = code;
             });
+            Debug.Log("UDEBUG: ID Token: " + PlayGamesPlatform.Instance.GetIdToken());
+
+            string userName = Social.localUser.userName;
+            string authCode = PlayGamesPlatform.Instance.GetServerAuthCode();
+            string pushToken = PushHandler.Instance.pushToken ?? "";
+
+            Task<string> authenticate = Communicator.Authenticate(userName, authCode, pushToken, method_google);
+            string response = await authenticate;
+            if (response == Communicator.USERNAME_TAKEN_ERROR_MESSAGE) {
+                /**
+                 * Since GooglePlay Usernames are unique (and can't contain special characters), and anonymous users get the 'anon-' prefix, this should never happen
+                 */
+                Debug.LogError("Google Username is already taken.");
+            }
+            else if (response == Communicator.INVALID_CHARACTERS_ERROR_MESSAGE) {
+                /**
+                 * Since GooglePlay Usernames can't contain special characters, this should never happen
+                 */
+                Debug.LogError("Username contains invalid characters");
+            }
+            else if (response == null) {
+                throw new Exception("An unknown error occurred");
+            }
+            else {
+                string authToken = response;
+                PlayerPrefs.SetString(Communicator.PLAYERPREFS_AUTH_TOKEN, authToken);
+                PlayerPrefs.SetString(PLAYERPREFS_USERNAME, userName);
+                PlayerPrefs.SetString(PLAYERPREFS_PASSWORD, authCode);
+                PlayerPrefs.SetString(Communicator.PLAYERPREFS_SIGNIN_METHOD, method_google);
+                _uiController.CloseUsernamePanel();
+                isLoggedInGoogle = true;
+                Debug.Log($"Auth token received: {authToken}");
+                _uiController.googleAuthButtonText.text = (isLoggedInGoogle) ?
+                    SIGNED_IN_TEXT_GOOGLE : SIGNED_OUT_TEXT_GOOGLE;
+            }
+
         }
 
         /// <summary>
@@ -341,6 +323,7 @@ namespace Controllers.Authentication
         {
             // sign out
             PlayGamesPlatform.Instance.SignOut();
+            isLoggedInGoogle = false;
             _uiController.googleAuthButtonText.text = SIGNED_OUT_TEXT_GOOGLE;
             Debug.Log("Signing out of Google Play");
 
@@ -352,33 +335,11 @@ namespace Controllers.Authentication
         public void SignOutAnon()
         {
             // sign out
-            auth.SignOut();
             isLoggedInAnon = false;
             _uiController.anonAuthButtonText.text = (isLoggedInAnon) ? SIGNED_IN_TEXT_ANON : SIGNED_OUT_TEXT_ANON;
-            Debug.Log("Signing out of Firebase");
+            Debug.Log("Signing out");
 
         }
-    
-        //public void SignInWithFirebase() {
-        //    if (auth.CurrentUser == null) {
-        //        auth.SignInAnonymouslyAsync().ContinueWith(task => {
-        //            if (task.IsCanceled) {
-        //                Debug.LogError("SignInAnonymouslyAsync was canceled.");
-        //                return;
-        //            }
-        //            if (task.IsFaulted) {
-        //                Debug.LogError("SignInAnonymouslyAsync encountered an error: " + task.Exception);
-        //                return;
-        //            }
-
-        //            Firebase.Auth.FirebaseUser newUser = task.Result;
-        //            user = newUser;
-        //            Debug.LogFormat("User signed in successfully: {0} ({1})",
-        //                newUser.DisplayName, newUser.UserId);
-        //        });
-        //    }
-        //    menuController.OpenUsernamePanel();
-        //}
 
         /// <summary>
         /// Use this to show the leaderboard.

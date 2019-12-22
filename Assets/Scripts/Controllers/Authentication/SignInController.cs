@@ -36,7 +36,7 @@ namespace Controllers.Authentication
         private const string SIGNED_IN_TEXT_ANON = "Change Username";
         private const string SIGNED_OUT_TEXT_ANON = "Sign in Anonymously";
         private const string PLAYERPREFS_PASSWORD = "PASSWORD";
-        private const string PLAYERPREFS_USERNAME = "USERNAME";
+        public const string PLAYERPREFS_USERNAME = "USERNAME";
 
         /// <summary>
         /// Start is called before the first frame update.

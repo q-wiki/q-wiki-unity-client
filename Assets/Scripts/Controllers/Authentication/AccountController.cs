@@ -1,4 +1,5 @@
 ﻿using Controllers;
+using Controllers.Authentication;
 using Controllers.UI;
 using System;
 using System.Collections;
@@ -20,6 +21,8 @@ public class AccountController : MonoBehaviour
     [SerializeField] private GameObject requestScrollViewContent;
     [SerializeField] private Sprite incomingSprite;
     [SerializeField] private Sprite outgoingSprite;
+    [SerializeField] private Text usernameText;
+    [SerializeField] private Image avatarImage;
     private Color incomingColor = Color.white;
     private Color outgoingColor = Color.red;
 
@@ -27,11 +30,24 @@ public class AccountController : MonoBehaviour
     async void Start()
     {
         await RetrieveFriends();
+        SetHeadline();
     }
 
     // Update is called once per frame
     void Update()
     {
+    }
+
+    public void SetHeadline(){
+        bool usernameInPlayerprefs = !string.IsNullOrEmpty(PlayerPrefs.GetString(SignInController.PLAYERPREFS_USERNAME));
+        string name = usernameInPlayerprefs ? PlayerPrefs.GetString(SignInController.PLAYERPREFS_USERNAME) : "Username";
+        usernameText.text = name;
+
+        bool avatarExists = Social.localUser.image != null;
+        if (avatarExists){
+            Texture2D texture = Social.localUser.image;
+            avatarImage.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+        }
     }
 
 

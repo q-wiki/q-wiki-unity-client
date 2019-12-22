@@ -2002,7 +2002,7 @@ RectTransform:
   - {fileID: 541837322}
   - {fileID: 1556254594}
   m_Father: {fileID: 1378078473}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -3918,14 +3918,14 @@ RectTransform:
   m_GameObject: {fileID: 873093272}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.0001217, y: 1.0001217, z: 1.0001217}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1378078473}
-  m_RootOrder: 0
+  m_Father: {fileID: 2076565076}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: -319, y: 198}
+  m_AnchoredPosition: {x: 81.03885, y: 30.469818}
   m_SizeDelta: {x: 160, y: 70}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &873093274
@@ -4526,6 +4526,8 @@ MonoBehaviour:
   requestScrollViewContent: {fileID: 1206180661}
   incomingSprite: {fileID: 21300000, guid: 1876c7635959cb74eafb2fe74c904306, type: 3}
   outgoingSprite: {fileID: 21300000, guid: 04a563adfa10e5240acb037ad7c086d1, type: 3}
+  usernameText: {fileID: 0}
+  avatarImage: {fileID: 0}
 --- !u!4 &1038043115
 Transform:
   m_ObjectHideFlags: 0
@@ -5763,7 +5765,6 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.9998783, y: 0.9998783, z: 0.9998783}
   m_Children:
-  - {fileID: 873093273}
   - {fileID: 343550147}
   - {fileID: 2076565076}
   - {fileID: 1754094029}
@@ -7445,7 +7446,7 @@ RectTransform:
   m_Children:
   - {fileID: 1695135401}
   m_Father: {fileID: 1378078473}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -9341,8 +9342,9 @@ RectTransform:
   - {fileID: 907309754}
   - {fileID: 119470697}
   - {fileID: 374366896}
+  - {fileID: 873093273}
   m_Father: {fileID: 1378078473}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}

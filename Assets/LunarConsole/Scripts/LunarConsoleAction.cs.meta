@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 fileFormatVersion: 2
 guid: ec77148523b71dc4fa9c635588284aea
 timeCreated: 1484261353
@@ -8,20 +7,6 @@ MonoImporter:
   defaultReferences: []
   executionOrder: 0
   icon: {instanceID: 0}
-  userData: 
-  assetBundleName: 
-  assetBundleVariant: 
-=======
-fileFormatVersion: 2
-guid: ec77148523b71dc4fa9c635588284aea
-timeCreated: 1484261353
-licenseType: Store
-MonoImporter:
-  serializedVersion: 2
-  defaultReferences: []
-  executionOrder: 0
-  icon: {instanceID: 0}
-  userData: 
-  assetBundleName: 
-  assetBundleVariant: 
->>>>>>> 0a5d87acc37a1dbcd2b655eb08a6e5ac860847af
+  userData:
+  assetBundleName:
+  assetBundleVariant:

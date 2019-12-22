@@ -200,6 +200,107 @@ public class Communicator : MonoBehaviour
     }
 
     /// <summary>
+    ///     Retrieves all open game requests of the player that is currently logged in
+    /// </summary>
+    /// <returns>asynchronous Task</returns>
+    internal static async Task<GameRequestList> RetrieveGameRequests()
+    {
+        Debug.Log("Retrieving Open Game Requests");
+
+        try
+        {
+            HttpOperationResponse<GameRequestList> response = null;
+            response = await _gameApi.GetGameRequestsWithHttpMessagesAsync();
+            var gameRequestList = response.Body;
+
+            return gameRequestList;
+        }
+        catch (HttpOperationException e)
+        {
+            var response = e.Response;
+            Debug.LogError(
+                $"Error while trying to connect to API: {response.StatusCode} ({(int)response.StatusCode}) / {e.Response.Content}");
+            Debug.LogError(e.StackTrace);
+            return null;
+        }
+    }
+
+    /// <summary>
+    ///     Send a game request to a user
+    /// </summary>
+    /// <returns>asynchronous Task</returns>
+    internal static async Task<GameRequest> ChallengeUser(string userID)
+    {
+        Debug.Log($"Sending challenge to user {userID}");
+
+        try
+        {
+            HttpOperationResponse<GameRequest> response = null;
+            response = await _gameApi.RequestMatchWithHttpMessagesAsync(userID);
+            var request = response.Body;
+
+            return request;
+        }
+        catch (HttpOperationException e)
+        {
+            var response = e.Response;
+            Debug.LogError(
+                $"Error while trying to connect to API: {response.StatusCode} ({(int)response.StatusCode}) / {e.Response.Content}");
+            Debug.LogError(e.StackTrace);
+            return null;
+        }
+    }
+
+    /// <summary>
+    ///     Deletes an outgoing or incoming game request
+    /// </summary>
+    /// <returns>asynchronous Task</returns>
+    internal static async Task<bool> DeleteGameRequest(string requestID)
+    {
+        Debug.Log($"Deleting Game Request {requestID}");
+
+        try
+        {
+            HttpOperationResponse response = null;
+            response = await _gameApi.DeleteGameRequestWithHttpMessagesAsync(requestID);
+
+            return true;
+        }
+        catch (HttpOperationException e)
+        {
+            var response = e.Response;
+            Debug.LogError(
+                $"Error while trying to connect to API: {response.StatusCode} ({(int)response.StatusCode}) / {e.Response.Content}");
+            Debug.LogError(e.StackTrace);
+            return false;
+        }
+    }
+
+    /// <summary>
+    ///     Accepts an incoming game request
+    /// </summary>
+    /// <returns>asynchronous Task</returns>
+    internal static async Task<GameInfo> AcceptGameRequest(string requestID)
+    {
+        Debug.Log($"Accepting Game Request {requestID}");
+        try
+        {
+            HttpOperationResponse<GameInfo> response = null;
+            response = await _gameApi.CreateNewGameByRequestWithHttpMessagesAsync(requestID);
+
+            return response.Body;
+        }
+        catch (HttpOperationException e)
+        {
+            var response = e.Response;
+            Debug.LogError(
+                $"Error while trying to connect to API: {response.StatusCode} ({(int)response.StatusCode}) / {e.Response.Content}");
+            Debug.LogError(e.StackTrace);
+            return null;
+        }
+    }
+
+    /// <summary>
     ///     Retrieves users (limit 10) with a username similar to the query string
     /// </summary>
     /// <returns>asynchronous Task</returns>

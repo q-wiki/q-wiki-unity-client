@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Minigame
 {
@@ -15,8 +16,10 @@ namespace Minigame
         /// <param name="taskDescription">Description of the task</param>
         /// <param name="answerOptions">Provided answer options</param>
         /// <param name="difficulty">Given difficulty</param>
-        void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions, int difficulty);
-
+        /// <param name="sprite">Sprite (optional)</param>
+        void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions, int difficulty, Sprite sprite = null);
+        
+        
         /// <summary>
         ///     Use this to send answers to the backend
         /// </summary>

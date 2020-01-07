@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Controllers;
 using UnityEngine;
@@ -8,9 +8,9 @@ using UnityEngine.UI;
 namespace Minigame
 {
     /// <summary>
-    ///     Frontend implementation of the multiple choice MiniGame
+    ///     Frontend implementation of the 'Guess the image' MiniGame
     /// </summary>
-    public class MinigameMultipleChoice : MonoBehaviour, IMinigame
+    public class MinigameGuessImage : MonoBehaviour, IMinigame
     {
         private IList<string> _answerOptions;
 
@@ -22,16 +22,19 @@ namespace Minigame
         private string _id;
         private string _taskDescription;
         private Timer _timer;
+        private Sprite _sprite;
+        
+
+        /**
+         * public fields
+         */
+
+        public Image imagePlaceholder;
         public Sprite boxSprite;
         public Sprite checkSprite;
         public List<GameObject> choices;
         public Sprite closeButtonSprite;
         public GameObject description;
-
-        /**
-         * public fields
-         */
-        
         public GameObject sendButton;
         public Image sendButtonImage;
         public Sprite sendButtonSprite;
@@ -44,12 +47,11 @@ namespace Minigame
         /// </summary>
         /// <param name="miniGameId">ID of the current MiniGame</param>
         /// <param name="taskDescription">Description of the current MiniGame</param>
+        /// <param name="sprite">Sprite to use for the placeholder image</param>
         /// <param name="answerOptions">Provided answer options</param>
         /// <param name="difficulty">Provided difficulty</param>
-        /// <param name="sprite">Sprite (not used here)</param>
         /// <exception cref="Exception">Timer could not be set properly</exception>
-        public async void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions,
-            int difficulty, Sprite sprite = null)
+        public async void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions, int difficulty, Sprite sprite)
         {
             Reset();
 
@@ -57,7 +59,9 @@ namespace Minigame
             _id = miniGameId;
             _taskDescription = taskDescription;
             _answerOptions = answerOptions;
+            _sprite = sprite;
             AssignDescription(_taskDescription);
+            AssignImage(_sprite);
             AssignChoices(_answerOptions);
 
             /**
@@ -212,6 +216,7 @@ namespace Minigame
         /// </summary>
         private void Reset()
         {
+            imagePlaceholder.sprite = null;
             sendButton.GetComponent<Image>().color = new Color32(80, 158, 158, 255);
             sendButton.GetComponentInChildren<Text>().text = "Send";
             sendButtonImage.sprite = sendButtonSprite;
@@ -234,6 +239,15 @@ namespace Minigame
                 var text = choices[i].transform.Find("Text");
                 text.GetComponent<Text>().text = answerOptions[i];
             }
+        }
+        
+        /// <summary>
+        ///     Assign provided sprite to on-screen placeholder
+        /// </summary>
+        /// <param name="sprite">Provided sprite</param>
+        private void AssignImage(Sprite sprite)
+        {
+            imagePlaceholder.sprite = sprite;
         }
 
         /// <summary>

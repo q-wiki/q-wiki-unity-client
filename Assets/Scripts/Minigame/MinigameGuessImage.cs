@@ -23,13 +23,15 @@ namespace Minigame
         private string _taskDescription;
         private Timer _timer;
         private Sprite _sprite;
-        
+        private string _license;
+
 
         /**
          * public fields
          */
 
         public Image imagePlaceholder;
+        public Text licensePlaceholder;
         public Sprite boxSprite;
         public Sprite checkSprite;
         public List<GameObject> choices;
@@ -47,11 +49,11 @@ namespace Minigame
         /// </summary>
         /// <param name="miniGameId">ID of the current MiniGame</param>
         /// <param name="taskDescription">Description of the current MiniGame</param>
-        /// <param name="sprite">Sprite to use for the placeholder image</param>
         /// <param name="answerOptions">Provided answer options</param>
         /// <param name="difficulty">Provided difficulty</param>
+        /// <param name="minigameImage">Provided minigame image</param>
         /// <exception cref="Exception">Timer could not be set properly</exception>
-        public async void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions, int difficulty, Sprite sprite)
+        public async void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions, int difficulty, MinigameImage minigameImage)
         {
             Reset();
 
@@ -59,9 +61,11 @@ namespace Minigame
             _id = miniGameId;
             _taskDescription = taskDescription;
             _answerOptions = answerOptions;
-            _sprite = sprite;
+            _sprite = minigameImage.Sprite;
+            _license = minigameImage.License;
             AssignDescription(_taskDescription);
             AssignImage(_sprite);
+            AssignLicense(_license);
             AssignChoices(_answerOptions);
 
             /**
@@ -248,6 +252,15 @@ namespace Minigame
         private void AssignImage(Sprite sprite)
         {
             imagePlaceholder.sprite = sprite;
+        }
+        
+        /// <summary>
+        ///     Assign provided license to on-screen placeholder
+        /// </summary>
+        /// <param name="license">Provided license</param>
+        private void AssignLicense(string license)
+        {
+            licensePlaceholder.text = license;
         }
 
         /// <summary>

@@ -48,10 +48,10 @@ namespace Minigame
         /// <param name="taskDescription">Description of the current MiniGame</param>
         /// <param name="answerOptions">Provided answer options</param>
         /// <param name="difficulty">Provided difficulty</param>
-        /// <param name="sprite">Sprite (not used here)</param>
+        /// <param name="minigameImage">Minigame Image (not used here)</param>
         /// <exception cref="Exception">Timer could not be set properly</exception>
         public async void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions,
-            int difficulty, Sprite sprite = null)
+            int difficulty, MinigameImage minigameImage = null)
         {
             Reset();
 

@@ -16,8 +16,8 @@ namespace Minigame
         /// <param name="taskDescription">Description of the task</param>
         /// <param name="answerOptions">Provided answer options</param>
         /// <param name="difficulty">Given difficulty</param>
-        /// <param name="sprite">Sprite (optional)</param>
-        void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions, int difficulty, Sprite sprite = null);
+        /// <param name="minigameImage">Provided minigame image (optional)</param>
+        void Initialize(string miniGameId, string taskDescription, IList<string> answerOptions, int difficulty, MinigameImage minigameImage = null);
         
         
         /// <summary>

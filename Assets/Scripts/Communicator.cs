@@ -300,6 +300,7 @@ public class Communicator : MonoBehaviour
         }
     }
 
+
     /// <summary>
     ///     Retrieves users (limit 10) with a username similar to the query string
     /// </summary>
@@ -343,6 +344,51 @@ public class Communicator : MonoBehaviour
                 $"Error while trying to connect to API: {response.StatusCode} ({(int)response.StatusCode}) / {e.Response.Content}");
             Debug.LogError(e.StackTrace);
             return null;
+        }
+    }
+
+    /// <summary>
+    ///     Retrieves all games of the player that is currently logged in
+    /// </summary>
+    /// <returns>asynchronous Task</returns>
+    internal static async Task<IList<GameInfo>> RetrieveGames() {
+        Debug.Log("Retrieving Game List");
+
+        try {
+            HttpOperationResponse<IList<GameInfo>> response = null;
+            response = await _gameApi.GetGamesWithHttpMessagesAsync();
+            var gameList = response.Body;
+
+            return gameList;
+        }
+        catch (HttpOperationException e) {
+            var response = e.Response;
+            Debug.LogError(
+                $"Error while trying to connect to API: {response.StatusCode} ({(int)response.StatusCode}) / {e.Response.Content}");
+            Debug.LogError(e.StackTrace);
+            return null;
+        }
+    }
+
+    /// <summary>
+    ///     Deletes the specified game
+    /// </summary>
+    /// <returns>asynchronous Task</returns>
+    internal static async Task<bool> DeleteGame(string gameId) {
+        Debug.Log("Deleting Game");
+
+        try {
+            HttpOperationResponse response = null;
+            response = await _gameApi.DeleteGameWithHttpMessagesAsync(gameId);
+
+            return true;
+        }
+        catch (HttpOperationException e) {
+            var response = e.Response;
+            Debug.LogError(
+                $"Error while trying to connect to API: {response.StatusCode} ({(int)response.StatusCode}) / {e.Response.Content}");
+            Debug.LogError(e.StackTrace);
+            return false;
         }
     }
 

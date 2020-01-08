@@ -14,6 +14,8 @@ namespace Controllers.UI
         public Hideable startPanel;
         public Hideable usernamePanel;
         public Hideable loginPanel;
+        [SerializeField] private Hideable accountPanel;
+        [SerializeField] private Hideable gameRequestPanel;
 
         private bool _settingsToggle;
 
@@ -104,6 +106,8 @@ namespace Controllers.UI
                 legalNoticePanel.Hide();
                 loginPanel.Hide();
                 usernamePanel.Hide();
+                gameRequestPanel.Hide();
+                accountPanel.Hide();
             }
             else
             {
@@ -114,6 +118,8 @@ namespace Controllers.UI
                 legalNoticePanel.Hide();
                 loginPanel.Hide();
                 usernamePanel.Hide();
+                gameRequestPanel.Hide();
+                accountPanel.Hide();
             }
         }
         
@@ -141,6 +147,50 @@ namespace Controllers.UI
         {
             loginPanel.Show();
             settingsPanel.Hide();
+        }
+
+        /// <summary>
+        ///     This function is used to show and hide the user profile.
+        /// </summary>
+
+        public void ToggleUserProfile() {
+            if (accountPanel.IsVisible) {
+                accountPanel.Hide();
+                startPanel.Show();
+            }
+            else {
+                accountPanel.Show();
+
+                settingsPanel.Hide();
+                startPanel.Hide();
+                creditsPanel.Hide();
+                legalNoticePanel.Hide();
+                loginPanel.Hide();
+                usernamePanel.Hide();
+                gameRequestPanel.Hide();
+            }
+        }
+
+        /// <summary>
+        ///     This function is used to show and hide the game request panel.
+        /// </summary>
+
+        public void ToggleGameRequestPanel() {
+            if (gameRequestPanel.IsVisible) {
+                gameRequestPanel.Hide();
+                startPanel.Show();
+            }
+            else {
+                gameRequestPanel.Show();
+
+                settingsPanel.Hide();
+                startPanel.Hide();
+                creditsPanel.Hide();
+                legalNoticePanel.Hide();
+                loginPanel.Hide();
+                usernamePanel.Hide();
+                accountPanel.Hide();
+            }
         }
 
         /// <summary>

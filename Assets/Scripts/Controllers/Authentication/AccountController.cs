@@ -17,8 +17,10 @@ public class AccountController : MonoBehaviour
     [SerializeField] private GameObject userPrefab;
     [SerializeField] private GameObject friendPrefab;
     [SerializeField] private GameObject requestPrefab;
+    [SerializeField] private GameObject gameInstancePrefab;
     [SerializeField] private GameObject userScrollViewContent;
     [SerializeField] private GameObject requestScrollViewContent;
+    [SerializeField] private GameObject gamesScrollViewContent;
     [SerializeField] private Sprite incomingSprite;
     [SerializeField] private Sprite outgoingSprite;
     [SerializeField] private Text usernameText;
@@ -140,6 +142,49 @@ public class AccountController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Clears the ScrollView and adds a list of all running games to it.
+    /// </summary>
+    private void DisplayGamesInScrollView(IList<GameInfo> response) {
+        // Remove all Elements currently in the scrollview
+        foreach (Transform child in gamesScrollViewContent.transform) {
+            Destroy(child.gameObject);
+        }
+        foreach (GameInfo game in response) {
+            GameObject currentGameObject = Instantiate(gameInstancePrefab, gamesScrollViewContent.transform);
+            currentGameObject.transform.Find("ForfeitGameButton").GetComponent<Button>().onClick.AddListener(delegate { ForfeitGame(game.GameId, currentGameObject); });
+            currentGameObject.transform.Find("ContinueGameButton").GetComponent<Button>().onClick.AddListener(delegate { ContinueGame(game.GameId, currentGameObject); });
+            currentGameObject.transform.Find("Text").GetComponent<Text>().text = game.Message;
+            Transform inOrOut = currentGameObject.transform.Find("InOrOut");
+            inOrOut.GetComponent<Image>().sprite = incomingSprite;
+            inOrOut.GetComponent<Image>().color = incomingColor;
+        }
+    }
+
+    private async void ContinueGame(string id, GameObject gameInstance) {
+        bool success = await Communicator.DeleteGame(id);
+        //TODO
+        if (success) {
+            Destroy(gameInstance);
+            Debug.Log("TODO Add multiple game instances");
+        }
+        else {
+            Debug.LogError("An Error occurred. Couldn't continue game");
+        }
+    }
+
+    private async void ForfeitGame(string id, GameObject gameInstance) {
+        bool success = await Communicator.DeleteGame(id);
+        //TODO
+        if (success) {
+            Destroy(gameInstance);
+            Debug.Log("TODO Add multiple game instances");
+        }
+        else {
+            Debug.LogError("An Error occurred. Couldn't delete game.");
+        }
+    }
+
     private async void AcceptRequest(string id, GameObject requestObject)
     {
         GameInfo newGameInfo = await Communicator.AcceptGameRequest(id);
@@ -184,6 +229,24 @@ public class AccountController : MonoBehaviour
     }
 
     /// <summary>
+    /// Retrieve all open games of the player that is currently logged in
+    /// </summary>
+    public async Task<bool> RetrieveGames() {
+
+        Task<IList<GameInfo>> retrieveGames = Communicator.RetrieveGames();
+        IList<GameInfo> response = await retrieveGames;
+
+        if (response == null) {
+            Debug.LogError("Couldn't retrieve running games");
+            return false;
+        }
+        else {
+            DisplayGamesInScrollView(response);
+            return true;
+        }
+    }
+
+    /// <summary>
     /// Retrieve all open game requests of the player that is currently logged in
     /// </summary>
     public async Task<bool> RetrieveGameRequests()
@@ -194,7 +257,7 @@ public class AccountController : MonoBehaviour
 
         if (response == null)
         {
-            Debug.LogError("Couldn't retrieve friends");
+            Debug.LogError("Couldn't retrieve game requests");
             return false;
         }
         else
@@ -207,5 +270,9 @@ public class AccountController : MonoBehaviour
     public async void RetrieveGameRequestsVoid()
     {
         await RetrieveGameRequests();
+    }
+
+    public async void RetrieveRunningGamesVoid() {
+        await RetrieveGames();
     }
 }

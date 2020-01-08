@@ -22,7 +22,7 @@ public class Communicator : MonoBehaviour
     public const string PLAYERPREFS_USERNAME = "USERNAME";
     public const string PLAYERPREFS_PASSWORD = "PASSWORD";
     public const string PLAYERPREFS_SIGNIN_METHOD = "SIGNIN_METHOD";
-    private const string PLAYERPREFS_CURRENT_GAME_ID = "CURRENT_GAME_ID";
+    internal const string PLAYERPREFS_CURRENT_GAME_ID = "CURRENT_GAME_ID";
     private static WikidataGameAPI _gameApi;
     private static string _currentGameId;
     private static string _authToken { get; set; }
@@ -561,5 +561,11 @@ public class Communicator : MonoBehaviour
             throw new Exception("Client is not part of any game.");
         
         return await _gameApi.RetrieveGameStateAsync(_currentGameId);
+    }
+
+    public static void SetCurrentGameId(string currentGameId)
+    {
+        _currentGameId = currentGameId;
+        PlayerPrefs.SetString(PLAYERPREFS_CURRENT_GAME_ID, currentGameId);
     }
 }

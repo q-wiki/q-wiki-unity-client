@@ -124,7 +124,7 @@ public class AccountController : MonoBehaviour
         {
             GameObject request = Instantiate(requestPrefab, requestScrollViewContent.transform);
             request.transform.Find("RefuseRequestButton").GetComponent<Button>().onClick.AddListener(delegate { DeleteRequest(incomingRequests.Id, request); });
-            request.transform.Find("AcceptRequestButton").GetComponent<Button>().onClick.AddListener(delegate { AcceptRequest(incomingRequests.Id, request); });
+            request.transform.Find("AcceptRequestButton").GetComponent<Button>().onClick.AddListener(delegate { AcceptRequest(incomingRequests.Id); });
             request.transform.Find("Text").GetComponent<Text>().text = incomingRequests.Sender.Name;
             Transform inOrOut = request.transform.Find("InOrOut");
             inOrOut.GetComponent<Image>().sprite = incomingSprite;
@@ -185,18 +185,10 @@ public class AccountController : MonoBehaviour
         }
     }
 
-    private async void AcceptRequest(string id, GameObject requestObject)
+    private void AcceptRequest(string gameId)
     {
-        GameInfo newGameInfo = await Communicator.AcceptGameRequest(id);
-        if (newGameInfo != null)
-        {
-            Destroy(requestObject);
-            Debug.Log("TODO Add multiple game instances");
-        }
-        else
-        {
-            Debug.LogError("An Error occurred. Couldn't accept game request");
-        }
+        Communicator.SetCurrentGameId(gameId);
+        GameManager.Instance.ChangeToGameScene();
     }
 
     private async void DeleteRequest(string id, GameObject requestObject)

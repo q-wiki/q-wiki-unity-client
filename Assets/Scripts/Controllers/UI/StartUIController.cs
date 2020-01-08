@@ -16,6 +16,8 @@ namespace Controllers.UI
         public Hideable loginPanel;
         [SerializeField] private Hideable accountPanel;
         [SerializeField] private Hideable gameRequestPanel;
+        [SerializeField] private Text scrollviewText;
+        [SerializeField] private GameObject accountHeader;
 
         private bool _settingsToggle;
 
@@ -25,6 +27,8 @@ namespace Controllers.UI
         public Text anonAuthButtonText;
         public Text usernameTakenMessage;
         public Text invalidCharactersMessage;
+        private const string USERSEARCH_SCROLLVIEW_TEXT = "Searching for users";
+        private const string FRIENDSLIST_SCROLLVIEW_TEXT = "Friends";
 
         private static GameManager GameManager => GameManager.Instance;
 
@@ -157,6 +161,8 @@ namespace Controllers.UI
             if (accountPanel.IsVisible) {
                 accountPanel.Hide();
                 startPanel.Show();
+
+                findUserInput.text = "";
             }
             else {
                 accountPanel.Show();
@@ -168,7 +174,26 @@ namespace Controllers.UI
                 loginPanel.Hide();
                 usernamePanel.Hide();
                 gameRequestPanel.Hide();
+
+                findUserInput.text = "";
             }
+        }
+
+        /// <summary>
+        ///     This function is responsable for minor adjustments in the UI when the player searches for Users.
+        /// </summary>
+        public void DisplayUserSearchUI() {
+            scrollviewText.text = USERSEARCH_SCROLLVIEW_TEXT;
+            accountHeader.gameObject.SetActive(false);
+        }
+
+        /// <summary>
+        ///     This function is responsable for minor adjustments in the UI when the player displays his friends list.
+        /// </summary>
+        public void DisplayFriendsListUI() {
+            findUserInput.text = "";
+            scrollviewText.text = FRIENDSLIST_SCROLLVIEW_TEXT;
+            accountHeader.gameObject.SetActive(true);
         }
 
         /// <summary>

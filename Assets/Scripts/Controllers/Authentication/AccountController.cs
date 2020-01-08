@@ -21,7 +21,6 @@ public class AccountController : MonoBehaviour
     [SerializeField] private GameObject userScrollViewContent;
     [SerializeField] private GameObject requestScrollViewContent;
     [SerializeField] private GameObject gamesScrollViewContent;
-    [SerializeField] private InputField userSearchInputField;
     [SerializeField] private Sprite incomingSprite;
     [SerializeField] private Sprite outgoingSprite;
     [SerializeField] private Text usernameText;
@@ -29,23 +28,37 @@ public class AccountController : MonoBehaviour
     private Color incomingColor = Color.white;
     private Color outgoingColor = Color.red;
 
+    private const string USER_CORNERBUTTON_NAME = "AddFriendButton";
+    private const string FRIEND_CORNERBUTTON_NAME = "DeleteFriendButton";
+
     // Start is called before the first frame update
     async void Start(){
         SetHeadline();
         await RetrieveFriends();
+
+        //_uiController.findUserInput.onEndEdit.RemoveAllListeners();
+        _uiController.findUserInput.onValueChanged.RemoveAllListeners();
+
+        //_uiController.findUserInput.onEndEdit.AddListener(delegate { inputSubmitCallBack(); });
+        _uiController.findUserInput.onValueChanged.AddListener(delegate { inputChangedCallBack(); });
     }
 
     // Update is called once per frame
     void Update(){
     }
+
     void OnEnable(){
         //Register InputField Events
-        userSearchInputField.onEndEdit.AddListener(delegate { inputSubmitCallBack(); });
-        userSearchInputField.onValueChanged.AddListener(delegate { inputChangedCallBack(); });
+        if (_uiController == null)
+        {
+            return;
+        }
+       // _uiController.findUserInput.onEndEdit.AddListener(delegate { inputSubmitCallBack(); });
+        _uiController.findUserInput.onValueChanged.AddListener(delegate { inputChangedCallBack(); });
     }
 
     private void inputChangedCallBack() {
-        switch (userSearchInputField.text.Length)
+        switch (_uiController.findUserInput.text.Length)
         {
             case 0: RetrieveFriendsVoid(); break;
             case 1: break;
@@ -57,8 +70,8 @@ public class AccountController : MonoBehaviour
 
     void OnDisable(){
         //Un-Register InputField Events
-        userSearchInputField.onEndEdit.RemoveAllListeners();
-        userSearchInputField.onValueChanged.RemoveAllListeners();
+        //_uiController.findUserInput.onEndEdit.RemoveAllListeners();
+        _uiController.findUserInput.onValueChanged.RemoveAllListeners();
     }
 
     private void inputSubmitCallBack(){
@@ -86,6 +99,8 @@ public class AccountController : MonoBehaviour
     /// Search for users matching the name from the input
     /// </summary>
     public async void FindUsers() {
+
+        _uiController.DisplayUserSearchUI();
         string username = (_uiController.findUserInput.text == "") ? "Anonymous User" : _uiController.findUserInput.text;
         
         Task<IList<Player>> findUsers = Communicator.FindUsers(username);
@@ -95,7 +110,7 @@ public class AccountController : MonoBehaviour
             Debug.LogError("Couldn't retrieve users");
         }
         else {
-            DisplayUsersInScrollView(response, userPrefab, "AddFriendButton", AddFriend);
+            DisplayUsersInScrollView(response, userPrefab, USER_CORNERBUTTON_NAME, AddFriend);
         }
     }
 
@@ -104,7 +119,7 @@ public class AccountController : MonoBehaviour
     /// </summary>
     public async Task<bool> RetrieveFriends() {
 
-        userSearchInputField.text = "";
+        _uiController.DisplayFriendsListUI();
 
         Task<IList<Player>> retrieveFriends = Communicator.RetrieveFriends();
         IList<Player> response = await retrieveFriends;
@@ -115,7 +130,7 @@ public class AccountController : MonoBehaviour
         }
         else {
             friendsList = (List<Player>)response;
-            DisplayUsersInScrollView(response, friendPrefab, "DeleteFriendButton", DeleteFriend);
+            DisplayUsersInScrollView(response, friendPrefab, FRIEND_CORNERBUTTON_NAME, DeleteFriend);
             return true;
         }
     }
@@ -133,12 +148,10 @@ public class AccountController : MonoBehaviour
             Destroy(child.gameObject);
         }
         foreach (Player player in players) {
-            if (friendsList != null && !friendsList.Contains(player)){
-                GameObject user = Instantiate(prefab, userScrollViewContent.transform);
-                user.GetComponent<Button>().onClick.AddListener(delegate { ChallengeUser(player.Id); });
-                user.transform.Find(buttonName).GetComponent<Button>().onClick.AddListener(delegate { buttonFunction(player.Id); });
-                user.transform.Find("Text").GetComponent<Text>().text = player.Name;
-            }
+            GameObject user = Instantiate(prefab, userScrollViewContent.transform);
+            user.GetComponent<Button>().onClick.AddListener(delegate { ChallengeUser(player.Id); });
+            user.transform.Find(buttonName).GetComponent<Button>().onClick.AddListener(delegate { buttonFunction(player.Id); });
+            user.transform.Find("Text").GetComponent<Text>().text = player.Name;
         }
     }
 
@@ -193,7 +206,7 @@ public class AccountController : MonoBehaviour
         }
     }
 
-    private async void ContinueGame(string gameId) {
+    private void ContinueGame(string gameId) {
         Communicator.SetCurrentGameId(gameId);
         GameManager.Instance.ChangeToGameScene();
     }

@@ -17,8 +17,10 @@ public class AccountController : MonoBehaviour
     [SerializeField] private GameObject userPrefab;
     [SerializeField] private GameObject friendPrefab;
     [SerializeField] private GameObject requestPrefab;
+    [SerializeField] private GameObject gameInstancePrefab;
     [SerializeField] private GameObject userScrollViewContent;
     [SerializeField] private GameObject requestScrollViewContent;
+    [SerializeField] private GameObject gamesScrollViewContent;
     [SerializeField] private Sprite incomingSprite;
     [SerializeField] private Sprite outgoingSprite;
     [SerializeField] private Text usernameText;
@@ -26,18 +28,60 @@ public class AccountController : MonoBehaviour
     private Color incomingColor = Color.white;
     private Color outgoingColor = Color.red;
 
+    private const string USER_CORNERBUTTON_NAME = "AddFriendButton";
+    private const string FRIEND_CORNERBUTTON_NAME = "DeleteFriendButton";
+
     // Start is called before the first frame update
-    async void Start()
-    {
-        await RetrieveFriends();
+    async void Start(){
         SetHeadline();
+        await RetrieveFriends();
+
+        //_uiController.findUserInput.onEndEdit.RemoveAllListeners();
+        _uiController.findUserInput.onValueChanged.RemoveAllListeners();
+
+        //_uiController.findUserInput.onEndEdit.AddListener(delegate { inputSubmitCallBack(); });
+        _uiController.findUserInput.onValueChanged.AddListener(delegate { inputChangedCallBack(); });
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update(){
     }
 
+    void OnEnable(){
+        //Register InputField Events
+        if (_uiController == null)
+        {
+            return;
+        }
+       // _uiController.findUserInput.onEndEdit.AddListener(delegate { inputSubmitCallBack(); });
+        _uiController.findUserInput.onValueChanged.AddListener(delegate { inputChangedCallBack(); });
+    }
+
+    private void inputChangedCallBack() {
+        switch (_uiController.findUserInput.text.Length)
+        {
+            case 0: RetrieveFriendsVoid(); break;
+            case 1: break;
+            case 2: break;
+            default: FindUsers(); break;
+        }
+        
+    }
+
+    void OnDisable(){
+        //Un-Register InputField Events
+        //_uiController.findUserInput.onEndEdit.RemoveAllListeners();
+        _uiController.findUserInput.onValueChanged.RemoveAllListeners();
+    }
+
+    private void inputSubmitCallBack(){
+        FindUsers();
+    }
+
+
+    /// <summary>
+    /// Set Username and Avatar Image (if available) in the headline
+    /// </summary>
     public void SetHeadline(){
         bool usernameInPlayerprefs = !string.IsNullOrEmpty(PlayerPrefs.GetString(SignInController.PLAYERPREFS_USERNAME));
         string name = usernameInPlayerprefs ? PlayerPrefs.GetString(SignInController.PLAYERPREFS_USERNAME) : "Username";
@@ -55,6 +99,8 @@ public class AccountController : MonoBehaviour
     /// Search for users matching the name from the input
     /// </summary>
     public async void FindUsers() {
+
+        _uiController.DisplayUserSearchUI();
         string username = (_uiController.findUserInput.text == "") ? "Anonymous User" : _uiController.findUserInput.text;
         
         Task<IList<Player>> findUsers = Communicator.FindUsers(username);
@@ -64,7 +110,7 @@ public class AccountController : MonoBehaviour
             Debug.LogError("Couldn't retrieve users");
         }
         else {
-            DisplayUsersInScrollView(response, userPrefab, "AddFriendButton", AddFriend);
+            DisplayUsersInScrollView(response, userPrefab, USER_CORNERBUTTON_NAME, AddFriend);
         }
     }
 
@@ -72,6 +118,8 @@ public class AccountController : MonoBehaviour
     /// Retrieve the friends of the player that is currently logged in
     /// </summary>
     public async Task<bool> RetrieveFriends() {
+
+        _uiController.DisplayFriendsListUI();
 
         Task<IList<Player>> retrieveFriends = Communicator.RetrieveFriends();
         IList<Player> response = await retrieveFriends;
@@ -82,14 +130,13 @@ public class AccountController : MonoBehaviour
         }
         else {
             friendsList = (List<Player>)response;
-            DisplayUsersInScrollView(response, friendPrefab, "DeleteFriendButton", DeleteFriend);
+            DisplayUsersInScrollView(response, friendPrefab, FRIEND_CORNERBUTTON_NAME, DeleteFriend);
             return true;
         }
     }
     public async void RetrieveFriendsVoid() {
         await RetrieveFriends();
     }
-
     /// <summary>
     /// Clears the ScrollView and adds a list of users to it.
     /// These are either the friends of the player that is currently logged in, or up to 10 users matching the name from the input field
@@ -124,7 +171,7 @@ public class AccountController : MonoBehaviour
             request.transform.Find("RefuseRequestButton").GetComponent<Button>().onClick.AddListener(delegate { DeleteRequest(incomingRequests.Id, request); });
             request.transform.Find("AcceptRequestButton").GetComponent<Button>().onClick.AddListener(delegate { AcceptRequest(incomingRequests.Id, request); });
             request.transform.Find("Text").GetComponent<Text>().text = incomingRequests.Sender.Name;
-            Transform inOrOut = request.transform.Find("InOrOut");
+            Transform inOrOut = request.transform.Find("Image/InOrOut");
             inOrOut.GetComponent<Image>().sprite = incomingSprite;
             inOrOut.GetComponent<Image>().color = incomingColor;
         }
@@ -134,19 +181,57 @@ public class AccountController : MonoBehaviour
             request.transform.Find("RefuseRequestButton").GetComponent<Button>().onClick.AddListener(delegate { DeleteRequest(outgoingRequests.Id, request); });
             request.transform.Find("AcceptRequestButton").gameObject.SetActive(false);
             request.transform.Find("Text").GetComponent<Text>().text = outgoingRequests.Recipient.Name;
-            Transform inOrOut = request.transform.Find("Image").transform.Find("InOrOut");
+            Transform inOrOut = request.transform.Find("Image/InOrOut");
             inOrOut.GetComponent<Image>().sprite = outgoingSprite;
             inOrOut.GetComponent<Image>().color = outgoingColor;
         }
     }
 
-    private async void AcceptRequest(string id, GameObject requestObject)
+    /// <summary>
+    /// Clears the ScrollView and adds a list of all running games to it.
+    /// </summary>
+    private void DisplayGamesInScrollView(IList<GameInfo> response) {
+        // Remove all Elements currently in the scrollview
+        foreach (Transform child in gamesScrollViewContent.transform) {
+            Destroy(child.gameObject);
+        }
+        foreach (GameInfo game in response) {
+            GameObject currentGameObject = Instantiate(gameInstancePrefab, gamesScrollViewContent.transform);
+            currentGameObject.transform.Find("ForfeitGameButton").GetComponent<Button>().onClick.AddListener(delegate { ForfeitGame(game.GameId, currentGameObject); });
+            currentGameObject.GetComponent<Button>().onClick.AddListener(delegate { ContinueGame(game.GameId); });
+            currentGameObject.transform.Find("Text").GetComponent<Text>().text = game.Message;
+            Transform inOrOut = currentGameObject.transform.Find("InOrOut");
+            inOrOut.GetComponent<Image>().sprite = incomingSprite;
+            inOrOut.GetComponent<Image>().color = incomingColor;
+        }
+    }
+
+    private void ContinueGame(string gameId) {
+        Communicator.SetCurrentGameId(gameId);
+        GameManager.Instance.ChangeToGameScene();
+    }
+
+    private async void ForfeitGame(string id, GameObject gameInstance) {
+        bool success = await Communicator.DeleteGame(id);
+        //TODO
+        if (success) {
+            Destroy(gameInstance);
+            Debug.Log("TODO Add multiple game instances");
+        }
+        else {
+            Debug.LogError("An Error occurred. Couldn't delete game.");
+        }
+    }
+
+    private async void AcceptRequest(string gameId, GameObject requestObject)
     {
-        GameInfo newGameInfo = await Communicator.AcceptGameRequest(id);
+        GameInfo newGameInfo = await Communicator.AcceptGameRequest(gameId);
+        PlayerPrefs.SetString(Communicator.PLAYERPREFS_CURRENT_GAME_ID, gameId);
         if (newGameInfo != null)
         {
             Destroy(requestObject);
-            Debug.Log("TODO Add multiple game instances");
+            Communicator.SetCurrentGameId(gameId);
+            GameManager.Instance.ChangeToGameScene();
         }
         else
         {
@@ -184,6 +269,24 @@ public class AccountController : MonoBehaviour
     }
 
     /// <summary>
+    /// Retrieve all open games of the player that is currently logged in
+    /// </summary>
+    public async Task<bool> RetrieveGames() {
+
+        Task<IList<GameInfo>> retrieveGames = Communicator.RetrieveGames();
+        IList<GameInfo> response = await retrieveGames;
+
+        if (response == null) {
+            Debug.LogError("Couldn't retrieve running games");
+            return false;
+        }
+        else {
+            DisplayGamesInScrollView(response);
+            return true;
+        }
+    }
+
+    /// <summary>
     /// Retrieve all open game requests of the player that is currently logged in
     /// </summary>
     public async Task<bool> RetrieveGameRequests()
@@ -194,7 +297,7 @@ public class AccountController : MonoBehaviour
 
         if (response == null)
         {
-            Debug.LogError("Couldn't retrieve friends");
+            Debug.LogError("Couldn't retrieve game requests");
             return false;
         }
         else
@@ -207,5 +310,9 @@ public class AccountController : MonoBehaviour
     public async void RetrieveGameRequestsVoid()
     {
         await RetrieveGameRequests();
+    }
+
+    public async void RetrieveRunningGamesVoid() {
+        await RetrieveGames();
     }
 }

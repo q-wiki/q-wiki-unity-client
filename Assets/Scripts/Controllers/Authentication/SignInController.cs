@@ -97,6 +97,7 @@ namespace Controllers.Authentication
         /// Sign in client anonymously.
         /// </summary>
         public void SignInAnonymously(){
+
             _uiController.OpenUsernamePanel();
         }
 
@@ -178,7 +179,9 @@ namespace Controllers.Authentication
                 PlayerPrefs.SetString(PLAYERPREFS_PASSWORD, password);
                 PlayerPrefs.SetString(Communicator.PLAYERPREFS_SIGNIN_METHOD, method_anonymous);
                 isLoggedInAnon = true;
+                await Communicator.SetupApiConnection();
                 _uiController.CloseUsernamePanel();
+                _uiController.CloseLoginPanel();
                 Debug.Log($"Auth token received: {authToken}");
                 Debug.Log($"Avatar: {authInfo.User.ProfileImage}");
             }
@@ -307,8 +310,10 @@ namespace Controllers.Authentication
                 PlayerPrefs.SetString(PLAYERPREFS_USERNAME, userName);
                 PlayerPrefs.SetString(PLAYERPREFS_PASSWORD, authCode);
                 PlayerPrefs.SetString(Communicator.PLAYERPREFS_SIGNIN_METHOD, method_google);
-                _uiController.CloseUsernamePanel();
                 isLoggedInGoogle = true;
+                await Communicator.SetupApiConnection();
+                _uiController.CloseUsernamePanel();
+                _uiController.CloseLoginPanel();
                 Debug.Log($"Auth token received: {authToken}");
                 _uiController.googleAuthButtonText.text = (isLoggedInGoogle) ?
                     SIGNED_IN_TEXT_GOOGLE : SIGNED_OUT_TEXT_GOOGLE;

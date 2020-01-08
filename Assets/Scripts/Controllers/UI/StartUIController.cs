@@ -14,6 +14,10 @@ namespace Controllers.UI
         public Hideable startPanel;
         public Hideable usernamePanel;
         public Hideable loginPanel;
+        [SerializeField] private Hideable accountPanel;
+        [SerializeField] private Hideable gameRequestPanel;
+        [SerializeField] private Text scrollviewText;
+        [SerializeField] private GameObject accountHeader;
 
         private bool _settingsToggle;
 
@@ -23,6 +27,8 @@ namespace Controllers.UI
         public Text anonAuthButtonText;
         public Text usernameTakenMessage;
         public Text invalidCharactersMessage;
+        private const string USERSEARCH_SCROLLVIEW_TEXT = "Searching for users";
+        private const string FRIENDSLIST_SCROLLVIEW_TEXT = "Friends";
 
         private static GameManager GameManager => GameManager.Instance;
 
@@ -104,6 +110,8 @@ namespace Controllers.UI
                 legalNoticePanel.Hide();
                 loginPanel.Hide();
                 usernamePanel.Hide();
+                gameRequestPanel.Hide();
+                accountPanel.Hide();
             }
             else
             {
@@ -114,6 +122,8 @@ namespace Controllers.UI
                 legalNoticePanel.Hide();
                 loginPanel.Hide();
                 usernamePanel.Hide();
+                gameRequestPanel.Hide();
+                accountPanel.Hide();
             }
         }
         
@@ -144,6 +154,71 @@ namespace Controllers.UI
         }
 
         /// <summary>
+        ///     This function is used to show and hide the user profile.
+        /// </summary>
+
+        public void ToggleUserProfile() {
+            if (accountPanel.IsVisible) {
+                accountPanel.Hide();
+                startPanel.Show();
+
+                findUserInput.text = "";
+            }
+            else {
+                accountPanel.Show();
+
+                settingsPanel.Hide();
+                startPanel.Hide();
+                creditsPanel.Hide();
+                legalNoticePanel.Hide();
+                loginPanel.Hide();
+                usernamePanel.Hide();
+                gameRequestPanel.Hide();
+
+                findUserInput.text = "";
+            }
+        }
+
+        /// <summary>
+        ///     This function is responsable for minor adjustments in the UI when the player searches for Users.
+        /// </summary>
+        public void DisplayUserSearchUI() {
+            scrollviewText.text = USERSEARCH_SCROLLVIEW_TEXT;
+            accountHeader.gameObject.SetActive(false);
+        }
+
+        /// <summary>
+        ///     This function is responsable for minor adjustments in the UI when the player displays his friends list.
+        /// </summary>
+        public void DisplayFriendsListUI() {
+            findUserInput.text = "";
+            scrollviewText.text = FRIENDSLIST_SCROLLVIEW_TEXT;
+            accountHeader.gameObject.SetActive(true);
+        }
+
+        /// <summary>
+        ///     This function is used to show and hide the game request panel.
+        /// </summary>
+
+        public void ToggleGameRequestPanel() {
+            if (gameRequestPanel.IsVisible) {
+                gameRequestPanel.Hide();
+                startPanel.Show();
+            }
+            else {
+                gameRequestPanel.Show();
+
+                settingsPanel.Hide();
+                startPanel.Hide();
+                creditsPanel.Hide();
+                legalNoticePanel.Hide();
+                loginPanel.Hide();
+                usernamePanel.Hide();
+                accountPanel.Hide();
+            }
+        }
+
+        /// <summary>
         ///     This function is used to open the CreditsPanel in the settings.
         /// </summary>
         public void OpenCreditsPanel()
@@ -171,6 +246,14 @@ namespace Controllers.UI
             usernamePanel.Hide();
             loginPanel.Show();
             settingsButton.GetComponent<Hideable>().Show();
+        }
+
+        /// <summary>
+        ///     This function is used to close the LoginPanel and return to the StartPanel.
+        /// </summary>
+        public void CloseLoginPanel(){
+            loginPanel.Hide();
+            startPanel.Show();
         }
 
         /// <summary>

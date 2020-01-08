@@ -198,7 +198,7 @@ public class AccountController : MonoBehaviour
         foreach (GameInfo game in response) {
             GameObject currentGameObject = Instantiate(gameInstancePrefab, gamesScrollViewContent.transform);
             currentGameObject.transform.Find("ForfeitGameButton").GetComponent<Button>().onClick.AddListener(delegate { ForfeitGame(game.GameId, currentGameObject); });
-            currentGameObject.transform.Find("ContinueGameButton").GetComponent<Button>().onClick.AddListener(delegate { ContinueGame(game.GameId); });
+            currentGameObject.GetComponent<Button>().onClick.AddListener(delegate { ContinueGame(game.GameId); });
             currentGameObject.transform.Find("Text").GetComponent<Text>().text = game.Message;
             Transform inOrOut = currentGameObject.transform.Find("InOrOut");
             inOrOut.GetComponent<Image>().sprite = incomingSprite;

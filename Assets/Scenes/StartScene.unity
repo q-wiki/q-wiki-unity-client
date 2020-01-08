@@ -478,7 +478,7 @@ PrefabInstance:
     - target: {fileID: 2569854283858120173, guid: c7821263fb7962d4186ee07e1bb708c4,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 2569854283858120173, guid: c7821263fb7962d4186ee07e1bb708c4,
         type: 3}
@@ -910,7 +910,7 @@ PrefabInstance:
     - target: {fileID: 8178374425887846982, guid: 4b448fa8361efca4c89e7004276d03bb,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 8178374425887846982, guid: 4b448fa8361efca4c89e7004276d03bb,
         type: 3}
@@ -5204,6 +5204,7 @@ MonoBehaviour:
   userScrollViewContent: {fileID: 913517301}
   requestScrollViewContent: {fileID: 1206180661}
   gamesScrollViewContent: {fileID: 1443692181}
+  userSearchInputField: {fileID: 1695135402}
   incomingSprite: {fileID: 21300000, guid: 1876c7635959cb74eafb2fe74c904306, type: 3}
   outgoingSprite: {fileID: 21300000, guid: 04a563adfa10e5240acb037ad7c086d1, type: 3}
   usernameText: {fileID: 1556254595}

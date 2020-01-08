@@ -21,6 +21,7 @@ public class AccountController : MonoBehaviour
     [SerializeField] private GameObject userScrollViewContent;
     [SerializeField] private GameObject requestScrollViewContent;
     [SerializeField] private GameObject gamesScrollViewContent;
+    [SerializeField] private InputField userSearchInputField;
     [SerializeField] private Sprite incomingSprite;
     [SerializeField] private Sprite outgoingSprite;
     [SerializeField] private Text usernameText;
@@ -29,17 +30,45 @@ public class AccountController : MonoBehaviour
     private Color outgoingColor = Color.red;
 
     // Start is called before the first frame update
-    async void Start()
-    {
-        await RetrieveFriends();
+    async void Start(){
         SetHeadline();
+        await RetrieveFriends();
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update(){
+    }
+    void OnEnable(){
+        //Register InputField Events
+        userSearchInputField.onEndEdit.AddListener(delegate { inputSubmitCallBack(); });
+        userSearchInputField.onValueChanged.AddListener(delegate { inputChangedCallBack(); });
     }
 
+    private void inputChangedCallBack() {
+        switch (userSearchInputField.text.Length)
+        {
+            case 0: RetrieveFriendsVoid(); break;
+            case 1: break;
+            case 2: break;
+            default: FindUsers(); break;
+        }
+        
+    }
+
+    void OnDisable(){
+        //Un-Register InputField Events
+        userSearchInputField.onEndEdit.RemoveAllListeners();
+        userSearchInputField.onValueChanged.RemoveAllListeners();
+    }
+
+    private void inputSubmitCallBack(){
+        FindUsers();
+    }
+
+
+    /// <summary>
+    /// Set Username and Avatar Image (if available) in the headline
+    /// </summary>
     public void SetHeadline(){
         bool usernameInPlayerprefs = !string.IsNullOrEmpty(PlayerPrefs.GetString(SignInController.PLAYERPREFS_USERNAME));
         string name = usernameInPlayerprefs ? PlayerPrefs.GetString(SignInController.PLAYERPREFS_USERNAME) : "Username";
@@ -75,6 +104,8 @@ public class AccountController : MonoBehaviour
     /// </summary>
     public async Task<bool> RetrieveFriends() {
 
+        userSearchInputField.text = "";
+
         Task<IList<Player>> retrieveFriends = Communicator.RetrieveFriends();
         IList<Player> response = await retrieveFriends;
 
@@ -91,7 +122,6 @@ public class AccountController : MonoBehaviour
     public async void RetrieveFriendsVoid() {
         await RetrieveFriends();
     }
-
     /// <summary>
     /// Clears the ScrollView and adds a list of users to it.
     /// These are either the friends of the player that is currently logged in, or up to 10 users matching the name from the input field
@@ -103,10 +133,12 @@ public class AccountController : MonoBehaviour
             Destroy(child.gameObject);
         }
         foreach (Player player in players) {
-            GameObject user = Instantiate(prefab, userScrollViewContent.transform);
-            user.GetComponent<Button>().onClick.AddListener(delegate { ChallengeUser(player.Id); });
-            user.transform.Find(buttonName).GetComponent<Button>().onClick.AddListener(delegate { buttonFunction(player.Id); });
-            user.transform.Find("Text").GetComponent<Text>().text = player.Name;
+            if (friendsList != null && !friendsList.Contains(player)){
+                GameObject user = Instantiate(prefab, userScrollViewContent.transform);
+                user.GetComponent<Button>().onClick.AddListener(delegate { ChallengeUser(player.Id); });
+                user.transform.Find(buttonName).GetComponent<Button>().onClick.AddListener(delegate { buttonFunction(player.Id); });
+                user.transform.Find("Text").GetComponent<Text>().text = player.Name;
+            }
         }
     }
 
@@ -124,9 +156,9 @@ public class AccountController : MonoBehaviour
         {
             GameObject request = Instantiate(requestPrefab, requestScrollViewContent.transform);
             request.transform.Find("RefuseRequestButton").GetComponent<Button>().onClick.AddListener(delegate { DeleteRequest(incomingRequests.Id, request); });
-            request.transform.Find("AcceptRequestButton").GetComponent<Button>().onClick.AddListener(delegate { AcceptRequest(incomingRequests.Id); });
+            request.transform.Find("AcceptRequestButton").GetComponent<Button>().onClick.AddListener(delegate { AcceptRequest(incomingRequests.Id, request); });
             request.transform.Find("Text").GetComponent<Text>().text = incomingRequests.Sender.Name;
-            Transform inOrOut = request.transform.Find("InOrOut");
+            Transform inOrOut = request.transform.Find("Image/InOrOut");
             inOrOut.GetComponent<Image>().sprite = incomingSprite;
             inOrOut.GetComponent<Image>().color = incomingColor;
         }
@@ -136,7 +168,7 @@ public class AccountController : MonoBehaviour
             request.transform.Find("RefuseRequestButton").GetComponent<Button>().onClick.AddListener(delegate { DeleteRequest(outgoingRequests.Id, request); });
             request.transform.Find("AcceptRequestButton").gameObject.SetActive(false);
             request.transform.Find("Text").GetComponent<Text>().text = outgoingRequests.Recipient.Name;
-            Transform inOrOut = request.transform.Find("Image").transform.Find("InOrOut");
+            Transform inOrOut = request.transform.Find("Image/InOrOut");
             inOrOut.GetComponent<Image>().sprite = outgoingSprite;
             inOrOut.GetComponent<Image>().color = outgoingColor;
         }
@@ -153,7 +185,7 @@ public class AccountController : MonoBehaviour
         foreach (GameInfo game in response) {
             GameObject currentGameObject = Instantiate(gameInstancePrefab, gamesScrollViewContent.transform);
             currentGameObject.transform.Find("ForfeitGameButton").GetComponent<Button>().onClick.AddListener(delegate { ForfeitGame(game.GameId, currentGameObject); });
-            currentGameObject.transform.Find("ContinueGameButton").GetComponent<Button>().onClick.AddListener(delegate { ContinueGame(game.GameId, currentGameObject); });
+            currentGameObject.transform.Find("ContinueGameButton").GetComponent<Button>().onClick.AddListener(delegate { ContinueGame(game.GameId); });
             currentGameObject.transform.Find("Text").GetComponent<Text>().text = game.Message;
             Transform inOrOut = currentGameObject.transform.Find("InOrOut");
             inOrOut.GetComponent<Image>().sprite = incomingSprite;
@@ -161,16 +193,9 @@ public class AccountController : MonoBehaviour
         }
     }
 
-    private async void ContinueGame(string id, GameObject gameInstance) {
-        bool success = await Communicator.DeleteGame(id);
-        //TODO
-        if (success) {
-            Destroy(gameInstance);
-            Debug.Log("TODO Add multiple game instances");
-        }
-        else {
-            Debug.LogError("An Error occurred. Couldn't continue game");
-        }
+    private async void ContinueGame(string gameId) {
+        Communicator.SetCurrentGameId(gameId);
+        GameManager.Instance.ChangeToGameScene();
     }
 
     private async void ForfeitGame(string id, GameObject gameInstance) {
@@ -185,10 +210,20 @@ public class AccountController : MonoBehaviour
         }
     }
 
-    private void AcceptRequest(string gameId)
+    private async void AcceptRequest(string gameId, GameObject requestObject)
     {
-        Communicator.SetCurrentGameId(gameId);
-        GameManager.Instance.ChangeToGameScene();
+        GameInfo newGameInfo = await Communicator.AcceptGameRequest(gameId);
+        PlayerPrefs.SetString(Communicator.PLAYERPREFS_CURRENT_GAME_ID, gameId);
+        if (newGameInfo != null)
+        {
+            Destroy(requestObject);
+            Communicator.SetCurrentGameId(gameId);
+            GameManager.Instance.ChangeToGameScene();
+        }
+        else
+        {
+            Debug.LogError("An Error occurred. Couldn't accept game request");
+        }
     }
 
     private async void DeleteRequest(string id, GameObject requestObject)

@@ -224,6 +224,14 @@ namespace Controllers.UI
         }
 
         /// <summary>
+        ///     This function is used to close the LoginPanel and return to the StartPanel.
+        /// </summary>
+        public void CloseLoginPanel(){
+            loginPanel.Hide();
+            startPanel.Show();
+        }
+
+        /// <summary>
         ///     This function is used to open the LegalNoticePanel in the settings.
         /// </summary>
         public void OpenLegalNoticePanel()

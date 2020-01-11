@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657838, g: 0.49641234, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -732,7 +732,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 519399263}
   m_HandleRect: {fileID: 519399262}
   m_Direction: 0
-  m_Value: 0.0000017951517
+  m_Value: -0.000005385455
   m_Size: 0.97875
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -1100,7 +1100,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 524030476}
   m_HandleRect: {fileID: 524030475}
   m_Direction: 0
-  m_Value: 0.0000017951517
+  m_Value: -0.0000035903033
   m_Size: 0.97875
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -2015,7 +2015,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1947699540}
   m_HandleRect: {fileID: 1947699539}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0.99999845
   m_Size: 0.94594586
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -2559,7 +2559,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1214943178}
   m_HandleRect: {fileID: 1214943177}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -3288,7 +3288,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300000, guid: 374d366671c3235438f9efc9af92633a, type: 3}
-  m_Type: 0
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -3720,7 +3720,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_BoundingSphereOverride: {x: 7.169e-42, y: 1.05e-43, z: 7e-43, w: 0}
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
@@ -5210,6 +5210,12 @@ MonoBehaviour:
   outgoingSprite: {fileID: 21300000, guid: 04a563adfa10e5240acb037ad7c086d1, type: 3}
   usernameText: {fileID: 1556254595}
   avatarImage: {fileID: 541837323}
+  defaultTextures:
+  - {fileID: 21300000, guid: ae34b7571a375754d86480f587c5d576, type: 3}
+  - {fileID: 21300000, guid: eefb119346f14a54eadfef395d0fdf7f, type: 3}
+  - {fileID: 21300000, guid: 18c7c95654c3f6842a4dea301fc4564e, type: 3}
+  - {fileID: 21300000, guid: 9b9dbca163b3569408e3f458dbaae95c, type: 3}
+  - {fileID: 21300000, guid: 1e20ed2e8cb6ccd4682e7dfbb4ad9d43, type: 3}
 --- !u!4 &1038043115
 Transform:
   m_ObjectHideFlags: 0
@@ -5814,7 +5820,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1273368665
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5830,10 +5836,10 @@ RectTransform:
   m_Father: {fileID: 1897724960}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 0, y: -40}
+  m_SizeDelta: {x: 380, y: 80}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1273368666
 MonoBehaviour:

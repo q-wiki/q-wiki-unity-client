@@ -161,8 +161,6 @@ namespace Controllers.UI
             if (accountPanel.IsVisible) {
                 accountPanel.Hide();
                 startPanel.Show();
-
-                findUserInput.text = "";
             }
             else {
                 accountPanel.Show();
@@ -175,7 +173,7 @@ namespace Controllers.UI
                 usernamePanel.Hide();
                 gameRequestPanel.Hide();
 
-                findUserInput.text = "";
+                DisplayFriendsListUI();
             }
         }
 

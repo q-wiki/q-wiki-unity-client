@@ -4,6 +4,8 @@ using Controllers.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
@@ -25,6 +27,7 @@ public class AccountController : MonoBehaviour
     [SerializeField] private Sprite outgoingSprite;
     [SerializeField] private Text usernameText;
     [SerializeField] private Image avatarImage;
+    [SerializeField] private List<Sprite> defaultTextures;
     private Color incomingColor = Color.white;
     private Color outgoingColor = Color.red;
 
@@ -65,7 +68,6 @@ public class AccountController : MonoBehaviour
             case 2: break;
             default: FindUsers(); break;
         }
-        
     }
 
     void OnDisable(){
@@ -84,13 +86,18 @@ public class AccountController : MonoBehaviour
     /// </summary>
     public void SetHeadline(){
         bool usernameInPlayerprefs = !string.IsNullOrEmpty(PlayerPrefs.GetString(SignInController.PLAYERPREFS_USERNAME));
-        string name = usernameInPlayerprefs ? PlayerPrefs.GetString(SignInController.PLAYERPREFS_USERNAME) : "Username";
-        usernameText.text = name;
+        string username = usernameInPlayerprefs ? PlayerPrefs.GetString(SignInController.PLAYERPREFS_USERNAME) : "Username";
+        usernameText.text = username;
 
         bool avatarExists = Social.localUser.image != null;
-        if (avatarExists){
+        if (avatarExists && Social.localUser.authenticated){
+            Debug.Log("Setting Google Avatar");
             Texture2D texture = Social.localUser.image;
             avatarImage.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+        }
+        else {
+            Debug.Log("Setting Default Avatar");
+            SetImage(avatarImage, username);
         }
     }
 
@@ -149,9 +156,16 @@ public class AccountController : MonoBehaviour
         }
         foreach (Player player in players) {
             GameObject user = Instantiate(prefab, userScrollViewContent.transform);
+            string username = player.Name.Contains("anon-") ? player.Name.Substring(5) : player.Name;
             user.GetComponent<Button>().onClick.AddListener(delegate { ChallengeUser(player.Id); });
             user.transform.Find(buttonName).GetComponent<Button>().onClick.AddListener(delegate { buttonFunction(player.Id); });
-            user.transform.Find("Text").GetComponent<Text>().text = player.Name;
+            user.transform.Find("Text").GetComponent<Text>().text = username;
+            if(string.IsNullOrEmpty(player.ProfileImage)) {
+                SetImage(user.transform.Find("Image").GetComponent<Image>(), username);
+            }
+            else {
+
+            }
         }
     }
 
@@ -167,23 +181,37 @@ public class AccountController : MonoBehaviour
         }
         foreach (GameRequest incomingRequests in response.Incoming)
         {
+            string username = incomingRequests.Sender.Name.Contains("anon-") ? incomingRequests.Sender.Name.Substring(5) : incomingRequests.Sender.Name;
             GameObject request = Instantiate(requestPrefab, requestScrollViewContent.transform);
             request.transform.Find("RefuseRequestButton").GetComponent<Button>().onClick.AddListener(delegate { DeleteRequest(incomingRequests.Id, request); });
             request.transform.Find("AcceptRequestButton").GetComponent<Button>().onClick.AddListener(delegate { AcceptRequest(incomingRequests.Id, request); });
-            request.transform.Find("Text").GetComponent<Text>().text = incomingRequests.Sender.Name;
+            request.transform.Find("Text").GetComponent<Text>().text = username;
             Transform inOrOut = request.transform.Find("Image/InOrOut");
             inOrOut.GetComponent<Image>().sprite = incomingSprite;
             inOrOut.GetComponent<Image>().color = incomingColor;
+            if (string.IsNullOrEmpty(incomingRequests.Sender.ProfileImage)) {
+                SetImage(request.transform.Find("Image").GetComponent<Image>(), username);
+            }
+            else {
+
+            }
         }
         foreach (GameRequest outgoingRequests in response.Outgoing)
         {
+            string username = outgoingRequests.Recipient.Name.Contains("anon-") ? outgoingRequests.Recipient.Name.Substring(5) : outgoingRequests.Recipient.Name; ;
             GameObject request = Instantiate(requestPrefab, requestScrollViewContent.transform);
             request.transform.Find("RefuseRequestButton").GetComponent<Button>().onClick.AddListener(delegate { DeleteRequest(outgoingRequests.Id, request); });
             request.transform.Find("AcceptRequestButton").gameObject.SetActive(false);
-            request.transform.Find("Text").GetComponent<Text>().text = outgoingRequests.Recipient.Name;
+            request.transform.Find("Text").GetComponent<Text>().text = username;
             Transform inOrOut = request.transform.Find("Image/InOrOut");
             inOrOut.GetComponent<Image>().sprite = outgoingSprite;
             inOrOut.GetComponent<Image>().color = outgoingColor;
+            if (string.IsNullOrEmpty(outgoingRequests.Recipient.ProfileImage)) {
+                SetImage(request.transform.Find("Image").GetComponent<Image>(), username);
+            }
+            else {
+
+            }
         }
     }
 
@@ -203,6 +231,7 @@ public class AccountController : MonoBehaviour
             Transform inOrOut = currentGameObject.transform.Find("InOrOut");
             inOrOut.GetComponent<Image>().sprite = incomingSprite;
             inOrOut.GetComponent<Image>().color = incomingColor;
+            //TODO Set profile Image once names of players are available in GameInfo
         }
     }
 
@@ -213,10 +242,8 @@ public class AccountController : MonoBehaviour
 
     private async void ForfeitGame(string id, GameObject gameInstance) {
         bool success = await Communicator.DeleteGame(id);
-        //TODO
         if (success) {
             Destroy(gameInstance);
-            Debug.Log("TODO Add multiple game instances");
         }
         else {
             Debug.LogError("An Error occurred. Couldn't delete game.");
@@ -227,14 +254,12 @@ public class AccountController : MonoBehaviour
     {
         GameInfo newGameInfo = await Communicator.AcceptGameRequest(gameId);
         PlayerPrefs.SetString(Communicator.PLAYERPREFS_CURRENT_GAME_ID, gameId);
-        if (newGameInfo != null)
-        {
+        if (newGameInfo != null){
             Destroy(requestObject);
-            Communicator.SetCurrentGameId(gameId);
-            GameManager.Instance.ChangeToGameScene();
+            //Communicator.SetCurrentGameId(gameId);
+            //GameManager.Instance.ChangeToGameScene();
         }
-        else
-        {
+        else{
             Debug.LogError("An Error occurred. Couldn't accept game request");
         }
     }
@@ -259,6 +284,7 @@ public class AccountController : MonoBehaviour
         friendsList.Add(newFriend);
         //Display the friend list with the newly added friend
         DisplayUsersInScrollView(friendsList, friendPrefab, "DeleteFriendButton", DeleteFriend);
+        _uiController.DisplayFriendsListUI();
     }
 
     public async void DeleteFriend(string userID) {
@@ -314,5 +340,22 @@ public class AccountController : MonoBehaviour
 
     public async void RetrieveRunningGamesVoid() {
         await RetrieveGames();
+    }
+
+    private void SetImage(Image img, string username) {
+        img.color = GetColorFromUsername(username);
+        img.sprite = GetAvatarSpriteFromUsername(username);
+    }
+
+    private Sprite GetAvatarSpriteFromUsername(string username) {
+        int index = (username.Length + Math.Abs(username.GetHashCode()) ) % defaultTextures.Count;
+        return defaultTextures[index];
+    }
+
+    private Color GetColorFromUsername(string username) {
+        MD5 md5 = MD5.Create();
+        byte[] hash = md5.ComputeHash(Encoding.UTF8.GetBytes(username));
+        Color color = new Color32(hash[0], hash[1], hash[2], 0xFF);
+        return color;
     }
 }

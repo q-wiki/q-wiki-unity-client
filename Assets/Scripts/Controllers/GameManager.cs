@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Controllers.Authentication;
@@ -434,6 +436,43 @@ namespace Controllers
             PlayerPrefs.SetInt(IS_WAITING_FOR_OPPONENT, 
                 isWaitingForOpponent ? 1 : 0);
         }
+        
+        /// <summary>
+        /// Use this to request a rematch while in the current game
+        /// </summary>
+        public async Task RequestRematch() {
+            await Communicator.ChallengeUser(Opponent().Id);
+        }
+
+        /// <summary>
+        /// Use this function to add a friend via the API
+        /// </summary>
+        /// <param name="id">ID of the player to add</param>
+        public async void AddFriend(string id)
+        {
+            await Communicator.AddFriend(id);
+        }
+        
+        /// <summary>
+        /// Use this function to remove a friend via the API
+        /// </summary>
+        /// <param name="id">ID of the player to delete</param>
+        public async void DeleteFriend(string id)
+        {
+            await Communicator.DeleteFriend(id);
+        }
+
+        /// <summary>
+        /// Indicates if user with id is in client's friend list
+        /// </summary>
+        /// <param name="id">Id of another user</param>
+        /// <returns>if user is in client's friend list</returns>
+        public async Task<bool> IsFriend(string id)
+        {
+           var friends = await Communicator.RetrieveFriends();
+           return friends
+               .Select(f => f.Id).Contains(id);
+        }
 
         /// <summary>
         ///     Return the player id of the client if existent.
@@ -442,6 +481,15 @@ namespace Controllers
         public string PlayerId()
         {
             return _game?.Me.Id;
+        }
+        
+        /// <summary>
+        ///     Return the player id of the opponent if existent.
+        /// </summary>
+        /// <returns>The id of the opponent.</returns>
+        public Player Opponent()
+        {
+            return _game?.Opponent;
         }
 
         /// <summary>

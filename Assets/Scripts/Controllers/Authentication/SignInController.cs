@@ -164,7 +164,7 @@ namespace Controllers.Authentication {
             else if (response == null) {
                 throw new Exception("An unknown error occurred. Response was null.");
             }
-            else if (response == Communicator.SUCCESS_MESSAGE){
+            else{
                 string authToken = response;
                 PlayerPrefs.SetString(Communicator.PLAYERPREFS_AUTH_TOKEN, authToken);
                 PlayerPrefs.SetString(PLAYERPREFS_USERNAME, newUserName);
@@ -181,9 +181,6 @@ namespace Controllers.Authentication {
                 _uiController.signInAnonButton.gameObject.SetActive(false);
                 _uiController.sidebar.SetActive(true);
                 _uiController.DisplayGameView();
-            }
-            else {
-                Debug.LogError("An unknown error occurred.");
             }
 
         }

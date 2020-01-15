@@ -7,13 +7,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using WikidataGame.Models;
 
-namespace Controllers.Authentication
-{
+namespace Controllers.Authentication {
     /// <summary>
     /// The SignIn Controller handles Firebase and Google Play authentication for the app.
     /// </summary>
-    public class SignInController : MonoBehaviour
-    {    
+    public class SignInController : MonoBehaviour {
         public Image testImage;
         public static bool forceLogin;
         public static AuthInfo authInfo { get; set; }
@@ -23,12 +21,12 @@ namespace Controllers.Authentication
         public static bool isLoggedInGoogle;
         public static bool isLoggedInAnon;
         public static bool reauthenticateWithGoogle = false;
-
-        /* private fields */
-        private bool isLoggedIn {
+        public static bool isLoggedIn {
             get { return isLoggedInAnon || isLoggedInGoogle; }
         }
-        private StartUIController _uiController => (StartUIController) GameManager.Instance.UIController();
+
+        /* private fields */
+        private StartUIController _uiController => (StartUIController)GameManager.Instance.UIController();
 
         /* private constants */
         private const string SIGNED_IN_TEXT_GOOGLE = "Sign Out of Google Play";
@@ -42,7 +40,7 @@ namespace Controllers.Authentication
         /// Start is called before the first frame update.
         /// When the SignInController is initialized, the play games API is constructed.
         /// </summary>
-        void Start(){
+        void Start() {
             var config = new PlayGamesClientConfiguration.Builder()
                 .RequestServerAuthCode(true)
                 .Build();
@@ -55,6 +53,7 @@ namespace Controllers.Authentication
             isLoggedInGoogle = PlayGamesPlatform.Instance.IsAuthenticated();
             _uiController.googleAuthButtonText.text = isLoggedInGoogle ? SIGNED_IN_TEXT_GOOGLE : SIGNED_OUT_TEXT_GOOGLE;
             _uiController.anonAuthButtonText.text = isLoggedInAnon ? SIGNED_IN_TEXT_ANON : SIGNED_OUT_TEXT_ANON;
+            _uiController.signInAnonButton.gameObject.SetActive(!isLoggedIn);
 
         }
 
@@ -62,14 +61,13 @@ namespace Controllers.Authentication
         /// Update is called once per frame.
         /// </summary>
 
-        private void Update()
-        {
+        private void Update() {
             if (PushHandler.Instance.isUsable) {
-                if ( !isLoggedIn && !(_uiController.loginPanel.IsVisible || _uiController.usernamePanel.IsVisible )) {
+                if (!isLoggedIn && !(_uiController.loginPanel.IsVisible || _uiController.usernamePanel.IsVisible)) {
                     forceLogin = true;
                 }
 
-                if (forceLogin){
+                if (forceLogin) {
                     ForceLogin();
                     forceLogin = false;
                 }
@@ -84,8 +82,7 @@ namespace Controllers.Authentication
         /// <summary>
         /// Forcing user to login.
         /// </summary>
-        private void ForceLogin()
-        {
+        private void ForceLogin() {
             Debug.Log("User is asked to choose a SignIn Method");
             _uiController.ToggleSettings();
             _uiController.DisplayLoginStart();
@@ -96,7 +93,7 @@ namespace Controllers.Authentication
         /// <summary>
         /// Sign in client anonymously.
         /// </summary>
-        public void SignInAnonymously(){
+        public void SignInAnonymously() {
 
             _uiController.OpenUsernamePanel();
         }
@@ -155,10 +152,10 @@ namespace Controllers.Authentication
             string newUserName = (_uiController.usernameInput.text == "") ? "Anonymous User" : _uiController.usernameInput.text;
 
             //If the user tries to log in with it's previously used username, use the stored password
-            string password = (PlayerPrefs.GetString(PLAYERPREFS_USERNAME) != null && newUserName == PlayerPrefs.GetString(PLAYERPREFS_USERNAME)) ? 
+            string password = (PlayerPrefs.GetString(PLAYERPREFS_USERNAME) != null && newUserName == PlayerPrefs.GetString(PLAYERPREFS_USERNAME)) ?
                 PlayerPrefs.GetString(PLAYERPREFS_PASSWORD) : CreatePassword(32);
             string pushToken = PushHandler.Instance.pushToken ?? "";
-            
+
             //Tries to authenticate by either logging in with the stored credentials or by trying to create a new user
             Task<string> authenticate = Communicator.Authenticate(newUserName, password, pushToken, method_anonymous);
             string response = await authenticate;
@@ -188,6 +185,7 @@ namespace Controllers.Authentication
 
             _uiController.anonAuthButtonText.text = (isLoggedInAnon) ?
                 SIGNED_IN_TEXT_ANON : SIGNED_OUT_TEXT_ANON;
+            _uiController.signInAnonButton.gameObject.SetActive(false);
         }
 
 
@@ -198,7 +196,7 @@ namespace Controllers.Authentication
             const string valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
             string pw = "";
             while (pw.Length < length) {
-                pw += valid[UnityEngine.Random.Range(0,valid.Length)];
+                pw += valid[UnityEngine.Random.Range(0, valid.Length)];
             }
             return pw;
         }
@@ -229,7 +227,7 @@ namespace Controllers.Authentication
         /// <param name="username">Provided user name</param>
         /// <returns></returns>
         private Task<bool> CheckUsernameAvailabilityAsync(string username) {
-            if(username == "golem") {
+            if (username == "golem") {
                 return Task.FromResult(false);
             }
             else return Task.FromResult(true);
@@ -238,33 +236,28 @@ namespace Controllers.Authentication
         /// <summary>
         /// Use this to sign in a user.
         /// </summary>
-        public void SignIn()
-        {
+        public void SignIn() {
             Debug.Log("UDEBUG: Authentication Status: " + PlayGamesPlatform.Instance.IsAuthenticated());
-            if (!PlayGamesPlatform.Instance.IsAuthenticated())
-            {
+            if (!PlayGamesPlatform.Instance.IsAuthenticated()) {
                 // authenticate user:
-                Social.localUser.Authenticate((bool success) =>
-                {
+                Social.localUser.Authenticate((bool success) => {
                     Debug.Log("UDEBUG: Authentication success: " + success);
                     Debug.Log("UDEBUG: Username: " + Social.localUser.userName);
                     Debug.Log("UDEBUG: ID: " + Social.localUser.id);
                     Debug.Log("UDEBUG: Avatar: " + Social.localUser.image.ToString());
                     Texture2D texture = Social.localUser.image;
-                    testImage.sprite = Sprite.Create(texture, new Rect(0,0,texture.width,texture.height), new Vector2(0.5f, 0.5f));
+                    testImage.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
 
 
 
                     _uiController.googleAuthButtonText.text = success ? SIGNED_IN_TEXT_GOOGLE : SIGNED_OUT_TEXT_GOOGLE;
-                    if (success)
-                    {
+                    if (success) {
                         OnSuccess();
                     }
                     // handle success or failure
                 });
             }
-            else
-            {
+            else {
                 SignOut();
             }
 
@@ -273,8 +266,7 @@ namespace Controllers.Authentication
         /// <summary>
         /// This is called when Google Play sign-in was successful.
         /// </summary>
-        private async void OnSuccess()
-        {
+        private async void OnSuccess() {
             Debug.Log("Successfully Signed In");
             _uiController.ShowSettingsButton(true);
             Debug.Log("UDEBUG: AuthCode: " + PlayGamesPlatform.Instance.GetServerAuthCode());
@@ -317,6 +309,7 @@ namespace Controllers.Authentication
                 Debug.Log($"Auth token received: {authToken}");
                 _uiController.googleAuthButtonText.text = (isLoggedInGoogle) ?
                     SIGNED_IN_TEXT_GOOGLE : SIGNED_OUT_TEXT_GOOGLE;
+                _uiController.signInAnonButton.gameObject.SetActive(false);
             }
 
         }
@@ -324,8 +317,7 @@ namespace Controllers.Authentication
         /// <summary>
         /// Use this to sign out a user.
         /// </summary>
-        private void SignOut()
-        {
+        private void SignOut() {
             // sign out
             PlayGamesPlatform.Instance.SignOut();
             isLoggedInGoogle = false;
@@ -337,8 +329,7 @@ namespace Controllers.Authentication
         /// <summary>
         /// Use this to sign out an anonymous user.
         /// </summary>
-        public void SignOutAnon()
-        {
+        public void SignOutAnon() {
             // sign out
             isLoggedInAnon = false;
             _uiController.anonAuthButtonText.text = (isLoggedInAnon) ? SIGNED_IN_TEXT_ANON : SIGNED_OUT_TEXT_ANON;
@@ -349,24 +340,21 @@ namespace Controllers.Authentication
         /// <summary>
         /// Use this to show the leaderboard.
         /// </summary>
-        public void ShowLeaderboard()
-        {
+        public void ShowLeaderboard() {
             Social.ShowLeaderboardUI();
         }
 
         /// <summary>
         /// Use this to show the achievements.
         /// </summary>
-        public void ShowAchievements()
-        {
+        public void ShowAchievements() {
             Social.ShowAchievementsUI();
         }
 
         /// <summary>
         /// Use this to unlock achievements.
         /// </summary>
-        public void UnlockAchievements()
-        {
+        public void UnlockAchievements() {
             PlayGamesPlatform.Instance.IncrementAchievement("CgkI-f_-2q4eEAIQAg", 10, (bool success) => {
                 // handle success or failure
             });
@@ -375,8 +363,7 @@ namespace Controllers.Authentication
         /// <summary>
         /// Use this to post the score.
         /// </summary>
-        public void PostScore()
-        {
+        public void PostScore() {
             Social.ReportScore(4, "CgkI-f_-2q4eEAIQAQ", (bool success) => {
                 // handle success or failure
             });

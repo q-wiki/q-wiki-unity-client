@@ -27,17 +27,22 @@ public class AccountController : MonoBehaviour
     [SerializeField] private Sprite outgoingSprite;
     [SerializeField] private Text usernameText;
     [SerializeField] private Image avatarImage;
+    //[SerializeField] private Text gameRequestHeadline;
     [SerializeField] private List<Sprite> defaultTextures;
     private Color incomingColor = Color.white;
     private Color outgoingColor = Color.red;
-
+    private const string GAME_MATCH_MESSAGE = "You matched with ";
     private const string USER_CORNERBUTTON_NAME = "AddFriendButton";
     private const string FRIEND_CORNERBUTTON_NAME = "DeleteFriendButton";
 
     // Start is called before the first frame update
     async void Start(){
-        SetHeadline();
-        await RetrieveFriends();
+        if (SignInController.isLoggedIn) {
+            SetHeadline();
+            await RetrieveGames();
+            await RetrieveGameRequests();
+            await RetrieveFriends();
+        }
 
         //_uiController.findUserInput.onEndEdit.RemoveAllListeners();
         _uiController.findUserInput.onValueChanged.RemoveAllListeners();
@@ -88,6 +93,7 @@ public class AccountController : MonoBehaviour
         bool usernameInPlayerprefs = !string.IsNullOrEmpty(PlayerPrefs.GetString(SignInController.PLAYERPREFS_USERNAME));
         string username = usernameInPlayerprefs ? PlayerPrefs.GetString(SignInController.PLAYERPREFS_USERNAME) : "Username";
         usernameText.text = username;
+        //gameRequestHeadline.text = "Game Requests for " + username;
 
         bool avatarExists = Social.localUser.image != null;
         if (avatarExists && Social.localUser.authenticated){
@@ -156,7 +162,7 @@ public class AccountController : MonoBehaviour
         }
         foreach (Player player in players) {
             GameObject user = Instantiate(prefab, userScrollViewContent.transform);
-            string username = player.Name.Contains("anon-") ? player.Name.Substring(5) : player.Name;
+            string username = GetPrefixFreeUsername(player.Name);
             user.GetComponent<Button>().onClick.AddListener(delegate { ChallengeUser(player.Id); });
             user.transform.Find(buttonName).GetComponent<Button>().onClick.AddListener(delegate { buttonFunction(player.Id); });
             user.transform.Find("Text").GetComponent<Text>().text = username;
@@ -181,7 +187,7 @@ public class AccountController : MonoBehaviour
         }
         foreach (GameRequest incomingRequests in response.Incoming)
         {
-            string username = incomingRequests.Sender.Name.Contains("anon-") ? incomingRequests.Sender.Name.Substring(5) : incomingRequests.Sender.Name;
+            string username = GetPrefixFreeUsername(incomingRequests.Sender.Name);
             GameObject request = Instantiate(requestPrefab, requestScrollViewContent.transform);
             request.transform.Find("RefuseRequestButton").GetComponent<Button>().onClick.AddListener(delegate { DeleteRequest(incomingRequests.Id, request); });
             request.transform.Find("AcceptRequestButton").GetComponent<Button>().onClick.AddListener(delegate { AcceptRequest(incomingRequests.Id, request); });
@@ -198,7 +204,7 @@ public class AccountController : MonoBehaviour
         }
         foreach (GameRequest outgoingRequests in response.Outgoing)
         {
-            string username = outgoingRequests.Recipient.Name.Contains("anon-") ? outgoingRequests.Recipient.Name.Substring(5) : outgoingRequests.Recipient.Name; ;
+            string username = GetPrefixFreeUsername(outgoingRequests.Recipient.Name);
             GameObject request = Instantiate(requestPrefab, requestScrollViewContent.transform);
             request.transform.Find("RefuseRequestButton").GetComponent<Button>().onClick.AddListener(delegate { DeleteRequest(outgoingRequests.Id, request); });
             request.transform.Find("AcceptRequestButton").gameObject.SetActive(false);
@@ -225,13 +231,13 @@ public class AccountController : MonoBehaviour
         }
         foreach (GameInfo game in response) {
             GameObject currentGameObject = Instantiate(gameInstancePrefab, gamesScrollViewContent.transform);
+            string username = GetPrefixFreeUsername(game.Opponent.Name);
             currentGameObject.transform.Find("ForfeitGameButton").GetComponent<Button>().onClick.AddListener(delegate { ForfeitGame(game.GameId, currentGameObject); });
             currentGameObject.GetComponent<Button>().onClick.AddListener(delegate { ContinueGame(game.GameId); });
-            currentGameObject.transform.Find("Text").GetComponent<Text>().text = game.Message;
-            Transform inOrOut = currentGameObject.transform.Find("InOrOut");
-            inOrOut.GetComponent<Image>().sprite = incomingSprite;
-            inOrOut.GetComponent<Image>().color = incomingColor;
-            //TODO Set profile Image once names of players are available in GameInfo
+            currentGameObject.transform.Find("Text").GetComponent<Text>().text = GAME_MATCH_MESSAGE + username;
+            SetImage(currentGameObject.transform.Find("Image").GetComponent<Image>(), username);
+            bool yourTurn = game.NextMovePlayerId != game.Opponent.Id;
+            currentGameObject.transform.Find("Image/YourTurn").gameObject.SetActive(yourTurn);
         }
     }
 
@@ -357,5 +363,9 @@ public class AccountController : MonoBehaviour
         byte[] hash = md5.ComputeHash(Encoding.UTF8.GetBytes(username));
         Color color = new Color32(hash[0], hash[1], hash[2], 0xFF);
         return color;
+    }
+
+    private string GetPrefixFreeUsername(string username) {
+        return username.Contains("anon-") ? username.Substring(5) : username;
     }
 }

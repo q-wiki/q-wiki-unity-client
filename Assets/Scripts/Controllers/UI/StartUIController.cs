@@ -7,6 +7,7 @@ namespace Controllers.UI
     {
         public Button newGameButton;
         public Button settingsButton;
+        public Button signInAnonButton;
         public Hideable cancelGameButton;
         public Hideable creditsPanel;
         public Hideable legalNoticePanel;
@@ -18,6 +19,15 @@ namespace Controllers.UI
         [SerializeField] private Hideable gameRequestPanel;
         [SerializeField] private Text scrollviewText;
         [SerializeField] private GameObject accountHeader;
+
+        [SerializeField] private Button gameViewButton;
+        [SerializeField] private Button profileViewButton;
+        [SerializeField] private Button gameRequestViewButton;
+        [SerializeField] private Button highscoreViewButton;
+        [SerializeField] private Button settingsViewButton;
+
+        [SerializeField] private Color inactiveColor;
+        [SerializeField] private Color activeColor;
 
         private bool _settingsToggle;
 
@@ -193,6 +203,65 @@ namespace Controllers.UI
             scrollviewText.text = FRIENDSLIST_SCROLLVIEW_TEXT;
             accountHeader.gameObject.SetActive(true);
         }
+
+        /// <summary>
+        ///     This function is used to display the game panel.
+        /// </summary>
+        public void DisplayGameView() {
+            DisplayView(startPanel, gameViewButton);
+        }
+
+        /// <summary>
+        ///     This function is used to display the profile panel.
+        /// </summary>
+        public void DisplayProfileView() {
+            DisplayView(accountPanel, profileViewButton);
+            DisplayFriendsListUI();
+        }
+
+        /// <summary>
+        ///     This function is used to display the game request panel.
+        /// </summary>
+        public void DisplayGameRequestView() {
+            DisplayView(gameRequestPanel, gameRequestViewButton);
+        }
+
+        /// <summary>
+        ///     This function is used to display the game Highscore panel.
+        /// </summary>
+        public void DisplayHighscoreView() {
+
+        }
+
+        /// <summary>
+        ///     This function is used to display the settings panel.
+        /// </summary>
+        public void DisplaySettingsView() {
+            DisplayView(settingsPanel, settingsViewButton);
+        }
+
+        private void DisplayView(Hideable view, Button button) {
+            gameRequestPanel.Hide();
+            settingsPanel.Hide();
+            startPanel.Hide();
+            creditsPanel.Hide();
+            legalNoticePanel.Hide();
+            loginPanel.Hide();
+            usernamePanel.Hide();
+            accountPanel.Hide();
+
+            view.Show();
+
+
+        gameViewButton.GetComponent<Image>().color = inactiveColor;
+        profileViewButton.GetComponent<Image>().color = inactiveColor;
+        gameRequestViewButton.GetComponent<Image>().color = inactiveColor;
+        highscoreViewButton.GetComponent<Image>().color = inactiveColor;
+        settingsViewButton.GetComponent<Image>().color = inactiveColor;
+
+        button.GetComponent<Image>().color = activeColor;
+        }
+
 
         /// <summary>
         ///     This function is used to show and hide the game request panel.

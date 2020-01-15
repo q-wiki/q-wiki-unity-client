@@ -15,7 +15,7 @@ public class AccountController : MonoBehaviour
 {
     public List<Player> friendsList { get; private set; }
 
-    private StartUIController _uiController => (StartUIController)GameManager.Instance.UIController();
+    private StartUIController _uiController => (StartUIController) GameManager.Instance.UIController();
     [SerializeField] private GameObject userPrefab;
     [SerializeField] private GameObject friendPrefab;
     [SerializeField] private GameObject requestPrefab;
@@ -78,7 +78,9 @@ public class AccountController : MonoBehaviour
     void OnDisable(){
         //Un-Register InputField Events
         //_uiController.findUserInput.onEndEdit.RemoveAllListeners();
-        _uiController.findUserInput.onValueChanged.RemoveAllListeners();
+
+        if(_uiController != null)
+            _uiController.findUserInput.onValueChanged.RemoveAllListeners();
     }
 
     private void inputSubmitCallBack(){
@@ -115,7 +117,7 @@ public class AccountController : MonoBehaviour
 
         _uiController.DisplayUserSearchUI();
         string username = (_uiController.findUserInput.text == "") ? "Anonymous User" : _uiController.findUserInput.text;
-        
+
         Task<IList<Player>> findUsers = Communicator.FindUsers(username);
         IList<Player> response = await findUsers;
 

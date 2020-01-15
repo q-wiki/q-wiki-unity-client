@@ -10,27 +10,19 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class OpeningHandler : MonoBehaviour
 {
-    // Start is called before the first frame update
     /// <summary>
     ///     When the app is started, try to restore a previous game.
     ///     If it does not exist, show the start screen of the game.
     /// </summary>
     private async void Start()
     {
-        /* initialize server session and restore previous game if there is one */
-        Debug.Log("Trying to restore previous game…");
-        
+
         var isAuthenticated = await Communicator.SetupApiConnection();
         Debug.Log($"isAuthenticated: {isAuthenticated}");
 
         if (!isAuthenticated) SignInController.forceLogin = true;
 
-        
-        
-        var previousGame = await Communicator.RestorePreviousGame();
-
         string scene = "StartScene";
-
 
         Debug.Log($"Switching to {scene}");
         StartCoroutine(LoadScene(scene));

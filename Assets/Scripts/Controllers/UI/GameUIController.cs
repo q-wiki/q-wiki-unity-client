@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
 using Controllers.Map;
+using Controllers.UI.User;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using WikidataGame.Models;
 
 namespace Controllers.UI
 {
@@ -12,6 +15,8 @@ namespace Controllers.UI
         public Hideable settingsPanel;
         public Hideable settingsContainer;
         public Hideable cancellationPanel;
+        public Hideable userPanel;
+        public InteractableIcon userIcon;
         public GameObject gameOverCanvas;
         public Text gameOverText;
 
@@ -23,7 +28,27 @@ namespace Controllers.UI
             "You Lost! Try again!",
             "Draw!\nTry again!"
         };
-        
+
+        /// <summary>
+        /// Functions that are called at the instantiation of the script
+        /// </summary>
+        public void Start()
+        {
+            AssignUserIcon();
+        }
+
+        /// <summary>
+        /// Assign the avatar and name of the current opponent to the user icon / panel
+        /// </summary>
+        /// <exception cref="Exception"></exception>
+        private void AssignUserIcon()
+        {
+            var gameManager = GameManager.Instance;
+            if(gameManager == null)
+                throw new Exception("GameManager is not allowed to be null at this (or any) point.");
+
+        }
+
         /// <summary>
         /// Handle the end of the game for the client
         /// </summary>
@@ -78,6 +103,34 @@ namespace Controllers.UI
         {
             settingsPanel.Hide();
             cancellationPanel.Show();
+        }
+
+        /// <summary>
+        /// This function is used to request a rematch with the player you just played against
+        /// </summary>
+        /// <exception cref="Exception">Game Manager does not exist</exception>
+        public async void RequestRematch()
+        {
+            var gameManager = GameManager.Instance;
+            if(gameManager == null)
+                throw new Exception("GameManager is not allowed to be null at this (or any) point.");
+            
+            await gameManager.RequestRematch();
+            await gameManager.LeaveGame();
+
+        }
+        
+        /// <summary>
+        ///     This function is used to go back to the main menu without leaving the current game.
+        ///     The game manager is called by cross referencing.
+        /// </summary>
+        public void GoBackToMenu()
+        {
+            var gameManager = GameManager.Instance;
+            if(gameManager == null)
+                throw new Exception("GameManager is not allowed to be null at this (or any) point.");
+            
+            gameManager.ChangeToStartScene();
         }
 
         /// <summary>

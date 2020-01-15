@@ -29,6 +29,9 @@ namespace Controllers.UI
             "Draw!\nTry again!"
         };
 
+        /// <summary>
+        /// Functions that are called at the instantiation of the script
+        /// </summary>
         public void Start()
         {
             AssignUserIcon();
@@ -102,6 +105,10 @@ namespace Controllers.UI
             cancellationPanel.Show();
         }
 
+        /// <summary>
+        /// This function is used to request a rematch with the player you just played against
+        /// </summary>
+        /// <exception cref="Exception">Game Manager does not exist</exception>
         public async void RequestRematch()
         {
             var gameManager = GameManager.Instance;

@@ -351,7 +351,7 @@ public class AccountController : MonoBehaviour
         await RetrieveGames();
     }
 
-    private void SetImage(Image img, string username) {
+    public void SetImage(Image img, string username) {
         img.color = GetColorFromUsername(username);
         img.sprite = GetAvatarSpriteFromUsername(username);
     }

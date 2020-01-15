@@ -16,7 +16,9 @@ using WikidataGame.Models;
 public class Communicator : MonoBehaviour
 {
     public const string USERNAME_TAKEN_ERROR_MESSAGE = "Username is already taken";
+    public const string USERNAME_TOO_SHORT_MESSAGE = "Username must have at least 3 characters";
     public const string INVALID_CHARACTERS_ERROR_MESSAGE = "User name can only contain letters or digits.";
+    public const string SUCCESS_MESSAGE = "SignIn successful";
     public const string PLAYERPREFS_AUTH_TOKEN = "AUTH_TOKEN";
     public const string PLAYERPREFS_AUTH_EXPIRY = "AUTH_EXPIRY";
     public const string PLAYERPREFS_USERNAME = "USERNAME";
@@ -83,12 +85,22 @@ public class Communicator : MonoBehaviour
                 $"Error while trying to connect to API: {response.StatusCode} ({(int) response.StatusCode}) / {e.Response.Content}");
             Debug.LogError(e.StackTrace);
 
-            if (e.Response.Content == $"User name 'anon-{userName}' is already taken.") {
+            if (e.Response.Content == $"User name 'anon-{userName}' is already taken." || response.StatusCode == System.Net.HttpStatusCode.Unauthorized) {
                 return USERNAME_TAKEN_ERROR_MESSAGE;
             }
-            else if(e.Response.Content == $"User name 'anon-{userName}' is invalid, can only contain letters or digits.") {
+            else if(response.Content.Contains("is invalid, can only contain letters or digits.")) {
                 return INVALID_CHARACTERS_ERROR_MESSAGE;
             }
+            else if (response.Content == "Username must have at least 3 characters"){
+                return USERNAME_TOO_SHORT_MESSAGE;
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadGateway){
+                return USERNAME_TAKEN_ERROR_MESSAGE;
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.OK){
+                return SUCCESS_MESSAGE;
+            }
+            Debug.LogError("Response could not be interpreted correctly.");
             return null;
         }
     }

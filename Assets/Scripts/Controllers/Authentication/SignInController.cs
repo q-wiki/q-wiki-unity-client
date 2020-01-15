@@ -12,6 +12,8 @@ namespace Controllers.Authentication {
     /// The SignIn Controller handles Firebase and Google Play authentication for the app.
     /// </summary>
     public class SignInController : MonoBehaviour {
+        public AccountController accountController;
+
         public Image testImage;
         public static bool forceLogin;
         public static AuthInfo authInfo { get; set; }
@@ -21,6 +23,8 @@ namespace Controllers.Authentication {
         public static bool isLoggedInGoogle;
         public static bool isLoggedInAnon;
         public static bool reauthenticateWithGoogle = false;
+        [SerializeField] private Image avatarPreview;
+
         public static bool isLoggedIn {
             get { return isLoggedInAnon || isLoggedInGoogle; }
         }
@@ -58,6 +62,9 @@ namespace Controllers.Authentication {
 
             _uiController.signInAnonButton.gameObject.SetActive(!isLoggedIn);
             _uiController.sidebar.SetActive(isLoggedIn);
+
+            _uiController.usernameInput.onValueChanged.RemoveAllListeners();
+            _uiController.usernameInput.onValueChanged.AddListener(delegate { inputChangedCallBack(); });
 
         }
 
@@ -103,49 +110,27 @@ namespace Controllers.Authentication {
         }
 
 
-        ///// <summary>
-        ///// Set user name of client according to input.
-        ///// </summary>
-        //public async void SetUsername(){
-        //    _uiController.usernameTakenMessage.gameObject.SetActive(false);
-        //    string newUserName = _uiController.usernameInput.text;
-        //    if (newUserName == "") { newUserName = "Anonymous User"; }
+        void OnEnable() {
+            //Register InputField Events
+            if (_uiController == null){
+                return;
+            }
+            _uiController.usernameInput.onValueChanged.AddListener(delegate { inputChangedCallBack(); });
+        }
 
-        //    bool usernameAvailable = false;
-        //    var checkIfTaken = CheckUsernameAvailabilityAsync(newUserName);
-        //    usernameAvailable = await checkIfTaken;
+        private void inputChangedCallBack() {
+            if (_uiController.usernameInput.text.Length > 2){
+                accountController.SetImage(avatarPreview, _uiController.usernameInput.text);
+            }
+        }
 
-        //    if (usernameAvailable) {
-        //        if (isLoggedInAnon) {
-        //            Task changeUsernameAsync = ChangeUsernameAsync(newUserName);
-        //            await changeUsernameAsync;
-        //            if(changeUsernameAsync.Status == TaskStatus.Faulted) {
-        //                //handle failure
-        //            }
-        //            else {
-        //                _uiController.CloseUsernamePanel();
-        //            }
-        //        }
-        //        else {
-        //            Task createAnonUserAsync = CreateAnonUserAsync(newUserName);
-        //            await createAnonUserAsync;
-        //            if (createAnonUserAsync.Status == TaskStatus.Faulted) {
-        //                //handle failure
-        //            }
-        //            else {
-        //                isLoggedIn = true;
-        //                isLoggedInAnon = true;
-        //                _uiController.CloseUsernamePanel();
-        //            }
-        //        }
-        //    }
-        //    else {
-        //        _uiController.usernameTakenMessage.gameObject.SetActive(true);
-        //    }
+        void OnDisable() {
+            //Un-Register InputField Events
+            //_uiController.findUserInput.onEndEdit.RemoveAllListeners();
 
-        //    _uiController.anonAuthButtonText.text = (isLoggedInAnon) ? 
-        //        SIGNED_IN_TEXT_ANON : SIGNED_OUT_TEXT_ANON;
-        //}
+            if (_uiController != null)
+                _uiController.usernameInput.onValueChanged.RemoveAllListeners();
+        }
 
         /// <summary>
         /// Set user name of client according to input.
@@ -153,6 +138,7 @@ namespace Controllers.Authentication {
         public async void SetUsername() {
             _uiController.usernameTakenMessage.gameObject.SetActive(false);
             _uiController.invalidCharactersMessage.gameObject.SetActive(false);
+            _uiController.usernameTooShortMessage.gameObject.SetActive(false);
             string newUserName = (_uiController.usernameInput.text == "") ? "Anonymous User" : _uiController.usernameInput.text;
 
             //If the user tries to log in with it's previously used username, use the stored password
@@ -164,16 +150,21 @@ namespace Controllers.Authentication {
             Task<string> authenticate = Communicator.Authenticate(newUserName, password, pushToken, method_anonymous);
             string response = await authenticate;
 
+            Debug.Log(response);
+
             if (response == Communicator.USERNAME_TAKEN_ERROR_MESSAGE) {
                 _uiController.usernameTakenMessage.gameObject.SetActive(true);
             }
             else if (response == Communicator.INVALID_CHARACTERS_ERROR_MESSAGE) {
                 _uiController.invalidCharactersMessage.gameObject.SetActive(true);
             }
-            else if (response == null) {
-                throw new Exception("An unknown error occurred");
+            else if (response == Communicator.USERNAME_TOO_SHORT_MESSAGE){
+                _uiController.usernameTooShortMessage.gameObject.SetActive(true);
             }
-            else {
+            else if (response == null) {
+                throw new Exception("An unknown error occurred. Response was null.");
+            }
+            else if (response == Communicator.SUCCESS_MESSAGE){
                 string authToken = response;
                 PlayerPrefs.SetString(Communicator.PLAYERPREFS_AUTH_TOKEN, authToken);
                 PlayerPrefs.SetString(PLAYERPREFS_USERNAME, newUserName);
@@ -185,13 +176,16 @@ namespace Controllers.Authentication {
                 _uiController.CloseLoginPanel();
                 Debug.Log($"Auth token received: {authToken}");
                 Debug.Log($"Avatar: {authInfo.User.ProfileImage}");
+                _uiController.anonAuthButtonText.text = (isLoggedInAnon) ?
+                    SIGNED_IN_TEXT_ANON : SIGNED_OUT_TEXT_ANON;
+                _uiController.signInAnonButton.gameObject.SetActive(false);
+                _uiController.sidebar.SetActive(true);
+                _uiController.DisplayGameView();
+            }
+            else {
+                Debug.LogError("An unknown error occurred.");
             }
 
-            _uiController.anonAuthButtonText.text = (isLoggedInAnon) ?
-                SIGNED_IN_TEXT_ANON : SIGNED_OUT_TEXT_ANON;
-            _uiController.signInAnonButton.gameObject.SetActive(false);
-            _uiController.sidebar.SetActive(true);
-            _uiController.DisplayGameView();
         }
 
 
@@ -205,38 +199,6 @@ namespace Controllers.Authentication {
                 pw += valid[UnityEngine.Random.Range(0, valid.Length)];
             }
             return pw;
-        }
-
-        /// <summary>
-        /// Create an anonymous user.
-        /// </summary>
-        /// <param name="newUserName">Provided user name</param>
-        /// <returns></returns>
-        //private async Task<string> CreateAnonUserAsync(string newUserName) {
-        //    Task<string> authenticate = Communicator.Authenticate(newUserName, "12345678", "");
-        //    string response = await authenticate;
-        //    return response;
-        //}
-
-        /// <summary>
-        /// Change the name of an user.
-        /// </summary>
-        /// <param name="newUserName">Provided user name</param>
-        /// <returns></returns>
-        private Task ChangeUsernameAsync(string newUserName) {
-            return Task.FromResult(true);
-        }
-
-        /// <summary>
-        /// Check if provided user name is available.
-        /// </summary>
-        /// <param name="username">Provided user name</param>
-        /// <returns></returns>
-        private Task<bool> CheckUsernameAvailabilityAsync(string username) {
-            if (username == "golem") {
-                return Task.FromResult(false);
-            }
-            else return Task.FromResult(true);
         }
 
         /// <summary>

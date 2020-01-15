@@ -37,6 +37,7 @@ namespace Controllers.UI
         public Text anonAuthButtonText;
         public Text usernameTakenMessage;
         public Text invalidCharactersMessage;
+        public Text usernameTooShortMessage;
         public GameObject sidebar;
         private const string USERSEARCH_SCROLLVIEW_TEXT = "Searching for users";
         private const string FRIENDSLIST_SCROLLVIEW_TEXT = "Friends";
@@ -302,6 +303,7 @@ namespace Controllers.UI
         {
             usernameTakenMessage.gameObject.SetActive(false);
             invalidCharactersMessage.gameObject.SetActive(false);
+            usernameTooShortMessage.gameObject.SetActive(false);
             usernamePanel.Show();
             loginPanel.Hide();
         }

@@ -53,7 +53,11 @@ namespace Controllers.Authentication {
             isLoggedInGoogle = PlayGamesPlatform.Instance.IsAuthenticated();
             _uiController.googleAuthButtonText.text = isLoggedInGoogle ? SIGNED_IN_TEXT_GOOGLE : SIGNED_OUT_TEXT_GOOGLE;
             _uiController.anonAuthButtonText.text = isLoggedInAnon ? SIGNED_IN_TEXT_ANON : SIGNED_OUT_TEXT_ANON;
+
+            isLoggedInAnon = (!string.IsNullOrEmpty(PlayerPrefs.GetString(PLAYERPREFS_USERNAME)) && !isLoggedInGoogle );
+
             _uiController.signInAnonButton.gameObject.SetActive(!isLoggedIn);
+            _uiController.sidebar.SetActive(isLoggedIn);
 
         }
 
@@ -186,6 +190,8 @@ namespace Controllers.Authentication {
             _uiController.anonAuthButtonText.text = (isLoggedInAnon) ?
                 SIGNED_IN_TEXT_ANON : SIGNED_OUT_TEXT_ANON;
             _uiController.signInAnonButton.gameObject.SetActive(false);
+            _uiController.sidebar.SetActive(true);
+            _uiController.DisplayGameView();
         }
 
 
@@ -310,6 +316,8 @@ namespace Controllers.Authentication {
                 _uiController.googleAuthButtonText.text = (isLoggedInGoogle) ?
                     SIGNED_IN_TEXT_GOOGLE : SIGNED_OUT_TEXT_GOOGLE;
                 _uiController.signInAnonButton.gameObject.SetActive(false);
+                _uiController.sidebar.SetActive(true);
+                _uiController.DisplayGameView();
             }
 
         }

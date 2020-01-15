@@ -134,6 +134,7 @@ public class AccountController : MonoBehaviour
     /// </summary>
     public async Task<bool> RetrieveFriends() {
 
+        SetHeadline();
         _uiController.DisplayFriendsListUI();
 
         Task<IList<Player>> retrieveFriends = Communicator.RetrieveFriends();

@@ -37,6 +37,7 @@ namespace Controllers.UI
         public Text anonAuthButtonText;
         public Text usernameTakenMessage;
         public Text invalidCharactersMessage;
+        public GameObject sidebar;
         private const string USERSEARCH_SCROLLVIEW_TEXT = "Searching for users";
         private const string FRIENDSLIST_SCROLLVIEW_TEXT = "Friends";
 

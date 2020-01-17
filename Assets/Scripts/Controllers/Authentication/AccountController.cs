@@ -387,7 +387,7 @@ public class AccountController : MonoBehaviour
     }
 
     public void SetImage(Image img, string username) {
-        img.color = GetColorFromUsername(username);
+       // img.color = GetColorFromUsername(username);
         img.sprite = GetAvatarSpriteFromUsername(username);
     }
 

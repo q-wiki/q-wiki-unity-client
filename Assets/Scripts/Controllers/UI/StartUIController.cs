@@ -245,6 +245,7 @@ namespace Controllers.UI {
             loginPanel.Hide();
             usernamePanel.Hide();
             accountPanel.Hide();
+            qrPanel.Hide();
 
             view.Show();
 
@@ -254,6 +255,7 @@ namespace Controllers.UI {
             gameRequestViewButton.GetComponent<Image>().color = inactiveColor;
             highscoreViewButton.GetComponent<Image>().color = inactiveColor;
             settingsViewButton.GetComponent<Image>().color = inactiveColor;
+            qrViewButton.GetComponent<Image>().color = inactiveColor;
 
             button.GetComponent<Image>().color = activeColor;
         }

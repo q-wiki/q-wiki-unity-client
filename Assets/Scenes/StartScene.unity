@@ -471,7 +471,7 @@ PrefabInstance:
     - target: {fileID: 2569854283858120173, guid: c7821263fb7962d4186ee07e1bb708c4,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 2569854283858120173, guid: c7821263fb7962d4186ee07e1bb708c4,
         type: 3}
@@ -1131,7 +1131,7 @@ PrefabInstance:
     - target: {fileID: 8178374425887846982, guid: 4b448fa8361efca4c89e7004276d03bb,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 8178374425887846982, guid: 4b448fa8361efca4c89e7004276d03bb,
         type: 3}
@@ -2063,7 +2063,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 81477407}
-        m_MethodName: DisplayGameRequestView
+        m_MethodName: DisplayQRView
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2073,8 +2073,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 1038043114}
-        m_MethodName: RetrieveGameRequestsVoid
+      - m_Target: {fileID: 2082586936}
+        m_MethodName: generateChallengeQRCode
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4124,7 +4124,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -10360,7 +10360,7 @@ GameObject:
   - component: {fileID: 1742587427}
   - component: {fileID: 1742587426}
   m_Layer: 5
-  m_Name: AchievementsButton
+  m_Name: ScanQRCodeButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10430,8 +10430,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1038043114}
-        m_MethodName: ShowAchievements
+      - m_Target: {fileID: 2082586936}
+        m_MethodName: openQRReader
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -12296,18 +12296,18 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 12800000, guid: 9ff30b63b51e841ec9b95b3562cd911b, type: 3}
-    m_FontSize: 12
+    m_FontSize: 8
     m_FontStyle: 0
     m_BestFit: 1
-    m_MinSize: 10
-    m_MaxSize: 60
+    m_MinSize: 8
+    m_MaxSize: 37
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Achievements
+  m_Text: Scan QR-Code for direkt challenge
 --- !u!222 &2042952302
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -12612,7 +12612,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8727e12c17b75a944ac421198503f81c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  qrCode: {fileID: 0}
+  qrCode: {fileID: 592898997}
 --- !u!4 &2082586937
 Transform:
   m_ObjectHideFlags: 0

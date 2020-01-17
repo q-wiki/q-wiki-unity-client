@@ -15,32 +15,48 @@ public class QRController : MonoBehaviour {
     private Rect screenRect;
 
     [SerializeField] private Image qrCode;
+    private bool displayCameraOverlay = false;
+    int counter = 0;
 
     void Start() {
         screenRect = new Rect(0, 0, Screen.width, Screen.height);
         camTexture = new WebCamTexture();
         camTexture.requestedHeight = Screen.height;
         camTexture.requestedWidth = Screen.width;
-        if (camTexture != null) {
-            camTexture.Play();
+    }
+    async void OnGUI() {
+        if (displayCameraOverlay) {
+            if (GUI.Button(screenRect, "", new GUIStyle())) {
+                stopQRReader();
+            }
+
+            // drawing the camera on screen
+            GUI.DrawTexture(screenRect, camTexture, ScaleMode.ScaleToFit);
+            
+            counter++;
+            //Read QR Codes every 15 Frames
+            if (counter%15 == 0) {
+                try {
+                    IBarcodeReader barcodeReader = new BarcodeReader();
+                    // decode the current frame
+                    var result = barcodeReader.Decode(camTexture.GetPixels32(),
+                      camTexture.width, camTexture.height);
+                    if (result != null) {
+                        Debug.Log("DECODED TEXT FROM QR: " + result.Text);
+                        try {
+                            await Communicator.ChallengeUser(result.Text);
+                            stopQRReader();
+                        }
+                        catch {
+                            Debug.Log("Couldn't challenge user");
+                        }
+                    }
+                }
+                catch (Exception ex) { Debug.LogWarning(ex.Message); }
+            }
+
         }
     }
-
-    //void OnGUI() {
-    //    // drawing the camera on screen
-    //    GUI.DrawTexture(screenRect, camTexture, ScaleMode.ScaleToFit);
-    //    // do the reading — you might want to attempt to read less often than you draw on the screen for performance sake
-    //    try {
-    //        IBarcodeReader barcodeReader = new BarcodeReader();
-    //        // decode the current frame
-    //        var result = barcodeReader.Decode(camTexture.GetPixels32(),
-    //          camTexture.width, camTexture.height);
-    //        if (result != null) {
-    //            Debug.Log("DECODED TEXT FROM QR: " + result.Text);
-    //        }
-    //    }
-    //    catch (Exception ex) { Debug.LogWarning(ex.Message); }
-    //}
 
     private static Color32[] Encode(string textForEncoding, int width, int height) {
         var writer = new BarcodeWriter {
@@ -54,7 +70,12 @@ public class QRController : MonoBehaviour {
     }
 
     public void generateChallengeQRCode() {
-       // qrCode.sprite = generateChallengeQRCode();
+        Debug.Log("DEBUG ID: " + PlayerPrefs.GetString(Communicator.PLAYERPREFS_USER_ID));
+        if (!string.IsNullOrEmpty(PlayerPrefs.GetString(Communicator.PLAYERPREFS_USER_ID))) {
+            Texture2D texture = generateQR(PlayerPrefs.GetString(Communicator.PLAYERPREFS_USER_ID)); ;
+            qrCode.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+            Debug.Log(texture);
+        }
     }
 
     public Texture2D generateQR(string text) {
@@ -63,6 +84,20 @@ public class QRController : MonoBehaviour {
         encoded.SetPixels32(color32);
         encoded.Apply();
         return encoded;
+    }
+
+    public void openQRReader() {
+        if (camTexture != null) {
+            camTexture.Play();
+            displayCameraOverlay = true;
+        }
+    }
+
+    public void stopQRReader() {
+        if (camTexture != null) {
+            camTexture.Stop();
+            displayCameraOverlay = false;
+        }
     }
 
 

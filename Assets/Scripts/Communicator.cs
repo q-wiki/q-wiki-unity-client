@@ -21,6 +21,7 @@ public class Communicator : MonoBehaviour
     public const string SUCCESS_MESSAGE = "SignIn successful";
     public const string PLAYERPREFS_AUTH_TOKEN = "AUTH_TOKEN";
     public const string PLAYERPREFS_AUTH_EXPIRY = "AUTH_EXPIRY";
+    public const string PLAYERPREFS_USER_ID = "USER_ID";
     public const string PLAYERPREFS_USERNAME = "USERNAME";
     public const string PLAYERPREFS_PASSWORD = "PASSWORD";
     public const string PLAYERPREFS_SIGNIN_METHOD = "SIGNIN_METHOD";
@@ -72,6 +73,7 @@ public class Communicator : MonoBehaviour
             Debug.Log($"Saving new auth token {authResponse.Bearer} in Player Prefs");
             PlayerPrefs.SetString(PLAYERPREFS_AUTH_TOKEN, authResponse.Bearer);
             PlayerPrefs.SetString(PLAYERPREFS_AUTH_EXPIRY, authResponse.Expires.Value.ToBinary().ToString());
+            PlayerPrefs.SetString(PLAYERPREFS_USER_ID, authResponse.User.Id);
             PlayerPrefs.SetString(PLAYERPREFS_SIGNIN_METHOD, method);
             
             return authResponse.Bearer;

@@ -1,5 +1,7 @@
 ﻿// Code used from: https://medium.com/@adrian.n/reading-and-generating-qr-codes-with-c-in-unity-3d-the-easy-way-a25e1d85ba51
 
+using Controllers;
+using Controllers.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,6 +12,7 @@ using ZXing.QrCode;
 
 public class QRController : MonoBehaviour {
 
+    private StartUIController _uiController => (StartUIController)GameManager.Instance.UIController();
 
     private WebCamTexture camTexture;
     private Rect screenRect;
@@ -46,6 +49,7 @@ public class QRController : MonoBehaviour {
                         try {
                             await Communicator.ChallengeUser(result.Text);
                             stopQRReader();
+                            _uiController.DisplayGameRequestView();
                         }
                         catch {
                             Debug.Log("Couldn't challenge user");
@@ -74,7 +78,6 @@ public class QRController : MonoBehaviour {
         if (!string.IsNullOrEmpty(PlayerPrefs.GetString(Communicator.PLAYERPREFS_USER_ID))) {
             Texture2D texture = generateQR(PlayerPrefs.GetString(Communicator.PLAYERPREFS_USER_ID)); ;
             qrCode.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
-            Debug.Log(texture);
         }
     }
 

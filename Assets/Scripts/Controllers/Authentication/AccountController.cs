@@ -1,6 +1,7 @@
 ﻿using Controllers;
 using Controllers.Authentication;
 using Controllers.UI;
+using GooglePlayGames;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ using WikidataGame.Models;
 
 public class AccountController : MonoBehaviour
 {
-    public List<Player> friendsList { get; private set; }
+    public List<Player> FriendsList { get; private set; }
 
     private StartUIController _uiController => (StartUIController) GameManager.Instance.UIController();
     [SerializeField] private GameObject userPrefab;
@@ -37,7 +38,8 @@ public class AccountController : MonoBehaviour
 
     // Start is called before the first frame update
     async void Start(){
-        if (SignInController.isLoggedIn) {
+        if (!string.IsNullOrEmpty(PlayerPrefs.GetString(Communicator.PLAYERPREFS_AUTH_TOKEN))) {
+            Debug.Log("Settings Headlines, filling scrollviews. The usual stuff.");
             SetHeadline();
             await RetrieveGames();
             await RetrieveGameRequests();
@@ -145,7 +147,7 @@ public class AccountController : MonoBehaviour
             return false;
         }
         else {
-            friendsList = (List<Player>)response;
+            FriendsList = (List<Player>)response;
             DisplayUsersInScrollView(response, friendPrefab, FRIEND_CORNERBUTTON_NAME, DeleteFriend);
             return true;
         }
@@ -227,12 +229,12 @@ public class AccountController : MonoBehaviour
     /// <summary>
     /// Clears the ScrollView and adds a list of all running games to it.
     /// </summary>
-    private void DisplayGamesInScrollView(IList<GameInfo> response) {
+    private void DisplayGamesInScrollView(IList<WikidataGame.Models.GameInfo> response) {
         // Remove all Elements currently in the scrollview
         foreach (Transform child in gamesScrollViewContent.transform) {
             Destroy(child.gameObject);
         }
-        foreach (GameInfo game in response) {
+        foreach (WikidataGame.Models.GameInfo game in response) {
             GameObject currentGameObject = Instantiate(gameInstancePrefab, gamesScrollViewContent.transform);
             string username = GetPrefixFreeUsername(game.Opponent.Name);
             currentGameObject.transform.Find("ForfeitGameButton").GetComponent<Button>().onClick.AddListener(delegate { ForfeitGame(game.GameId, currentGameObject); });
@@ -261,7 +263,7 @@ public class AccountController : MonoBehaviour
 
     private async void AcceptRequest(string gameId, GameObject requestObject)
     {
-        GameInfo newGameInfo = await Communicator.AcceptGameRequest(gameId);
+        WikidataGame.Models.GameInfo newGameInfo = await Communicator.AcceptGameRequest(gameId);
         PlayerPrefs.SetString(Communicator.PLAYERPREFS_CURRENT_GAME_ID, gameId);
         if (newGameInfo != null){
             Destroy(requestObject);
@@ -290,17 +292,17 @@ public class AccountController : MonoBehaviour
 
     public async void AddFriend(string userID) {
         Player newFriend = await Communicator.AddFriend(userID);
-        friendsList.Add(newFriend);
+        FriendsList.Add(newFriend);
         //Display the friend list with the newly added friend
-        DisplayUsersInScrollView(friendsList, friendPrefab, "DeleteFriendButton", DeleteFriend);
+        DisplayUsersInScrollView(FriendsList, friendPrefab, "DeleteFriendButton", DeleteFriend);
         _uiController.DisplayFriendsListUI();
     }
 
     public async void DeleteFriend(string userID) {
         Player formerFriend = await Communicator.DeleteFriend(userID);
-        friendsList.RemoveAll(x => x.Id == userID);
+        FriendsList.RemoveAll(x => x.Id == userID);
         //Display the friend list without the deleted friend
-        DisplayUsersInScrollView(friendsList, friendPrefab, "DeleteFriendButton", DeleteFriend);
+        DisplayUsersInScrollView(FriendsList, friendPrefab, "DeleteFriendButton", DeleteFriend);
     }
 
     /// <summary>
@@ -308,8 +310,8 @@ public class AccountController : MonoBehaviour
     /// </summary>
     public async Task<bool> RetrieveGames() {
 
-        Task<IList<GameInfo>> retrieveGames = Communicator.RetrieveGames();
-        IList<GameInfo> response = await retrieveGames;
+        Task<IList<WikidataGame.Models.GameInfo>> retrieveGames = Communicator.RetrieveGames();
+        IList<WikidataGame.Models.GameInfo> response = await retrieveGames;
 
         if (response == null) {
             Debug.LogError("Couldn't retrieve running games");
@@ -349,6 +351,39 @@ public class AccountController : MonoBehaviour
 
     public async void RetrieveRunningGamesVoid() {
         await RetrieveGames();
+    }
+
+
+    /// <summary>
+    /// Use this to show the leaderboard.
+    /// </summary>
+    public void ShowLeaderboard() {
+        Social.ShowLeaderboardUI();
+    }
+
+    /// <summary>
+    /// Use this to show the achievements.
+    /// </summary>
+    public void ShowAchievements() {
+        Social.ShowAchievementsUI();
+    }
+
+    /// <summary>
+    /// Use this to unlock achievements.
+    /// </summary>
+    public void UnlockAchievements() {
+        PlayGamesPlatform.Instance.IncrementAchievement("CgkI-f_-2q4eEAIQAg", 10, (bool success) => {
+            // handle success or failure
+        });
+    }
+
+    /// <summary>
+    /// Use this to post the score.
+    /// </summary>
+    public void PostScore() {
+        Social.ReportScore(4, "CgkI-f_-2q4eEAIQAQ", (bool success) => {
+            // handle success or failure
+        });
     }
 
     public void SetImage(Image img, string username) {

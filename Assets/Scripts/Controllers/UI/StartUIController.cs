@@ -1,12 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Controllers.UI
-{
-    public class StartUIController : MonoBehaviour, IUIController
-    {
+namespace Controllers.UI {
+    public class StartUIController : MonoBehaviour, IUIController {
         public Button newGameButton;
-        public Button settingsButton;
         public Button signInAnonButton;
         public Hideable cancelGameButton;
         public Hideable creditsPanel;
@@ -15,6 +12,8 @@ namespace Controllers.UI
         public Hideable startPanel;
         public Hideable usernamePanel;
         public Hideable loginPanel;
+        public Hideable qrPanel;
+
         [SerializeField] private Hideable accountPanel;
         [SerializeField] private Hideable gameRequestPanel;
         [SerializeField] private Text scrollviewText;
@@ -23,6 +22,7 @@ namespace Controllers.UI
         [SerializeField] private Button gameViewButton;
         [SerializeField] private Button profileViewButton;
         [SerializeField] private Button gameRequestViewButton;
+        [SerializeField] private Button qrViewButton;
         [SerializeField] private Button highscoreViewButton;
         [SerializeField] private Button settingsViewButton;
 
@@ -47,8 +47,7 @@ namespace Controllers.UI
         /// <summary>
         ///     This function is used to initialize a new game.
         /// </summary>
-        public async void InitializeGame()
-        {
+        public async void InitializeGame() {
             // disable all buttons so we don't initialize multiple games
             var startGameText = newGameButton.GetComponentInChildren<Text>().text;
             newGameButton.GetComponentInChildren<Text>().text = "Searching for Opponent...";
@@ -56,34 +55,26 @@ namespace Controllers.UI
 
             LoadingIndicator.Instance.ShowWithoutBlockingUI();
             newGameButton.enabled = false;
-            
-            if (!Communicator.IsConnected())
-            {
+
+            if (!Communicator.IsConnected()) {
                 Debug.Log("You are not connected to any game");
                 // reset the interface so we can try initializing a game again
                 newGameButton.GetComponentInChildren<Text>().text = startGameText;
                 newGameButton.enabled = true;
                 return;
             }
-            
+
             // show button to abort the game initialization
             cancelGameButton.Show();
 
-            // prevent user from hitting settings button (because loading indicator overlays that panel)
-            settingsButton.interactable = false;
-            
             var isStartingNewGame = await GameManager.WaitForOpponent(true);
 
-            if (isStartingNewGame)
-            {
-                // settings button needs to be made interactable again
-                settingsButton.interactable = true;
-                
+            if (isStartingNewGame) {
+
                 LoadingIndicator.Instance.Hide();
 
             }
-            else
-            {
+            else {
                 // reset the interface so we can try initializing a game again
                 newGameButton.GetComponentInChildren<Text>().text = startGameText;
                 newGameButton.enabled = true;
@@ -91,33 +82,27 @@ namespace Controllers.UI
                 // make the abort button invisible again
                 cancelGameButton.Hide();
 
-                // settings button needs to be made interactable again
-                settingsButton.interactable = true;
-                
                 LoadingIndicator.Instance.Hide();
             }
         }
-        
+
         /// <summary>
         ///     Stop searching for an opponent by setting the respective variable false.
         /// </summary>
-        public void CancelGameInitialization()
-        {
-           GameManager.SetWaitingForOpponent(false);
+        public void CancelGameInitialization() {
+            GameManager.SetWaitingForOpponent(false);
         }
-        
+
         /// <summary>
         ///     This function is used to show or hide the settings panel while being in the main menu.
         /// </summary>
-        public void ToggleSettings()
-        {
+        public void ToggleSettings() {
             _settingsToggle = !_settingsToggle;
 
-            if (_settingsToggle)
-            {
+            if (_settingsToggle) {
                 settingsPanel.Show();
                 startPanel.Hide();
-                
+
                 creditsPanel.Hide();
                 legalNoticePanel.Hide();
                 loginPanel.Hide();
@@ -125,11 +110,10 @@ namespace Controllers.UI
                 gameRequestPanel.Hide();
                 accountPanel.Hide();
             }
-            else
-            {
+            else {
                 settingsPanel.Hide();
                 startPanel.Show();
-                
+
                 creditsPanel.Hide();
                 legalNoticePanel.Hide();
                 loginPanel.Hide();
@@ -138,20 +122,18 @@ namespace Controllers.UI
                 accountPanel.Hide();
             }
         }
-        
+
         /// <summary>
         ///     This function is used to turn sound on or off.
         /// </summary>
-        public void ToggleSound()
-        {
+        public void ToggleSound() {
             Debug.LogWarning("This function is not implemented yet.");
         }
 
         /// <summary>
         ///     This function is used to turn notifications on or off.
         /// </summary>
-        public void ToggleNotifications()
-        {
+        public void ToggleNotifications() {
             Debug.LogWarning("This function is not implemented yet.");
         }
 
@@ -159,10 +141,11 @@ namespace Controllers.UI
         ///     This function is used to show the login panel while being in the settings menu.
         /// </summary>
 
-        public void DisplayLoginStart()
-        {
+        public void DisplayLoginStart() {
             loginPanel.Show();
+            usernamePanel.Hide();
             settingsPanel.Hide();
+            startPanel.Hide();
         }
 
         /// <summary>
@@ -229,10 +212,21 @@ namespace Controllers.UI
         }
 
         /// <summary>
+        ///     This function is used to display the QR-Challenge panel.
+        /// </summary>
+        public void DisplayQRView() {
+            DisplayView(qrPanel, qrViewButton);
+        }
+
+        /// <summary>
         ///     This function is used to display the game Highscore panel.
         /// </summary>
         public void DisplayHighscoreView() {
 
+        }
+
+        public void HighscoreButtonSetActiveState(bool state) {
+            highscoreViewButton.interactable = state;
         }
 
         /// <summary>
@@ -255,13 +249,13 @@ namespace Controllers.UI
             view.Show();
 
 
-        gameViewButton.GetComponent<Image>().color = inactiveColor;
-        profileViewButton.GetComponent<Image>().color = inactiveColor;
-        gameRequestViewButton.GetComponent<Image>().color = inactiveColor;
-        highscoreViewButton.GetComponent<Image>().color = inactiveColor;
-        settingsViewButton.GetComponent<Image>().color = inactiveColor;
+            gameViewButton.GetComponent<Image>().color = inactiveColor;
+            profileViewButton.GetComponent<Image>().color = inactiveColor;
+            gameRequestViewButton.GetComponent<Image>().color = inactiveColor;
+            highscoreViewButton.GetComponent<Image>().color = inactiveColor;
+            settingsViewButton.GetComponent<Image>().color = inactiveColor;
 
-        button.GetComponent<Image>().color = activeColor;
+            button.GetComponent<Image>().color = activeColor;
         }
 
 
@@ -290,8 +284,7 @@ namespace Controllers.UI
         /// <summary>
         ///     This function is used to open the CreditsPanel in the settings.
         /// </summary>
-        public void OpenCreditsPanel()
-        {
+        public void OpenCreditsPanel() {
             creditsPanel.Show();
             settingsPanel.Hide();
         }
@@ -299,8 +292,7 @@ namespace Controllers.UI
         /// <summary>
         ///     This function is used to open the UsernamePanel from the LoginPanel.
         /// </summary>
-        public void OpenUsernamePanel()
-        {
+        public void OpenUsernamePanel() {
             usernameTakenMessage.gameObject.SetActive(false);
             invalidCharactersMessage.gameObject.SetActive(false);
             usernameTooShortMessage.gameObject.SetActive(false);
@@ -311,17 +303,15 @@ namespace Controllers.UI
         /// <summary>
         ///     This function is used to close the UsernamePanel and return to the LoginPanel.
         /// </summary>
-        public void CloseUsernamePanel()
-        {
+        public void CloseUsernamePanel() {
             usernamePanel.Hide();
             loginPanel.Show();
-            settingsButton.GetComponent<Hideable>().Show();
         }
 
         /// <summary>
         ///     This function is used to close the LoginPanel and return to the StartPanel.
         /// </summary>
-        public void CloseLoginPanel(){
+        public void CloseLoginPanel() {
             loginPanel.Hide();
             startPanel.Show();
         }
@@ -329,35 +319,24 @@ namespace Controllers.UI
         /// <summary>
         ///     This function is used to open the LegalNoticePanel in the settings.
         /// </summary>
-        public void OpenLegalNoticePanel()
-        {
-           legalNoticePanel.Show();
-           settingsPanel.Hide();
+        public void OpenLegalNoticePanel() {
+            legalNoticePanel.Show();
+            settingsPanel.Hide();
         }
 
-        public void ShowSettingsButton(bool isVisible)
-        {
-            var hideable = settingsButton
-                .GetComponent<Hideable>();
-            
-            if(isVisible) hideable.Show();
-            else hideable.Hide();
-        }
         /// <summary>
         ///     This function is used to open the privacy policy of the game.
         ///     It is opened in a web browser.
         /// </summary>
-        public void OpenPrivacyPolicy()
-        {
+        public void OpenPrivacyPolicy() {
             Application.OpenURL("https://wikidatagame.azurewebsites.net/privacy");
         }
-        
+
         /// <summary>
         /// Indicates if settings are visible to the user.
         /// </summary>
         /// <returns>If settings are visible.</returns>
-        public bool AreSettingsVisible()
-        {
+        public bool AreSettingsVisible() {
             return _settingsToggle;
         }
 
@@ -365,10 +344,9 @@ namespace Controllers.UI
         /// Currently, the game finished function does nothing if called inside the main menu.
         /// </summary>
         /// <param name="index"></param>
-        public void HandleGameFinished(short index)
-        {
+        public void HandleGameFinished(short index) {
             Debug.LogWarning("This function is not yet implemented.");
         }
     }
-    
+
 }

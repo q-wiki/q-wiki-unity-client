@@ -58,13 +58,11 @@ public class Communicator : MonoBehaviour
         try
         {
             HttpOperationResponse<AuthInfo> response = null;
-            if (method == SignInController.method_anonymous) {
+            if (method == SignInController.METHOD_ANONYMOUS) {
                 response = await apiClient.AuthenticateWithHttpMessagesAsync(userName, password, pushToken);
-                SignInController.isLoggedInAnon = true;
             }
-            else if (method == SignInController.method_google) {
+            else if (method == SignInController.METHOD_GOOGLE) {
                 response = await apiClient.AuthenticateGooglePlayWithHttpMessagesAsync(userName, password, pushToken);
-                SignInController.isLoggedInGoogle = true;
             }
             else {
                 Debug.LogError("Not a valid SignIn method");
@@ -136,26 +134,24 @@ public class Communicator : MonoBehaviour
              */
             Debug.Log("Token expired. Trying to re-authenticate...");
             var pushToken = PushHandler.Instance.pushToken ?? "";
-            if(method == SignInController.method_anonymous) {
+            if(method == SignInController.METHOD_ANONYMOUS) {
                 authToken = await Authenticate(
                     userName,
                     password,
                     pushToken,
                     method);
             }
-            else if (method == SignInController.method_google) {
+            else if (method == SignInController.METHOD_GOOGLE) {
                 SignInController.reauthenticateWithGoogle = true;
             }
 
             if (authToken == null) return false;
         }
         else {
-            if(method == SignInController.method_anonymous) {
-                SignInController.isLoggedInAnon = true;
+            if(method == SignInController.METHOD_ANONYMOUS) {
                 Debug.Log("Already Signed In anonymously");
             }
-            else if(method == SignInController.method_google) {
-                SignInController.isLoggedInGoogle = true;
+            else if(method == SignInController.METHOD_GOOGLE) {
                 Debug.Log("Already Signed In with Google");
             }
         }

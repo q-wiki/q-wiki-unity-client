@@ -214,24 +214,27 @@ namespace Controllers.Authentication {
         /// Use this to sign in a user.
         /// </summary>
         public void SignIn() {
-            Debug.Log("UDEBUG: Authentication Status: " + PlayGamesPlatform.Instance.IsAuthenticated());
+            Debug.Log("Google Play: Authentication Status: " + PlayGamesPlatform.Instance.IsAuthenticated());
             if (!PlayGamesPlatform.Instance.IsAuthenticated()) {
                 // authenticate user:
-                Social.localUser.Authenticate((bool success) => {
-                    Debug.Log("UDEBUG: Authentication success: " + success);
-                    Debug.Log("UDEBUG: Username: " + Social.localUser.userName);
-                    Debug.Log("UDEBUG: ID: " + Social.localUser.id);
-                    Debug.Log("UDEBUG: Avatar: " + Social.localUser.image.ToString());
+                Social.localUser.Authenticate((bool success) =>
+                {
+                    if (!success)
+                    {
+                        _uiController.googleAuthButtonText.text = SIGNED_OUT_TEXT_GOOGLE;
+                        return;
+                    }
+
+                    Debug.Log("Google Play: Authentication success: " + success);
+                    Debug.Log("Google Play: Username: " + Social.localUser.userName);
+                    Debug.Log("Google Play: ID: " + Social.localUser.id);
+                    Debug.Log("Google Play: Avatar: " + Social.localUser.image);
                     Texture2D texture = Social.localUser.image;
                     testImage.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
 
-
-
-                    _uiController.googleAuthButtonText.text = success ? SIGNED_IN_TEXT_GOOGLE : SIGNED_OUT_TEXT_GOOGLE;
-                    if (success) {
-                        OnSuccess();
-                    }
-                    // handle success or failure
+                    
+                    _uiController.googleAuthButtonText.text = SIGNED_IN_TEXT_GOOGLE;
+                    OnSuccess();
                 });
             }
             else {

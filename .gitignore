@@ -138,4 +138,5 @@ $RECYCLE.BIN/
 [Aa]ssets/Plugins/Editor.meta*
 
 # All kinds of keystores
+Keystore*
 *.keystore

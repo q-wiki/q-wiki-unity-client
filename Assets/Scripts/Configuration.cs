@@ -21,5 +21,7 @@ public class Configuration : Singleton<Configuration>
         {
             throw new Exception("SERVER_URL was not set.");
         }
+        
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
     }
 }

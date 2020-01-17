@@ -29,6 +29,7 @@ public class PushHandler : Singleton<PushHandler>
 
             FirebaseMessaging.TokenReceived += OnTokenReceived;
             FirebaseMessaging.MessageReceived += OnMessageReceived;
+            FirebaseApp.LogLevel = LogLevel.Debug;
 
             var app = FirebaseApp.DefaultInstance;
 
@@ -73,7 +74,7 @@ public class PushHandler : Singleton<PushHandler>
         
         foreach (var entry in data)
         {
-            Debug.Log($"Firebase: (Key: {entry.Key} / Value: {entry.Key})");
+            Debug.Log($"Firebase: (Key: {entry.Key} / Value: {entry.Value})");
             
             if (entry.Key == "refresh" && 
                 entry.Value == "true")

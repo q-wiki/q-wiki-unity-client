@@ -12,7 +12,6 @@ namespace Controllers.Authentication {
     /// The SignIn Controller handles Firebase and Google Play authentication for the app.
     /// </summary>
     public class SignInController : MonoBehaviour {
-        public AccountController accountController;
 
         public Image testImage;
         public static bool forceLogin;
@@ -79,6 +78,7 @@ namespace Controllers.Authentication {
 
             _uiController.usernameInput.onValueChanged.RemoveAllListeners();
             _uiController.usernameInput.onValueChanged.AddListener(delegate { inputChangedCallBack(); });
+            _uiController.usernameInput.onEndEdit.AddListener(delegate { inputSubmitCallBack(); });
         }
 
         /// <summary>
@@ -127,26 +127,40 @@ namespace Controllers.Authentication {
                 return;
             }
             _uiController.usernameInput.onValueChanged.AddListener(delegate { inputChangedCallBack(); });
+            _uiController.usernameInput.onEndEdit.AddListener(delegate { inputSubmitCallBack(); });
         }
 
+        /// <summary>
+        /// While the user chooses his username, display a preview for the generated user avatar
+        /// </summary>
         private void inputChangedCallBack() {
-            if (_uiController.usernameInput.text.Length > 2){
-                accountController.SetImage(avatarPreview, _uiController.usernameInput.text);
-            }
+            HelperMethods.SetImage(avatarPreview, "anon-" + _uiController.usernameInput.text);
         }
 
         void OnDisable() {
             //Un-Register InputField Events
             //_uiController.findUserInput.onEndEdit.RemoveAllListeners();
 
-            if (_uiController != null)
+            if (_uiController != null) {
                 _uiController.usernameInput.onValueChanged.RemoveAllListeners();
+                _uiController.usernameInput.onEndEdit.RemoveAllListeners();
+            }
+        }
+
+
+        /// <summary>
+        /// If the users ends the input field edit with Enter, start the authentication process
+        /// </summary>
+        private void inputSubmitCallBack() {
+            if (Input.GetButtonDown("Submit")) {
+                AuthenticateWithUsername();
+            }
         }
 
         /// <summary>
-        /// Set user name of client according to input.
+        /// Authenticate anonymously with the submitted username
         /// </summary>
-        public async void SetUsername() {
+        public async void AuthenticateWithUsername() {
             _uiController.usernameTakenMessage.gameObject.SetActive(false);
             _uiController.invalidCharactersMessage.gameObject.SetActive(false);
             _uiController.usernameTooShortMessage.gameObject.SetActive(false);
@@ -154,7 +168,7 @@ namespace Controllers.Authentication {
 
             //If the user tries to log in with it's previously used username, use the stored password
             string password = (PlayerPrefs.GetString(PLAYERPREFS_USERNAME) != null && newUserName == PlayerPrefs.GetString(PLAYERPREFS_USERNAME)) ?
-                PlayerPrefs.GetString(PLAYERPREFS_PASSWORD) : CreatePassword(32);
+                PlayerPrefs.GetString(PLAYERPREFS_PASSWORD) : HelperMethods.CreatePassword(32);
             string pushToken = PushHandler.Instance.pushToken ?? "";
 
             //Tries to authenticate by either logging in with the stored credentials or by trying to create a new user
@@ -195,19 +209,6 @@ namespace Controllers.Authentication {
                 _uiController.HighscoreButtonSetActiveState(false);
             }
 
-        }
-
-
-        /// <summary>
-        /// Generates a password of the specified length.
-        /// </summary>
-        public static string CreatePassword(int length) {
-            const string valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-            string pw = "";
-            while (pw.Length < length) {
-                pw += valid[UnityEngine.Random.Range(0, valid.Length)];
-            }
-            return pw;
         }
 
         /// <summary>

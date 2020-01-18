@@ -47,6 +47,7 @@ public class QRController : MonoBehaviour {
                     if (result != null) {
                         Debug.Log("DECODED TEXT FROM QR: " + result.Text);
                         try {
+                            //Challenge user via the user id from their QR code and open the game request view
                             await Communicator.ChallengeUser(result.Text);
                             stopQRReader();
                             _uiController.DisplayGameRequestView();
@@ -62,6 +63,9 @@ public class QRController : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Encode a string to a QR code
+    /// </summary>
     private static Color32[] Encode(string textForEncoding, int width, int height) {
         var writer = new BarcodeWriter {
             Format = BarcodeFormat.QR_CODE,
@@ -73,6 +77,9 @@ public class QRController : MonoBehaviour {
         return writer.Write(textForEncoding);
     }
 
+    /// <summary>
+    /// Generate a QR code that returns the users player id
+    /// </summary>
     public void generateChallengeQRCode() {
         Debug.Log("DEBUG ID: " + PlayerPrefs.GetString(Communicator.PLAYERPREFS_USER_ID));
         if (!string.IsNullOrEmpty(PlayerPrefs.GetString(Communicator.PLAYERPREFS_USER_ID))) {
@@ -81,7 +88,10 @@ public class QRController : MonoBehaviour {
         }
     }
 
-    public Texture2D generateQR(string text) {
+    /// <summary>
+    /// Generate a QR Code texture from a string
+    /// </summary>
+    private Texture2D generateQR(string text) {
         var encoded = new Texture2D(256, 256);
         var color32 = Encode(text, encoded.width, encoded.height);
         encoded.SetPixels32(color32);

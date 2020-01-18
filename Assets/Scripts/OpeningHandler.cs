@@ -20,6 +20,8 @@ public class OpeningHandler : MonoBehaviour
         var isAuthenticated = await Communicator.SetupApiConnection();
         Debug.Log($"isAuthenticated: {isAuthenticated}");
 
+        HelperMethods.LoadDefaultTextures();
+
         if (!isAuthenticated) SignInController.forceLogin = true;
 
         string scene = "StartScene";

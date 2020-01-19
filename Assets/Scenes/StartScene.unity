@@ -331,6 +331,7 @@ MonoBehaviour:
   usernamePanel: {fileID: 82277955}
   loginPanel: {fileID: 1577718196}
   qrPanel: {fileID: 1871708833}
+  highscorePanel: {fileID: 407775325}
   accountPanel: {fileID: 1378078475}
   gameRequestPanel: {fileID: 962125069}
   scrollviewText: {fileID: 819470741}
@@ -471,7 +472,7 @@ PrefabInstance:
     - target: {fileID: 2569854283858120173, guid: c7821263fb7962d4186ee07e1bb708c4,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 2569854283858120173, guid: c7821263fb7962d4186ee07e1bb708c4,
         type: 3}
@@ -876,8 +877,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 519399263}
   m_HandleRect: {fileID: 519399262}
   m_Direction: 0
-  m_Value: 0.0000017951517
-  m_Size: 0.97875
+  m_Value: 0.0000017951581
+  m_Size: 0.97875005
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1135,7 +1136,7 @@ PrefabInstance:
     - target: {fileID: 8178374425887846982, guid: 4b448fa8361efca4c89e7004276d03bb,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 8178374425887846982, guid: 4b448fa8361efca4c89e7004276d03bb,
         type: 3}
@@ -3799,18 +3800,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 493850610}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &495906940 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3101964634160849991, guid: 6a940944ffb36ce40a38e9aedc14b6f2,
-    type: 3}
-  m_PrefabInstance: {fileID: 3101964633699095611}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &506963464
 GameObject:
   m_ObjectHideFlags: 0
@@ -8734,7 +8723,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dbb3ca1a8d0e3246827575b45192c22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  testImage: {fileID: 495906940}
   avatarPreview: {fileID: 82277958}
 --- !u!4 &1516744600
 Transform:
@@ -12957,10 +12945,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 2082586935}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8727e12c17b75a944ac421198503f81c, type: 3}
+  m_Script: {fileID: 11500000, guid: e35e77d2b2e20427ca01f140c8bcfd67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  qrCode: {fileID: 592898997}
+  qrCode: {fileID: 1114290710}
 --- !u!4 &2082586937
 Transform:
   m_ObjectHideFlags: 0

@@ -38,7 +38,7 @@ namespace Controllers.UI.User
         private void Update()
         {
             if (GameManager.Opponent() == null) return;
-            AvatarController.Instance.SetImage(
+            HelperMethods.SetImage(
                 Image,
                 GameManager.Opponent().Name);
         }
@@ -83,7 +83,7 @@ namespace Controllers.UI.User
                     });
                 }
                 
-                AvatarController.Instance.SetImage(userAvatar, opponent.Name);
+                HelperMethods.SetImage(userAvatar, opponent.Name);
                 userPanel.Show();
             }
             else

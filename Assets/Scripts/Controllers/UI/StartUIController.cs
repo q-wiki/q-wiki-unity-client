@@ -13,6 +13,7 @@ namespace Controllers.UI {
         public Hideable usernamePanel;
         public Hideable loginPanel;
         public Hideable qrPanel;
+        public Hideable highscorePanel;
 
         [SerializeField] private Hideable accountPanel;
         [SerializeField] private Hideable gameRequestPanel;
@@ -155,14 +156,11 @@ namespace Controllers.UI {
         }
 
         /// <summary>
-        ///     This function is used to show the login panel while being in the settings menu.
+        ///     This function is used to show the login panel.
         /// </summary>
 
         public void DisplayLoginStart() {
-            loginPanel.Show();
-            usernamePanel.Hide();
-            settingsPanel.Hide();
-            startPanel.Hide();
+            DisplayView(loginPanel, settingsViewButton);
         }
 
         /// <summary>
@@ -239,7 +237,7 @@ namespace Controllers.UI {
         ///     This function is used to display the game Highscore panel.
         /// </summary>
         public void DisplayHighscoreView() {
-
+            DisplayView(highscorePanel, highscoreViewButton);
         }
 
         public void HighscoreButtonSetActiveState(bool state) {
@@ -263,6 +261,7 @@ namespace Controllers.UI {
             usernamePanel.Hide();
             accountPanel.Hide();
             qrPanel.Hide();
+            highscorePanel.Hide();
 
             view.Show();
 

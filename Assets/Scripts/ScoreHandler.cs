@@ -19,7 +19,7 @@ public class ScoreHandler : Singleton<ScoreHandler>
 
     private long _opponentScore;
     private Text _opponentScoreText;
-    private long _playerScore;
+    public long _playerScore;
     private Text _playerScoreText;
     private int _turnsPlayed;
     private Text _turnsPlayedText;

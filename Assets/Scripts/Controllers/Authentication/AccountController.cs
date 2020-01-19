@@ -18,9 +18,7 @@ public class AccountController : MonoBehaviour
     public List<Player> FriendsList { get; private set; }
 
     private StartUIController _uiController => (StartUIController) GameManager.Instance.UIController();
-    private AvatarController _avatarController => AvatarController.Instance;
-    
-    
+
     [SerializeField] private GameObject userPrefab;
     [SerializeField] private GameObject friendPrefab;
     [SerializeField] private GameObject requestPrefab;
@@ -42,7 +40,6 @@ public class AccountController : MonoBehaviour
     // Start is called before the first frame update
     async void Start(){
         if (!string.IsNullOrEmpty(PlayerPrefs.GetString(Communicator.PLAYERPREFS_AUTH_TOKEN))) {
-            Debug.Log("Settings Headlines, filling scrollviews. The usual stuff.");
             SetHeadline();
             await RetrieveGames();
             await RetrieveGameRequests();
@@ -88,10 +85,6 @@ public class AccountController : MonoBehaviour
             _uiController.findUserInput.onValueChanged.RemoveAllListeners();
     }
 
-    private void inputSubmitCallBack(){
-        FindUsers();
-    }
-
 
     /// <summary>
     /// Set Username and Avatar Image (if available) in the headline
@@ -100,17 +93,14 @@ public class AccountController : MonoBehaviour
         bool usernameInPlayerprefs = !string.IsNullOrEmpty(PlayerPrefs.GetString(SignInController.PLAYERPREFS_USERNAME));
         string username = usernameInPlayerprefs ? PlayerPrefs.GetString(SignInController.PLAYERPREFS_USERNAME) : "Username";
         usernameText.text = username;
-        //gameRequestHeadline.text = "Game Requests for " + username;
 
-        bool avatarExists = Social.localUser.image != null;
-        if (avatarExists && Social.localUser.authenticated){
+        if (Social.localUser.authenticated){
             Debug.Log("Setting Google Avatar");
-            Texture2D texture = Social.localUser.image;
-            avatarImage.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+            HelperMethods.SetImage(avatarImage, username);
         }
         else {
             Debug.Log("Setting Default Avatar");
-            _avatarController.SetImage(avatarImage, username);
+            HelperMethods.SetImage(avatarImage, "anon-" + username);
         }
     }
 
@@ -170,16 +160,12 @@ public class AccountController : MonoBehaviour
         }
         foreach (Player player in players) {
             GameObject user = Instantiate(prefab, userScrollViewContent.transform);
-            string username = GetPrefixFreeUsername(player.Name);
+            string username = HelperMethods.GetUsernameWithoutPrefix(player.Name);
             user.GetComponent<Button>().onClick.AddListener(delegate { ChallengeUser(player.Id); });
             user.transform.Find(buttonName).GetComponent<Button>().onClick.AddListener(delegate { buttonFunction(player.Id); });
             user.transform.Find("Text").GetComponent<Text>().text = username;
-            if(string.IsNullOrEmpty(player.ProfileImage)) {
-                _avatarController.SetImage(user.transform.Find("Image").GetComponent<Image>(), username);
-            }
-            else {
-
-            }
+            if(string.IsNullOrEmpty(player.ProfileImage)) 
+                HelperMethods.SetImage(user.transform.Find("Image").GetComponent<Image>(), player.Name);
         }
     }
 
@@ -195,7 +181,7 @@ public class AccountController : MonoBehaviour
         }
         foreach (GameRequest incomingRequests in response.Incoming)
         {
-            string username = GetPrefixFreeUsername(incomingRequests.Sender.Name);
+            string username = HelperMethods.GetUsernameWithoutPrefix(incomingRequests.Sender.Name);
             GameObject request = Instantiate(requestPrefab, requestScrollViewContent.transform);
             request.transform.Find("RefuseRequestButton").GetComponent<Button>().onClick.AddListener(delegate { DeleteRequest(incomingRequests.Id, request); });
             request.transform.Find("AcceptRequestButton").GetComponent<Button>().onClick.AddListener(delegate { AcceptRequest(incomingRequests.Id, request); });
@@ -203,16 +189,12 @@ public class AccountController : MonoBehaviour
             Transform inOrOut = request.transform.Find("Image/InOrOut");
             inOrOut.GetComponent<Image>().sprite = incomingSprite;
             inOrOut.GetComponent<Image>().color = incomingColor;
-            if (string.IsNullOrEmpty(incomingRequests.Sender.ProfileImage)) {
-                _avatarController.SetImage(request.transform.Find("Image").GetComponent<Image>(), username);
-            }
-            else {
-
-            }
+            if (string.IsNullOrEmpty(incomingRequests.Sender.ProfileImage)) 
+                HelperMethods.SetImage(request.transform.Find("Image").GetComponent<Image>(), incomingRequests.Sender.Name);
         }
         foreach (GameRequest outgoingRequests in response.Outgoing)
         {
-            string username = GetPrefixFreeUsername(outgoingRequests.Recipient.Name);
+            string username = HelperMethods.GetUsernameWithoutPrefix(outgoingRequests.Recipient.Name);
             GameObject request = Instantiate(requestPrefab, requestScrollViewContent.transform);
             request.transform.Find("RefuseRequestButton").GetComponent<Button>().onClick.AddListener(delegate { DeleteRequest(outgoingRequests.Id, request); });
             request.transform.Find("AcceptRequestButton").gameObject.SetActive(false);
@@ -220,12 +202,8 @@ public class AccountController : MonoBehaviour
             Transform inOrOut = request.transform.Find("Image/InOrOut");
             inOrOut.GetComponent<Image>().sprite = outgoingSprite;
             inOrOut.GetComponent<Image>().color = outgoingColor;
-            if (string.IsNullOrEmpty(outgoingRequests.Recipient.ProfileImage)) {
-                _avatarController.SetImage(request.transform.Find("Image").GetComponent<Image>(), username);
-            }
-            else {
-
-            }
+            if (string.IsNullOrEmpty(outgoingRequests.Recipient.ProfileImage)) 
+                HelperMethods.SetImage(request.transform.Find("Image").GetComponent<Image>(), outgoingRequests.Recipient.Name);
         }
     }
 
@@ -239,11 +217,11 @@ public class AccountController : MonoBehaviour
         }
         foreach (WikidataGame.Models.GameInfo game in response) {
             GameObject currentGameObject = Instantiate(gameInstancePrefab, gamesScrollViewContent.transform);
-            string username = GetPrefixFreeUsername(game.Opponent.Name);
+            string username = HelperMethods.GetUsernameWithoutPrefix(game.Opponent.Name);
             currentGameObject.transform.Find("ForfeitGameButton").GetComponent<Button>().onClick.AddListener(delegate { ForfeitGame(game.GameId, currentGameObject); });
             currentGameObject.GetComponent<Button>().onClick.AddListener(delegate { ContinueGame(game.GameId); });
             currentGameObject.transform.Find("Text").GetComponent<Text>().text = GAME_MATCH_MESSAGE + username;
-            _avatarController.SetImage(currentGameObject.transform.Find("Image").GetComponent<Image>(), username);
+            HelperMethods.SetImage(currentGameObject.transform.Find("Image").GetComponent<Image>(), game.Opponent.Name);
             bool yourTurn = game.NextMovePlayerId != game.Opponent.Id;
             currentGameObject.transform.Find("Image/YourTurn").gameObject.SetActive(yourTurn);
         }
@@ -374,7 +352,7 @@ public class AccountController : MonoBehaviour
     /// <summary>
     /// Use this to unlock achievements.
     /// </summary>
-    public void UnlockAchievements() {
+    public static void UnlockAchievements() {
         PlayGamesPlatform.Instance.IncrementAchievement("CgkI-f_-2q4eEAIQAg", 10, (bool success) => {
             // handle success or failure
         });
@@ -383,8 +361,8 @@ public class AccountController : MonoBehaviour
     /// <summary>
     /// Use this to post the score.
     /// </summary>
-    public void PostScore() {
-        Social.ReportScore(4, "CgkI-f_-2q4eEAIQAQ", (bool success) => {
+    public static void PostScore(long score) {
+        Social.ReportScore(score, "CgkI-f_-2q4eEAIQAQ", (bool success) => {
             // handle success or failure
         });
     }
@@ -392,4 +370,5 @@ public class AccountController : MonoBehaviour
     private string GetPrefixFreeUsername(string username) {
         return username.Contains("anon-") ? username.Substring(5) : username;
     }
+
 }

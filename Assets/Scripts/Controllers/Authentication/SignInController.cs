@@ -14,11 +14,11 @@ namespace Controllers.Authentication {
     /// </summary>
     public class SignInController : MonoBehaviour {
 
-        public Image testImage;
         public static bool forceLogin;
         public static AuthInfo authInfo { get; set; }
         public const string METHOD_GOOGLE = "Google";
         public const string METHOD_ANONYMOUS = "Anonymous";
+        public const string METHOD_NONE = "Not logged in";
 
         private static bool isLoggedInGoogle;
         public bool IsLoggedInGoogle {
@@ -79,6 +79,7 @@ namespace Controllers.Authentication {
 
             _uiController.usernameInput.onValueChanged.RemoveAllListeners();
             _uiController.usernameInput.onValueChanged.AddListener(delegate { inputChangedCallBack(); });
+            _uiController.usernameInput.onEndEdit.AddListener(delegate { inputSubmitCallBack(); });
         }
 
         /// <summary>
@@ -108,6 +109,11 @@ namespace Controllers.Authentication {
         /// </summary>
         private void ForceLogin() {
             Debug.Log("User is asked to choose a SignIn Method");
+
+            _uiController.googleAuthButtonText.text = (IsLoggedInGoogle) ? SIGNED_IN_TEXT_GOOGLE : SIGNED_OUT_TEXT_GOOGLE;
+            _uiController.signInAnonButton.gameObject.SetActive(true);
+            _uiController.sidebar.SetActive(false);
+
             _uiController.DisplayLoginStart();
         }
 
@@ -127,11 +133,15 @@ namespace Controllers.Authentication {
                 return;
             }
             _uiController.usernameInput.onValueChanged.AddListener(delegate { inputChangedCallBack(); });
+            _uiController.usernameInput.onEndEdit.AddListener(delegate { inputSubmitCallBack(); });
         }
 
+        /// <summary>
+        /// While the user chooses his username, display a preview for the generated user avatar
+        /// </summary>
         private void inputChangedCallBack() {
             if (_uiController.usernameInput.text.Length > 2){
-                AvatarController.Instance.SetImage(avatarPreview, _uiController.usernameInput.text);
+                HelperMethods.SetImage(avatarPreview, "anon-" + _uiController.usernameInput.text);
             }
         }
 
@@ -139,14 +149,26 @@ namespace Controllers.Authentication {
             //Un-Register InputField Events
             //_uiController.findUserInput.onEndEdit.RemoveAllListeners();
 
-            if (_uiController != null)
+            if (_uiController != null) {
                 _uiController.usernameInput.onValueChanged.RemoveAllListeners();
+                _uiController.usernameInput.onEndEdit.RemoveAllListeners();
+            }
+        }
+
+
+        /// <summary>
+        /// If the users ends the input field edit with Enter, start the authentication process
+        /// </summary>
+        private void inputSubmitCallBack() {
+            if (Input.GetButtonDown("Submit")) {
+                AuthenticateWithUsername();
+            }
         }
 
         /// <summary>
-        /// Set user name of client according to input.
+        /// Authenticate anonymously with the submitted username
         /// </summary>
-        public async void SetUsername() {
+        public async void AuthenticateWithUsername() {
             _uiController.usernameTakenMessage.gameObject.SetActive(false);
             _uiController.invalidCharactersMessage.gameObject.SetActive(false);
             _uiController.usernameTooShortMessage.gameObject.SetActive(false);
@@ -154,7 +176,7 @@ namespace Controllers.Authentication {
 
             //If the user tries to log in with it's previously used username, use the stored password
             string password = (PlayerPrefs.GetString(PLAYERPREFS_USERNAME) != null && newUserName == PlayerPrefs.GetString(PLAYERPREFS_USERNAME)) ?
-                PlayerPrefs.GetString(PLAYERPREFS_PASSWORD) : CreatePassword(32);
+                PlayerPrefs.GetString(PLAYERPREFS_PASSWORD) : HelperMethods.CreatePassword(32);
             string pushToken = PushHandler.Instance.pushToken ?? "";
 
             //Tries to authenticate by either logging in with the stored credentials or by trying to create a new user
@@ -197,19 +219,6 @@ namespace Controllers.Authentication {
 
         }
 
-
-        /// <summary>
-        /// Generates a password of the specified length.
-        /// </summary>
-        public static string CreatePassword(int length) {
-            const string valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-            string pw = "";
-            while (pw.Length < length) {
-                pw += valid[UnityEngine.Random.Range(0, valid.Length)];
-            }
-            return pw;
-        }
-
         /// <summary>
         /// Use this to sign in a user.
         /// </summary>
@@ -217,24 +226,21 @@ namespace Controllers.Authentication {
             Debug.Log("Google Play: Authentication Status: " + PlayGamesPlatform.Instance.IsAuthenticated());
             if (!PlayGamesPlatform.Instance.IsAuthenticated()) {
                 // authenticate user:
-                Social.localUser.Authenticate((bool success) =>
-                {
-                    if (!success)
-                    {
-                        _uiController.googleAuthButtonText.text = SIGNED_OUT_TEXT_GOOGLE;
-                        return;
+
+                Social.localUser.Authenticate((bool success) => {
+                    Debug.Log("UDEBUG: Authentication success: " + success);
+                    Debug.Log("UDEBUG: Username: " + Social.localUser.userName);
+                    Debug.Log("UDEBUG: ID: " + Social.localUser.id);
+
+                    _uiController.googleAuthButtonText.text = success ? SIGNED_IN_TEXT_GOOGLE : SIGNED_OUT_TEXT_GOOGLE;
+
+                    // handle success or failure
+                    if (success) {
+                        OnSuccess();
                     }
-
-                    Debug.Log("Google Play: Authentication success: " + success);
-                    Debug.Log("Google Play: Username: " + Social.localUser.userName);
-                    Debug.Log("Google Play: ID: " + Social.localUser.id);
-                    Debug.Log("Google Play: Avatar: " + Social.localUser.image);
-                    Texture2D texture = Social.localUser.image;
-                    testImage.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
-
-                    
-                    _uiController.googleAuthButtonText.text = SIGNED_IN_TEXT_GOOGLE;
-                    OnSuccess();
+                    else {
+                        ForceLogin();
+                    }
                 });
             }
             else {
@@ -256,7 +262,11 @@ namespace Controllers.Authentication {
             Debug.Log("UDEBUG: ID Token: " + PlayGamesPlatform.Instance.GetIdToken());
 
             string userName = Social.localUser.userName;
+            //string authCode = string.IsNullOrEmpty(PlayerPrefs.GetString(Communicator.PLAYERPREFS_PASSWORD)) ? PlayGamesPlatform.Instance.GetServerAuthCode() : PlayerPrefs.GetString(Communicator.PLAYERPREFS_PASSWORD);
             string authCode = PlayGamesPlatform.Instance.GetServerAuthCode();
+            PlayGamesPlatform.Instance.GetAnotherServerAuthCode(true, (string code) => {
+                authCode = code;
+            });
             string pushToken = PushHandler.Instance.pushToken ?? "";
 
             Task<string> authenticate = Communicator.Authenticate(userName, authCode, pushToken, METHOD_GOOGLE);
@@ -265,18 +275,17 @@ namespace Controllers.Authentication {
                 /**
                  * Since GooglePlay Usernames are unique (and can't contain special characters), and anonymous users get the 'anon-' prefix, this should never happen
                  */
+                SignOut();
                 Debug.LogError("Google Username is already taken.");
             }
             else if (response == Communicator.INVALID_CHARACTERS_ERROR_MESSAGE) {
                 /**
                  * Since GooglePlay Usernames can't contain special characters, this should never happen
                  */
+                SignOut();
                 Debug.LogError("Username contains invalid characters");
             }
-            else if (response == null) {
-                throw new Exception("An unknown error occurred");
-            }
-            else {
+            else if(!string.IsNullOrEmpty(response)) {
                 string authToken = response;
                 PlayerPrefs.SetString(Communicator.PLAYERPREFS_AUTH_TOKEN, authToken);
                 PlayerPrefs.SetString(PLAYERPREFS_USERNAME, userName);
@@ -294,7 +303,10 @@ namespace Controllers.Authentication {
                 _uiController.DisplayGameView();
                 _uiController.HighscoreButtonSetActiveState(true);
             }
-
+            else {
+                SignOut();
+                throw new Exception("An unknown error occurred");
+            }
         }
 
         /// <summary>
@@ -302,19 +314,21 @@ namespace Controllers.Authentication {
         /// </summary>
         private void SignOut() {
             // sign out
-            PlayGamesPlatform.Instance.SignOut();
-            IsLoggedInGoogle = false;
-            _uiController.googleAuthButtonText.text = SIGNED_OUT_TEXT_GOOGLE;
             Debug.Log("Signing out of Google Play");
+            PlayGamesPlatform.Instance.SignOut();
+            PlayerPrefs.SetString(Communicator.PLAYERPREFS_SIGNIN_METHOD, METHOD_NONE);
+            IsLoggedInGoogle = false;
+            ForceLogin();
 
         }
 
         /// <summary>
-        /// Use this to sign out an anonymous user.
+        /// Use this to sign out an anonymous user. This is usually only called, if an anonymously authenticated user decides to switch to a Google account
         /// </summary>
         public void SignOutAnon() {
             // sign out
             IsLoggedInAnon = false;
+            PlayerPrefs.SetString(Communicator.PLAYERPREFS_SIGNIN_METHOD, METHOD_NONE);
             _uiController.anonAuthButtonText.text = (IsLoggedInAnon) ? SIGNED_IN_TEXT_ANON : SIGNED_OUT_TEXT_ANON;
             _uiController.signInAnonButton.gameObject.SetActive(true);
             Debug.Log("Signing out");

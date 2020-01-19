@@ -190,16 +190,24 @@ public class Communicator : MonoBehaviour
         /**
          * regenerate API and auth process
          */
-
         string username = PlayerPrefs.GetString(PLAYERPREFS_USERNAME);
         string method = PlayerPrefs.GetString(PLAYERPREFS_SIGNIN_METHOD);
         string password = PlayerPrefs.GetString(PLAYERPREFS_PASSWORD);
 
-        var authToken = await Authenticate(
-            username,
-            password,
-            token,
-            method);
+        var authToken = PlayerPrefs.GetString(PLAYERPREFS_AUTH_TOKEN); 
+
+        if (PlayerPrefs.GetString(PLAYERPREFS_SIGNIN_METHOD) == SignInController.METHOD_GOOGLE) {
+            SignInController.reauthenticateWithGoogle = true;
+        }
+        else {
+            authToken = await Authenticate(
+                            username,
+                            password,
+                            token,
+                            method);
+        }
+
+        authToken = PlayerPrefs.GetString(PLAYERPREFS_AUTH_TOKEN);
 
         if (authToken == null) return false;
 

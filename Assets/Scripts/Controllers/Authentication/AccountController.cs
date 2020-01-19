@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Controllers.UI.User;
 using UnityEngine;
 using UnityEngine.UI;
 using WikidataGame.Models;
@@ -17,6 +18,9 @@ public class AccountController : MonoBehaviour
     public List<Player> FriendsList { get; private set; }
 
     private StartUIController _uiController => (StartUIController) GameManager.Instance.UIController();
+    private AvatarController _avatarController => AvatarController.Instance;
+    
+    
     [SerializeField] private GameObject userPrefab;
     [SerializeField] private GameObject friendPrefab;
     [SerializeField] private GameObject requestPrefab;
@@ -28,8 +32,7 @@ public class AccountController : MonoBehaviour
     [SerializeField] private Sprite outgoingSprite;
     [SerializeField] private Text usernameText;
     [SerializeField] private Image avatarImage;
-    //[SerializeField] private Text gameRequestHeadline;
-    [SerializeField] private List<Sprite> defaultTextures;
+
     private Color incomingColor = Color.white;
     private Color outgoingColor = Color.red;
     private const string GAME_MATCH_MESSAGE = "You matched with ";
@@ -107,7 +110,7 @@ public class AccountController : MonoBehaviour
         }
         else {
             Debug.Log("Setting Default Avatar");
-            SetImage(avatarImage, username);
+            _avatarController.SetImage(avatarImage, username);
         }
     }
 
@@ -172,7 +175,7 @@ public class AccountController : MonoBehaviour
             user.transform.Find(buttonName).GetComponent<Button>().onClick.AddListener(delegate { buttonFunction(player.Id); });
             user.transform.Find("Text").GetComponent<Text>().text = username;
             if(string.IsNullOrEmpty(player.ProfileImage)) {
-                SetImage(user.transform.Find("Image").GetComponent<Image>(), username);
+                _avatarController.SetImage(user.transform.Find("Image").GetComponent<Image>(), username);
             }
             else {
 
@@ -201,7 +204,7 @@ public class AccountController : MonoBehaviour
             inOrOut.GetComponent<Image>().sprite = incomingSprite;
             inOrOut.GetComponent<Image>().color = incomingColor;
             if (string.IsNullOrEmpty(incomingRequests.Sender.ProfileImage)) {
-                SetImage(request.transform.Find("Image").GetComponent<Image>(), username);
+                _avatarController.SetImage(request.transform.Find("Image").GetComponent<Image>(), username);
             }
             else {
 
@@ -218,7 +221,7 @@ public class AccountController : MonoBehaviour
             inOrOut.GetComponent<Image>().sprite = outgoingSprite;
             inOrOut.GetComponent<Image>().color = outgoingColor;
             if (string.IsNullOrEmpty(outgoingRequests.Recipient.ProfileImage)) {
-                SetImage(request.transform.Find("Image").GetComponent<Image>(), username);
+                _avatarController.SetImage(request.transform.Find("Image").GetComponent<Image>(), username);
             }
             else {
 
@@ -240,7 +243,7 @@ public class AccountController : MonoBehaviour
             currentGameObject.transform.Find("ForfeitGameButton").GetComponent<Button>().onClick.AddListener(delegate { ForfeitGame(game.GameId, currentGameObject); });
             currentGameObject.GetComponent<Button>().onClick.AddListener(delegate { ContinueGame(game.GameId); });
             currentGameObject.transform.Find("Text").GetComponent<Text>().text = GAME_MATCH_MESSAGE + username;
-            SetImage(currentGameObject.transform.Find("Image").GetComponent<Image>(), username);
+            _avatarController.SetImage(currentGameObject.transform.Find("Image").GetComponent<Image>(), username);
             bool yourTurn = game.NextMovePlayerId != game.Opponent.Id;
             currentGameObject.transform.Find("Image/YourTurn").gameObject.SetActive(yourTurn);
         }
@@ -384,23 +387,6 @@ public class AccountController : MonoBehaviour
         Social.ReportScore(4, "CgkI-f_-2q4eEAIQAQ", (bool success) => {
             // handle success or failure
         });
-    }
-
-    public void SetImage(Image img, string username) {
-       // img.color = GetColorFromUsername(username);
-        img.sprite = GetAvatarSpriteFromUsername(username);
-    }
-
-    private Sprite GetAvatarSpriteFromUsername(string username) {
-        int index = (username.Length + Math.Abs(username.GetHashCode()) ) % defaultTextures.Count;
-        return defaultTextures[index];
-    }
-
-    private Color GetColorFromUsername(string username) {
-        MD5 md5 = MD5.Create();
-        byte[] hash = md5.ComputeHash(Encoding.UTF8.GetBytes(username));
-        Color color = new Color32(hash[0], hash[1], hash[2], 0xFF);
-        return color;
     }
 
     private string GetPrefixFreeUsername(string username) {

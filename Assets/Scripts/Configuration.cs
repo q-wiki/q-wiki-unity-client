@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -6,10 +7,8 @@ using UnityEngine.Serialization;
 public class Configuration : Singleton<Configuration>
 {
     [SerializeField] private string serverURL;
-    [SerializeField] private string userName;
 
     public string ServerURL => serverURL;
-    public string UserName => userName;
 
 
     /// <summary>

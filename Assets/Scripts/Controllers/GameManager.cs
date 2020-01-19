@@ -485,6 +485,15 @@ namespace Controllers
            return friends
                .Select(f => f.Id).Contains(id);
         }
+        
+        /// <summary>
+        /// This is used to report a user.
+        /// </summary>
+        /// <param name="userId">ID of the user</param>
+        public void ReportUser(string userId)
+        {
+            Debug.Log($"Reporting user {userId} to the organization.");
+        }
 
         /// <summary>
         ///     Return the player id of the client if existent.

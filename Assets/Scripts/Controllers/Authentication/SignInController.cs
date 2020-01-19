@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Controllers.UI;
+using Controllers.UI.User;
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
 using UnityEngine;
@@ -12,7 +13,6 @@ namespace Controllers.Authentication {
     /// The SignIn Controller handles Firebase and Google Play authentication for the app.
     /// </summary>
     public class SignInController : MonoBehaviour {
-        public AccountController accountController;
 
         public Image testImage;
         public static bool forceLogin;
@@ -131,7 +131,7 @@ namespace Controllers.Authentication {
 
         private void inputChangedCallBack() {
             if (_uiController.usernameInput.text.Length > 2){
-                accountController.SetImage(avatarPreview, _uiController.usernameInput.text);
+                AvatarController.Instance.SetImage(avatarPreview, _uiController.usernameInput.text);
             }
         }
 

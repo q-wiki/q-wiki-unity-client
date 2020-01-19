@@ -331,6 +331,7 @@ MonoBehaviour:
   usernamePanel: {fileID: 82277955}
   loginPanel: {fileID: 1577718196}
   qrPanel: {fileID: 1871708833}
+  highscorePanel: {fileID: 407775325}
   accountPanel: {fileID: 1378078475}
   gameRequestPanel: {fileID: 962125069}
   scrollviewText: {fileID: 819470741}
@@ -583,6 +584,11 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1516744599}
+    - target: {fileID: 5969126507550577908, guid: c7821263fb7962d4186ee07e1bb708c4,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: AuthenticateWithUsername
+      objectReference: {fileID: 0}
     - target: {fileID: 5969126507274910815, guid: c7821263fb7962d4186ee07e1bb708c4,
         type: 3}
       propertyPath: m_AnchorMin.y
@@ -3666,18 +3672,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 493850610}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &495906940 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3101964634160849991, guid: 6a940944ffb36ce40a38e9aedc14b6f2,
-    type: 3}
-  m_PrefabInstance: {fileID: 3101964633699095611}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &506963464
 GameObject:
   m_ObjectHideFlags: 0
@@ -7499,7 +7493,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1273928362}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 81477407}
+        m_MethodName: DisplayHighscoreView
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1273928362
@@ -8464,7 +8469,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dbb3ca1a8d0e3246827575b45192c22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  testImage: {fileID: 495906940}
   avatarPreview: {fileID: 82277958}
 --- !u!4 &1516744600
 Transform:

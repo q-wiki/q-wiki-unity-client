@@ -37,7 +37,6 @@ public class AccountController : MonoBehaviour
     // Start is called before the first frame update
     async void Start(){
         if (!string.IsNullOrEmpty(PlayerPrefs.GetString(Communicator.PLAYERPREFS_AUTH_TOKEN))) {
-            Debug.Log("Settings Headlines, filling scrollviews. The usual stuff.");
             SetHeadline();
             await RetrieveGames();
             await RetrieveGameRequests();
@@ -91,10 +90,8 @@ public class AccountController : MonoBehaviour
         bool usernameInPlayerprefs = !string.IsNullOrEmpty(PlayerPrefs.GetString(SignInController.PLAYERPREFS_USERNAME));
         string username = usernameInPlayerprefs ? PlayerPrefs.GetString(SignInController.PLAYERPREFS_USERNAME) : "Username";
         usernameText.text = username;
-        //gameRequestHeadline.text = "Game Requests for " + username;
-
-        bool avatarExists = Social.localUser.image != null;
-        if (avatarExists && Social.localUser.authenticated){
+ 
+        if (Social.localUser.authenticated){
             Debug.Log("Setting Google Avatar");
             HelperMethods.SetImage(avatarImage, username);
         }
@@ -164,12 +161,7 @@ public class AccountController : MonoBehaviour
             user.GetComponent<Button>().onClick.AddListener(delegate { ChallengeUser(player.Id); });
             user.transform.Find(buttonName).GetComponent<Button>().onClick.AddListener(delegate { buttonFunction(player.Id); });
             user.transform.Find("Text").GetComponent<Text>().text = username;
-            if(string.IsNullOrEmpty(player.ProfileImage)) {
-                HelperMethods.SetImage(user.transform.Find("Image").GetComponent<Image>(), player.Name);
-            }
-            else {
-
-            }
+            HelperMethods.SetImage(user.transform.Find("Image").GetComponent<Image>(), player.Name);
         }
     }
 
@@ -193,12 +185,7 @@ public class AccountController : MonoBehaviour
             Transform inOrOut = request.transform.Find("Image/InOrOut");
             inOrOut.GetComponent<Image>().sprite = incomingSprite;
             inOrOut.GetComponent<Image>().color = incomingColor;
-            if (string.IsNullOrEmpty(incomingRequests.Sender.ProfileImage)) {
-                HelperMethods.SetImage(request.transform.Find("Image").GetComponent<Image>(), incomingRequests.Sender.Name);
-            }
-            else {
-
-            }
+            HelperMethods.SetImage(request.transform.Find("Image").GetComponent<Image>(), incomingRequests.Sender.Name);
         }
         foreach (GameRequest outgoingRequests in response.Outgoing)
         {
@@ -210,12 +197,7 @@ public class AccountController : MonoBehaviour
             Transform inOrOut = request.transform.Find("Image/InOrOut");
             inOrOut.GetComponent<Image>().sprite = outgoingSprite;
             inOrOut.GetComponent<Image>().color = outgoingColor;
-            if (string.IsNullOrEmpty(outgoingRequests.Recipient.ProfileImage)) {
-                HelperMethods.SetImage(request.transform.Find("Image").GetComponent<Image>(), outgoingRequests.Recipient.Name);
-            }
-            else {
-
-            }
+            HelperMethods.SetImage(request.transform.Find("Image").GetComponent<Image>(), outgoingRequests.Recipient.Name);
         }
     }
 

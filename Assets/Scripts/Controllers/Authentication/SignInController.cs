@@ -13,11 +13,11 @@ namespace Controllers.Authentication {
     /// </summary>
     public class SignInController : MonoBehaviour {
 
-        public Image testImage;
         public static bool forceLogin;
         public static AuthInfo authInfo { get; set; }
         public const string METHOD_GOOGLE = "Google";
         public const string METHOD_ANONYMOUS = "Anonymous";
+        public const string METHOD_NONE = "Not logged in";
 
         private static bool isLoggedInGoogle;
         public bool IsLoggedInGoogle {
@@ -108,6 +108,11 @@ namespace Controllers.Authentication {
         /// </summary>
         private void ForceLogin() {
             Debug.Log("User is asked to choose a SignIn Method");
+
+            _uiController.googleAuthButtonText.text = (IsLoggedInGoogle) ? SIGNED_IN_TEXT_GOOGLE : SIGNED_OUT_TEXT_GOOGLE;
+            _uiController.signInAnonButton.gameObject.SetActive(true);
+            _uiController.sidebar.SetActive(false);
+
             _uiController.DisplayLoginStart();
         }
 
@@ -222,17 +227,16 @@ namespace Controllers.Authentication {
                     Debug.Log("UDEBUG: Authentication success: " + success);
                     Debug.Log("UDEBUG: Username: " + Social.localUser.userName);
                     Debug.Log("UDEBUG: ID: " + Social.localUser.id);
-                    Debug.Log("UDEBUG: Avatar: " + Social.localUser.image.ToString());
-                    Texture2D texture = Social.localUser.image;
-                    testImage.sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
-
-
 
                     _uiController.googleAuthButtonText.text = success ? SIGNED_IN_TEXT_GOOGLE : SIGNED_OUT_TEXT_GOOGLE;
+
+                    // handle success or failure
                     if (success) {
                         OnSuccess();
                     }
-                    // handle success or failure
+                    else {
+                        ForceLogin();
+                    }
                 });
             }
             else {
@@ -254,7 +258,11 @@ namespace Controllers.Authentication {
             Debug.Log("UDEBUG: ID Token: " + PlayGamesPlatform.Instance.GetIdToken());
 
             string userName = Social.localUser.userName;
+            //string authCode = string.IsNullOrEmpty(PlayerPrefs.GetString(Communicator.PLAYERPREFS_PASSWORD)) ? PlayGamesPlatform.Instance.GetServerAuthCode() : PlayerPrefs.GetString(Communicator.PLAYERPREFS_PASSWORD);
             string authCode = PlayGamesPlatform.Instance.GetServerAuthCode();
+            PlayGamesPlatform.Instance.GetAnotherServerAuthCode(true, (string code) => {
+                authCode = code;
+            });
             string pushToken = PushHandler.Instance.pushToken ?? "";
 
             Task<string> authenticate = Communicator.Authenticate(userName, authCode, pushToken, METHOD_GOOGLE);
@@ -263,18 +271,17 @@ namespace Controllers.Authentication {
                 /**
                  * Since GooglePlay Usernames are unique (and can't contain special characters), and anonymous users get the 'anon-' prefix, this should never happen
                  */
+                SignOut();
                 Debug.LogError("Google Username is already taken.");
             }
             else if (response == Communicator.INVALID_CHARACTERS_ERROR_MESSAGE) {
                 /**
                  * Since GooglePlay Usernames can't contain special characters, this should never happen
                  */
+                SignOut();
                 Debug.LogError("Username contains invalid characters");
             }
-            else if (response == null) {
-                throw new Exception("An unknown error occurred");
-            }
-            else {
+            else if(!string.IsNullOrEmpty(response)) {
                 string authToken = response;
                 PlayerPrefs.SetString(Communicator.PLAYERPREFS_AUTH_TOKEN, authToken);
                 PlayerPrefs.SetString(PLAYERPREFS_USERNAME, userName);
@@ -292,7 +299,10 @@ namespace Controllers.Authentication {
                 _uiController.DisplayGameView();
                 _uiController.HighscoreButtonSetActiveState(true);
             }
-
+            else {
+                SignOut();
+                throw new Exception("An unknown error occurred");
+            }
         }
 
         /// <summary>
@@ -300,19 +310,21 @@ namespace Controllers.Authentication {
         /// </summary>
         private void SignOut() {
             // sign out
-            PlayGamesPlatform.Instance.SignOut();
-            IsLoggedInGoogle = false;
-            _uiController.googleAuthButtonText.text = SIGNED_OUT_TEXT_GOOGLE;
             Debug.Log("Signing out of Google Play");
+            PlayGamesPlatform.Instance.SignOut();
+            PlayerPrefs.SetString(Communicator.PLAYERPREFS_SIGNIN_METHOD, METHOD_NONE);
+            IsLoggedInGoogle = false;
+            ForceLogin();
 
         }
 
         /// <summary>
-        /// Use this to sign out an anonymous user.
+        /// Use this to sign out an anonymous user. This is usually only called, if an anonymously authenticated user decides to switch to a Google account
         /// </summary>
         public void SignOutAnon() {
             // sign out
             IsLoggedInAnon = false;
+            PlayerPrefs.SetString(Communicator.PLAYERPREFS_SIGNIN_METHOD, METHOD_NONE);
             _uiController.anonAuthButtonText.text = (IsLoggedInAnon) ? SIGNED_IN_TEXT_ANON : SIGNED_OUT_TEXT_ANON;
             _uiController.signInAnonButton.gameObject.SetActive(true);
             Debug.Log("Signing out");

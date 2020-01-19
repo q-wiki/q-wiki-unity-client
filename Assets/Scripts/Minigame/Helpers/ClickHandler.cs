@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 namespace Minigame.Helpers
 {
     /// <summary>
-    ///     This class is used to handle click events in the multiple choice MiniGame.
+    ///     This class is used to handle click events in the multiple choice and image MiniGame.
     /// </summary>
     public class ClickHandler : MonoBehaviour, IPointerDownHandler
     {
@@ -14,10 +14,7 @@ namespace Minigame.Helpers
         /// <param name="eventData">Event data about the click event.</param>
         public void OnPointerDown(PointerEventData eventData)
         {
-            var handler =
-                GameObject
-                    .Find("MinigameMchoiceCanvas")
-                    .GetComponent<MinigameMultipleChoice>();
+            var handler = GetComponentInParent<IMinigame>();
             handler.Process(gameObject);
         }
     }

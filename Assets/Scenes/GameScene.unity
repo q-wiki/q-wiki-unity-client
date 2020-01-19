@@ -9880,7 +9880,7 @@ MonoBehaviour:
   _persistent: 0
   miniGameCanvases:
   - {fileID: 2125643362763452242}
-  - {fileID: 9167687158840624971}
+  - {fileID: 3252737304718589430}
   - {fileID: 9167687158840624971}
   actionCanvas: {fileID: 1345315749}
   attackButton: {fileID: 1846780633}
@@ -10739,6 +10739,11 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 197591555}
+    - target: {fileID: 3252737304890462610, guid: 034a5bcff3fe9437cbd504c261de0900,
+        type: 3}
+      propertyPath: m_AdditionalShaderChannelsFlag
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 3252737304385366533, guid: 034a5bcff3fe9437cbd504c261de0900,
         type: 3}
       propertyPath: m_AnchorMin.y
@@ -11023,14 +11028,67 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
+      objectReference: {fileID: 3252737304718589431}
+    - target: {fileID: 3252737303795004599, guid: 034a5bcff3fe9437cbd504c261de0900,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Send
       objectReference: {fileID: 0}
     - target: {fileID: 3252737303855719549, guid: 034a5bcff3fe9437cbd504c261de0900,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
+      objectReference: {fileID: 3252737304718589431}
+    - target: {fileID: 3252737303855719549, guid: 034a5bcff3fe9437cbd504c261de0900,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Close
+      objectReference: {fileID: 0}
+    - target: {fileID: 7593915956316941410, guid: 034a5bcff3fe9437cbd504c261de0900,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7593915956316941410, guid: 034a5bcff3fe9437cbd504c261de0900,
+        type: 3}
+      propertyPath: m_textInfo.spaceCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7593915956316941410, guid: 034a5bcff3fe9437cbd504c261de0900,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7593915956316941410, guid: 034a5bcff3fe9437cbd504c261de0900,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7593915956316941410, guid: 034a5bcff3fe9437cbd504c261de0900,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 034a5bcff3fe9437cbd504c261de0900, type: 3}
+--- !u!1 &3252737304718589430 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3252737304890462612, guid: 034a5bcff3fe9437cbd504c261de0900,
+    type: 3}
+  m_PrefabInstance: {fileID: 3252737304718589429}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3252737304718589431 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3252737304890462609, guid: 034a5bcff3fe9437cbd504c261de0900,
+    type: 3}
+  m_PrefabInstance: {fileID: 3252737304718589429}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3252737304718589430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c43cbb4b5b724d228cb29bd17878c87d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!222 &4162761224107504680
 CanvasRenderer:
   m_ObjectHideFlags: 0

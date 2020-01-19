@@ -87,6 +87,23 @@ namespace Controllers.UI {
         }
 
         /// <summary>
+        /// This function is used to initialize a new game with AI opponent.
+        /// In-game, it's called a practise match.
+        /// </summary>
+        public async void InitializeGameWithAiOpponent()
+        {
+            if (!Communicator.IsConnected()) {
+                Debug.Log("You are not connected to any game");
+                return;
+            }
+            
+            LoadingIndicator.Instance.Show();
+            await GameManager.CreateNewGameWithAIOpponent();
+            LoadingIndicator.Instance.Hide();
+
+        }
+
+        /// <summary>
         ///     Stop searching for an opponent by setting the respective variable false.
         /// </summary>
         public void CancelGameInitialization() {

@@ -76,16 +76,16 @@ public class PushHandler : Singleton<PushHandler>
         {
             Debug.Log($"Firebase: (Key: {entry.Key} / Value: {entry.Value})");
             
-            if (entry.Key == "refresh" && 
-                entry.Value == "true")
+            if (entry.Key == "action" && 
+                entry.Value == "refresh")
             {
                 Debug.Log("Firebase: Refreshing game state of the client...");
                 GameManager.Instance.UpdateGameStateManually();
                 return;
             }
             
-            if (entry.Key == "delete" && 
-                entry.Value == "true")
+            if (entry.Key == "action" && 
+                entry.Value == "refresh")
             {
                 Debug.Log("Firebase: Deleting game state of the client...");
                 GameManager.Instance.LeaveGame();

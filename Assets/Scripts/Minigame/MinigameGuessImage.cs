@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Controllers;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -31,7 +32,7 @@ namespace Minigame
          */
 
         public Image imagePlaceholder;
-        public Text licensePlaceholder;
+        public TextMeshProUGUI licensePlaceholder;
         public Sprite boxSprite;
         public Sprite checkSprite;
         public List<GameObject> choices;

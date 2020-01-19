@@ -205,6 +205,15 @@ namespace Minigame
             sendButton.GetComponentInChildren<Text>().text = "Close Minigame";
             sendButtonImage.sprite = closeButtonSprite;
         }
+        
+        /// <summary>
+        ///     Process selection of an answer option by the user
+        /// </summary>
+        /// <param name="selected">Selected answer option</param>
+        public void Process(GameObject selected)
+        {
+            throw new NotImplementedException("This function should not be used within this minigame.");
+        }
 
         /// <summary>
         ///     This is used to close the MiniGame

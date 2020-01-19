@@ -168,7 +168,7 @@ namespace Controllers
         public async Task<bool> WaitForOpponent(bool createNewGame)
         {
             if (createNewGame)
-                await Communicator.CreateOrJoinGame();
+                await Communicator.CreateOrJoinGame(false);
             else
                 await Communicator.RestorePreviousGame();
 
@@ -210,6 +210,18 @@ namespace Controllers
             ChangeToGameScene();
             
             return true;
+        }
+
+        /// <summary>
+        /// This function is called when the client wants to create a new game with AI opponent.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> CreateNewGameWithAIOpponent()
+        {
+            var isNewGameCreated = await Communicator.CreateGameWithAiOpponent();
+            SetWaitingForOpponent(false);
+            ChangeToGameScene();
+            return isNewGameCreated;
         }
 
         /// <summary>

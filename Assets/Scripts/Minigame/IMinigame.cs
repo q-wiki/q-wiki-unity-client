@@ -34,5 +34,11 @@ namespace Minigame
         ///     Use this to shutdown the current MiniGame when Timer reached null
         /// </summary>
         void ForceQuit();
+
+        /// <summary>
+        ///     Process selection of an answer option by the user
+        /// </summary>
+        /// <param name="selected">Selected answer option</param>
+        void Process(GameObject selected);
     }
 }

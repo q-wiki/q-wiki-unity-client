@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Controllers.Web;
 using Minigame;
 using UnityEngine;
 using UnityEngine.UI;
@@ -44,8 +45,20 @@ namespace Controllers.Map
             if (miniGame.Type == null)
                 throw new Exception($"The provided MiniGame {miniGame.Id} has no type.");
 
+            /* if minigame has an image type, construct it from given values */
+
+            MinigameImage image = null;
+            if (miniGame.Type == 1)
+            {
+                var texture = await RemoteTextureHandler.GetRemoteTexture(miniGame.ImageUrl);
+                var rect = new Rect(0, 0, texture.width, texture.height);
+                var pivot = new Vector2(0.5f, 0.5f);
+                var sprite = Sprite.Create(texture, rect, pivot);
+                image = new MinigameImage(sprite, miniGame.LicenseInfo);
+            }
+
             // using IMinigame interface to get miniGame depending on given type
-            // 0: Sort, 1: Blurry (not implemented), 2: Multiple Choice
+            // 0: Sort, 1: Image, 2: Multiple Choice
             var miniGameCanvas = miniGameCanvases[miniGame.Type.Value];
             var miniGameInstance = miniGameCanvas.GetComponent<IMinigame>();
 
@@ -60,7 +73,7 @@ namespace Controllers.Map
              * get difficulty level from tile controller and initialize miniGame with it
              */
 
-            miniGameInstance.Initialize(miniGame.Id, miniGame.TaskDescription, miniGame.AnswerOptions, selectedTile.difficulty);
+            miniGameInstance.Initialize(miniGame.Id, miniGame.TaskDescription, miniGame.AnswerOptions, selectedTile.difficulty, image);
 
             LoadingIndicator.Instance.Hide();
             CameraBehaviour.Instance.Toggle();

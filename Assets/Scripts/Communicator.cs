@@ -452,11 +452,11 @@ public class Communicator : MonoBehaviour
     ///     Creates a game when no previous game was found or joins a game
     /// </summary>
     /// <returns>asynchronous Task</returns>
-    public static async Task<bool> CreateOrJoinGame()
+    public static async Task<bool> CreateOrJoinGame(bool withAiOpponent)
     {
         try
         {
-            var response = await _gameApi.CreateNewGameWithHttpMessagesAsync();
+            var response = await _gameApi.CreateNewGameWithHttpMessagesAsync(withAiOpponent);
             var gameInfo = response.Body;
             _currentGameId = gameInfo.GameId;
             Debug.Log($"Initialized new game with id: {_currentGameId}");
@@ -471,6 +471,15 @@ public class Communicator : MonoBehaviour
             Debug.LogError(e.StackTrace);
             return false;
         }
+    }
+
+    /// <summary>
+    /// Creates a new game with AI opponent.
+    /// </summary>
+    /// <returns>If game was created successfully</returns>
+    public static async Task<bool> CreateGameWithAiOpponent()
+    {
+        return await CreateOrJoinGame(true);
     }
 
     /// <summary>

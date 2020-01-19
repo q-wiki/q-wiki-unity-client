@@ -40,6 +40,8 @@ namespace Minigame
         public Timer timerPrefab;
         private List<GameObject> sortedChoices = new List<GameObject>();
         private GameObject ClosePanel => transform.Find("ClosePanel").gameObject;
+        private Hideable FeedbackButton => transform.Find("FeedbackButton")
+            .GetComponent<Hideable>();
 
         /// <summary>
         ///     Initialize MiniGame in the frontend
@@ -60,6 +62,8 @@ namespace Minigame
             _answerOptions = answerOptions;
             AssignDescription(_taskDescription);
             AssignChoices(_answerOptions);
+            
+            FeedbackButton.Hide();
 
             /**
              * match difficulty to timer value
@@ -121,13 +125,13 @@ namespace Minigame
             sendButton.GetComponent<Image>().color = new Color32(195, 98, 98, 255);
             sendButton.GetComponentInChildren<Text>().text = "Close Minigame";
             sendButtonImage.sprite = closeButtonSprite;
-            Send();
+            Submit();
         }
 
         /// <summary>
         ///     This is used to send answer options to the backend
         /// </summary>
-        public async void Send()
+        public async void Submit()
         {
             if (!Communicator.IsConnected())
             {
@@ -163,6 +167,8 @@ namespace Minigame
             LoadingIndicator.Instance.Show();
             var result = await Communicator.AnswerMinigame(_id, answers);
             LoadingIndicator.Instance.Hide();
+            
+            FeedbackButton.Show();
 
             /**
              * use block panel to block further interaction by user
@@ -238,7 +244,7 @@ namespace Minigame
         private void Reset()
         {
             sendButton.GetComponent<Image>().color = new Color32(80, 158, 158, 255);
-            sendButton.GetComponentInChildren<Text>().text = "Send";
+            sendButton.GetComponentInChildren<Text>().text = "Submit";
             sendButtonImage.sprite = sendButtonSprite;
             sortedChoices.Clear();
 
@@ -272,6 +278,14 @@ namespace Minigame
         private void AssignDescription(string desc)
         {
             description.GetComponent<Text>().text = desc;
+        }
+        
+        /// <summary>
+        ///     This is used to send feedback for this mini game to the platform.
+        /// </summary>
+        public void SendFeedbackToPlatform()
+        {
+            Communicator.SendFeedbackToPlatform(_id);
         }
     }
 }

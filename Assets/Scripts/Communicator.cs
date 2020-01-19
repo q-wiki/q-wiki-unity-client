@@ -18,14 +18,16 @@ public class Communicator : MonoBehaviour
     public const string USERNAME_TAKEN_ERROR_MESSAGE = "Username is already taken";
     public const string USERNAME_TOO_SHORT_MESSAGE = "Username must have at least 3 characters";
     public const string INVALID_CHARACTERS_ERROR_MESSAGE = "User name can only contain letters or digits.";
-    public const string SUCCESS_MESSAGE = "SignIn successful";
+    private const string SUCCESS_MESSAGE = "SignIn successful";
     public const string PLAYERPREFS_AUTH_TOKEN = "AUTH_TOKEN";
-    public const string PLAYERPREFS_AUTH_EXPIRY = "AUTH_EXPIRY";
+    private const string PLAYERPREFS_AUTH_EXPIRY = "AUTH_EXPIRY";
     public const string PLAYERPREFS_USER_ID = "USER_ID";
-    public const string PLAYERPREFS_USERNAME = "USERNAME";
-    public const string PLAYERPREFS_PASSWORD = "PASSWORD";
+    private const string PLAYERPREFS_USERNAME = "USERNAME";
+    private const string PLAYERPREFS_PASSWORD = "PASSWORD";
     public const string PLAYERPREFS_SIGNIN_METHOD = "SIGNIN_METHOD";
     internal const string PLAYERPREFS_CURRENT_GAME_ID = "CURRENT_GAME_ID";
+
+    private const string PLATFORM_FEEDBACK_URL = "https://q-wiki.github.io/#/report/";
     private static WikidataGameAPI _gameApi;
     private static string _currentGameId;
     private static string _authToken { get; set; }
@@ -582,9 +584,22 @@ public class Communicator : MonoBehaviour
         return await _gameApi.RetrieveGameStateAsync(_currentGameId);
     }
 
+    /// <summary>
+    ///     Use this function to set the current game id.
+    /// </summary>
+    /// <param name="currentGameId">The current game id</param>
     public static void SetCurrentGameId(string currentGameId)
     {
         _currentGameId = currentGameId;
         PlayerPrefs.SetString(PLAYERPREFS_CURRENT_GAME_ID, currentGameId);
+    }
+    
+    /// <summary>
+    ///      Use this function to initialize the feedback process for a certain minigame.
+    /// </summary>
+    /// <param name="minigameId">ID of  the minigame</param>
+    public static void SendFeedbackToPlatform(string minigameId)
+    {
+        Application.OpenURL($"{PLATFORM_FEEDBACK_URL}{minigameId}");
     }
 }

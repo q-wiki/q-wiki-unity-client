@@ -23,7 +23,7 @@ namespace Minigame
         /// <summary>
         ///     Use this to send answers to the backend
         /// </summary>
-        void Send();
+        void Submit();
 
         /// <summary>
         ///     Use this to shutdown the current MiniGame
@@ -40,5 +40,10 @@ namespace Minigame
         /// </summary>
         /// <param name="selected">Selected answer option</param>
         void Process(GameObject selected);
+
+        /// <summary>
+        ///     Open the client's mobile browser to initialize feedback for the platform
+        /// </summary>
+        void SendFeedbackToPlatform();
     }
 }

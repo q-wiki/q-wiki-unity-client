@@ -11,6 +11,7 @@ public class Configuration : Singleton<Configuration>
     public string ServerURL => serverURL;
     public string UserName => userName;
 
+
     /// <summary>
     /// Check if server URL was set, otherwise force quit the app.
     /// </summary>

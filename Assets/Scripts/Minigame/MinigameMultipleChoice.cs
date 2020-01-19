@@ -38,6 +38,8 @@ namespace Minigame
         public Timer timerPrefab;
 
         private GameObject ClosePanel => transform.Find("ClosePanel").gameObject;
+        private Hideable FeedbackButton => transform.Find("FeedbackButton")
+            .GetComponent<Hideable>();
 
         /// <summary>
         ///     Initialize MiniGame in the frontend
@@ -59,6 +61,8 @@ namespace Minigame
             _answerOptions = answerOptions;
             AssignDescription(_taskDescription);
             AssignChoices(_answerOptions);
+            
+            FeedbackButton.Hide();
 
             /**
              * match difficulty to timer value
@@ -132,7 +136,7 @@ namespace Minigame
             }
             else
             {
-                Send();
+                Submit();
             }
         }
 
@@ -140,7 +144,7 @@ namespace Minigame
         ///     This is used to send an answer option to the backend
         /// </summary>
         /// <exception cref="Exception">No selection was made, therefore the send button should not be clickable.</exception>
-        public async void Send()
+        public async void Submit()
         {
             if (_checkedChoice == null)
                 throw new Exception("It should not be possible to press the send button.");
@@ -158,6 +162,8 @@ namespace Minigame
             LoadingIndicator.Instance.Show();
             var result = await Communicator.AnswerMinigame(_id, new List<string> {chosenAnswer.text});
             LoadingIndicator.Instance.Hide();
+
+            FeedbackButton.Show();
 
             /**
              * use block panel to block further interaction by user
@@ -213,7 +219,7 @@ namespace Minigame
         private void Reset()
         {
             sendButton.GetComponent<Image>().color = new Color32(80, 158, 158, 255);
-            sendButton.GetComponentInChildren<Text>().text = "Send";
+            sendButton.GetComponentInChildren<Text>().text = "Submit";
             sendButtonImage.sprite = sendButtonSprite;
 
             foreach (var item in choices)
@@ -285,6 +291,14 @@ namespace Minigame
         private void Deselect(GameObject g)
         {
             g.GetComponentInChildren<Image>().sprite = boxSprite;
+        }
+        
+        /// <summary>
+        ///     This is used to send feedback for this mini game to the platform.
+        /// </summary>
+        public void SendFeedbackToPlatform()
+        {
+            Communicator.SendFeedbackToPlatform(_id);
         }
     }
 }

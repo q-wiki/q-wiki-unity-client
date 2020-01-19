@@ -86,9 +86,7 @@ namespace Controllers
             /*
              * delete action point indicator from player prefs to prevent inconsistencies
              */
-
-            PlayerPrefs.DeleteKey(REMAINING_ACTION_POINTS);
-            PlayerPrefs.DeleteKey(CURRENT_GAME_TURNS_PLAYED);
+            
 
             if (PlayerPrefs.GetInt(IS_WAITING_FOR_OPPONENT, 0) == 1) 
                 WaitForOpponent(false);
@@ -99,8 +97,6 @@ namespace Controllers
         /// </summary>
         private async void InitializeGameScene()
         {
-
-            
             Debug.Log("Game scene was successfully set up.");
             
             /* setting handling indicator false to prevent inconsistencies */
@@ -143,8 +139,11 @@ namespace Controllers
             /**
              * show action point indicator in UI
              */
-
-            if (PlayerPrefs.GetInt(REMAINING_ACTION_POINTS, -1) == 0)
+            
+            
+            ActionPointHandler.SetGameId(_game.Id);
+            ActionPointHandler.RebuildActionPointsFromPrefs();
+            if (PlayerPrefs.GetInt($"{_game.Id}/{REMAINING_ACTION_POINTS}", -1) == 0)
                 ActionPointHandler.UpdateState(PlayerId(), _game.NextMovePlayerId, true);
             ActionPointHandler.Show();
 
@@ -152,7 +151,7 @@ namespace Controllers
              * update turn UI when it is the player's move directly after opening the app
              */
 
-            if (PlayerPrefs.GetInt(CURRENT_GAME_BLOCK_TURN_UPDATE, 0) == 0)
+            if (PlayerPrefs.GetInt($"{_game.Id}/{CURRENT_GAME_BLOCK_TURN_UPDATE}", 0) == 0)
                 ScoreHandler.UpdateTurns();
 
             /*
@@ -315,6 +314,8 @@ namespace Controllers
             /**
              * simple function to update action points in game controller
              */
+
+            ActionPointHandler.SetGameId(_game.Id);
             ActionPointHandler.Instance.UpdateState(PlayerId(), _game.NextMovePlayerId, isNewTurn);
 
             /**
@@ -543,9 +544,9 @@ namespace Controllers
             if (_game != null)
             {
                 if (_game.NextMovePlayerId == _game.Me.Id)
-                    PlayerPrefs.SetInt(CURRENT_GAME_BLOCK_TURN_UPDATE, 1);
+                    PlayerPrefs.SetInt($"{_game.Id}/{CURRENT_GAME_BLOCK_TURN_UPDATE}", 1);
                 else
-                    PlayerPrefs.SetInt(CURRENT_GAME_BLOCK_TURN_UPDATE, 0);
+                    PlayerPrefs.SetInt($"{_game.Id}/{CURRENT_GAME_BLOCK_TURN_UPDATE}", 0);
             }
         }
 #endif
@@ -570,9 +571,9 @@ namespace Controllers
             if (_game != null)
             {
                 if (_game.NextMovePlayerId == _game.Me.Id)
-                    PlayerPrefs.SetInt(CURRENT_GAME_BLOCK_TURN_UPDATE, 1);
+                    PlayerPrefs.SetInt($"{_game.Id}/{CURRENT_GAME_BLOCK_TURN_UPDATE}", 1);
                 else
-                    PlayerPrefs.SetInt(CURRENT_GAME_BLOCK_TURN_UPDATE, 0);
+                    PlayerPrefs.SetInt($"{_game.Id}/{CURRENT_GAME_BLOCK_TURN_UPDATE}", 0);
             }
         }
 #endif

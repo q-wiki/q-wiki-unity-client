@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Controllers;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,13 +21,14 @@ public class ActionPointHandler : Singleton<ActionPointHandler>
      */
 
     private int _remainingActionPoints;
-    public List<GameObject> actionPoints;
+    private int _resetFailedCount;
+    private string _gameId;
 
-    private int resetFailedCount;
     /**
      * public fields
      */
-
+    
+    public List<GameObject> actionPoints;
     public Text turnIndicator;
     private CanvasGroup _canvasGroup => GetComponent<CanvasGroup>();
 
@@ -36,7 +38,17 @@ public class ActionPointHandler : Singleton<ActionPointHandler>
     /// </summary>
     public void Awake()
     {
-        resetFailedCount = 0;
+       
+    }
+    
+    /// <summary>
+    ///     Sets the current game id.
+    /// </summary>
+    /// <param name="gameId">Current game ID</param>
+    public void SetGameId(string gameId)
+    {
+        _gameId = gameId;
+        _resetFailedCount = 0;
         Reset();
     }
 
@@ -56,7 +68,7 @@ public class ActionPointHandler : Singleton<ActionPointHandler>
 
         actionPoints[_remainingActionPoints - 1].SetActive(false);
         _remainingActionPoints--;
-        PlayerPrefs.SetInt(REMAINING_ACTION_POINTS, _remainingActionPoints);
+        PlayerPrefs.SetInt($"{_gameId}/{REMAINING_ACTION_POINTS}", _remainingActionPoints);
     }
 
     /// <summary>
@@ -66,7 +78,7 @@ public class ActionPointHandler : Singleton<ActionPointHandler>
     {
         foreach (var actionPoint in actionPoints) actionPoint.SetActive(true);
         _remainingActionPoints = 3;
-        PlayerPrefs.SetInt(REMAINING_ACTION_POINTS, _remainingActionPoints);
+        PlayerPrefs.SetInt($"{_gameId}/{REMAINING_ACTION_POINTS}", _remainingActionPoints);
     }
 
     /// <summary>
@@ -75,7 +87,7 @@ public class ActionPointHandler : Singleton<ActionPointHandler>
     /// </summary>
     private void Reset()
     {
-        var fetchedPoints = PlayerPrefs.GetInt(REMAINING_ACTION_POINTS, -1);
+        var fetchedPoints = PlayerPrefs.GetInt($"{_gameId}/{REMAINING_ACTION_POINTS}", -1);
 
         // if fetched points are not found, use default setting
         if (fetchedPoints == -1)
@@ -95,16 +107,16 @@ public class ActionPointHandler : Singleton<ActionPointHandler>
             }
             else
             {
-                resetFailedCount++;
+                _resetFailedCount++;
 
                 turnIndicator.text = "your turn:";
                 foreach (var actionPoint in actionPoints)
                     actionPoint.SetActive(false);
 
-                if (resetFailedCount < 3)
+                if (_resetFailedCount < 3)
                     Reset();
                 else
-                    resetFailedCount = 0;
+                    _resetFailedCount = 0;
             }
         }
     }
@@ -137,7 +149,7 @@ public class ActionPointHandler : Singleton<ActionPointHandler>
     /// </summary>
     public void DeleteKey()
     {
-        PlayerPrefs.DeleteKey(REMAINING_ACTION_POINTS);
+        PlayerPrefs.DeleteKey($"{_gameId}/{REMAINING_ACTION_POINTS}");
     }
 
     /// <summary>

@@ -12,17 +12,23 @@ using WikidataGame.Models;
 public class ScoreHandler : Singleton<ScoreHandler>
 {
     private const string CURRENT_GAME_TURNS_PLAYED = "CURRENT_GAME_TURNS_PLAYED";
-
+    
+    /*
+     * public fields
+     */ 
+    
+    public long playerScore;
+    
     /**
      * private fields
      */
 
     private long _opponentScore;
     private Text _opponentScoreText;
-    public long _playerScore;
     private Text _playerScoreText;
     private int _turnsPlayed;
     private Text _turnsPlayedText;
+    private string _gameId;
     private CanvasGroup _canvasGroup => GetComponent<CanvasGroup>();
 
     /// <summary>
@@ -33,7 +39,7 @@ public class ScoreHandler : Singleton<ScoreHandler>
         _playerScoreText = transform.Find("You").GetComponentInChildren<Text>();
         _opponentScoreText = transform.Find("They").GetComponentInChildren<Text>();
         _turnsPlayedText = transform.Find("Turns").GetComponentInChildren<Text>();
-        _turnsPlayed = PlayerPrefs.GetInt(CURRENT_GAME_TURNS_PLAYED, 0);
+        _turnsPlayed = PlayerPrefs.GetInt($"{_gameId}/{CURRENT_GAME_TURNS_PLAYED}", 0);
     }
 
     /// <summary>
@@ -41,6 +47,25 @@ public class ScoreHandler : Singleton<ScoreHandler>
     /// </summary>
     public void Start()
     {
+        _turnsPlayedText.text = $"{_turnsPlayed} / 6 Turns";
+    }
+    
+    /// <summary>
+    ///     Sets the current game id.
+    /// </summary>
+    /// <param name="gameId">Current game ID</param>
+    public void SetGameId(string gameId)
+    {
+        _gameId = gameId;
+    }
+    
+    /// <summary>
+    /// Reads the current turn count from player prefs
+    /// </summary>
+    /// <exception cref="NotImplementedException"></exception>
+    public void ReadCurrentTurnCountFromPrefs()
+    {
+        _turnsPlayed = PlayerPrefs.GetInt($"{_gameId}/{CURRENT_GAME_TURNS_PLAYED}", 0);
         _turnsPlayedText.text = $"{_turnsPlayed} / 6 Turns";
     }
 
@@ -55,7 +80,7 @@ public class ScoreHandler : Singleton<ScoreHandler>
         /**
          * reset player scores before counting again
          */
-        _playerScore = 0;
+        playerScore = 0;
         _opponentScore = 0;
 
         // flatten input to one dimension
@@ -77,7 +102,7 @@ public class ScoreHandler : Singleton<ScoreHandler>
                 continue;
 
             if (tile.OwnerId == myId)
-                _playerScore += difficulty;
+                playerScore += difficulty;
             else
                 _opponentScore += difficulty;
         }
@@ -86,7 +111,7 @@ public class ScoreHandler : Singleton<ScoreHandler>
          * update UI text
          */
 
-        _playerScoreText.text = $"{_playerScore}";
+        _playerScoreText.text = $"{playerScore}";
         _opponentScoreText.text = $"{_opponentScore}";
     }
 
@@ -96,7 +121,7 @@ public class ScoreHandler : Singleton<ScoreHandler>
     public void UpdateTurns()
     {
         _turnsPlayed++;
-        PlayerPrefs.SetInt(CURRENT_GAME_TURNS_PLAYED, _turnsPlayed);
+        PlayerPrefs.SetInt($"{_gameId}/{CURRENT_GAME_TURNS_PLAYED}", _turnsPlayed);
         _turnsPlayedText.text = $"{_turnsPlayed} / 6 Turns";
     }
 
@@ -117,4 +142,5 @@ public class ScoreHandler : Singleton<ScoreHandler>
         _canvasGroup.alpha = 0;
         _canvasGroup.blocksRaycasts = false;
     }
+
 }

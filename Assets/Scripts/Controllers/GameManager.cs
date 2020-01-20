@@ -89,7 +89,6 @@ namespace Controllers {
         /// <summary>
         ///     This function is used to initialize the game scene of the game.
         /// </summary>
-
         private async void InitializeGameScene()
         {
             Debug.Log("Game scene was successfully set up.");
@@ -119,6 +118,8 @@ namespace Controllers {
              * update points to show an updated state
              */
 
+            ScoreHandler.SetGameId(_game.Id);
+            ScoreHandler.ReadCurrentTurnCountFromPrefs();
             ScoreHandler.UpdatePoints(_game.Tiles, PlayerId(), _game.Opponent.Id);
 
             /**
@@ -133,7 +134,6 @@ namespace Controllers {
             /**
              * show action point indicator in UI
              */
-
 
             ActionPointHandler.SetGameId(_game.Id);
             ActionPointHandler.RebuildActionPointsFromPrefs();
@@ -286,16 +286,17 @@ namespace Controllers {
             /**
              * adjust UI to new score
              */
-
-            ScoreHandler.Instance.Show();
-            ScoreHandler.Instance.UpdatePoints(_game.Tiles, PlayerId(), _game.Opponent.Id);
+            
+            ScoreHandler.SetGameId(_game.Id);
+            ScoreHandler.Show();
+            ScoreHandler.UpdatePoints(_game.Tiles, PlayerId(), _game.Opponent.Id);
 
             /**
              * if current update happens in a new turn, update turn count
              */
 
             if (isNewTurn)
-                ScoreHandler.Instance.UpdateTurns();
+                ScoreHandler.UpdateTurns();
 
 
             /**
@@ -303,6 +304,7 @@ namespace Controllers {
              */
 
             ActionPointHandler.SetGameId(_game.Id);
+            ActionPointHandler.RebuildActionPointsFromPrefs();
             ActionPointHandler.Instance.UpdateState(PlayerId(), _game.NextMovePlayerId, isNewTurn);
 
             /**
@@ -344,7 +346,7 @@ namespace Controllers {
                     state = 2;
                 else throw new Exception("This game state is illegal.");
 
-                AccountController.PostScore(ScoreHandler.Instance._playerScore);
+                AccountController.PostScore(ScoreHandler.Instance.playerScore);
                 _uiController.HandleGameFinished(state);
             }
         }

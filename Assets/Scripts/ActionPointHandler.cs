@@ -32,13 +32,13 @@ public class ActionPointHandler : Singleton<ActionPointHandler>
     public Text turnIndicator;
     private CanvasGroup _canvasGroup => GetComponent<CanvasGroup>();
 
-
     /// <summary>
-    ///     Actions points are set to their maximum value.
+    /// 
     /// </summary>
-    public void Awake()
+    /// <exception cref="NotImplementedException"></exception>
+    public void RebuildActionPointsFromPrefs()
     {
-       
+        Reset();
     }
     
     /// <summary>
@@ -169,4 +169,5 @@ public class ActionPointHandler : Singleton<ActionPointHandler>
         _canvasGroup.alpha = 0;
         _canvasGroup.blocksRaycasts = false;
     }
+
 }

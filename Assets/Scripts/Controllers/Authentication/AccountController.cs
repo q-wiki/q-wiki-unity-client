@@ -167,9 +167,8 @@ public class AccountController : MonoBehaviour
             string username = HelperMethods.GetUsernameWithoutPrefix(player.Name);
             user.GetComponent<Button>().onClick.AddListener(delegate { ChallengeUser(player.Id); });
             user.transform.Find(buttonName).GetComponent<Button>().onClick.AddListener(delegate { buttonFunction(player.Id); });
-            user.transform.Find("Text").GetComponent<Text>().text = username;
-            if(string.IsNullOrEmpty(player.ProfileImage)) 
-                HelperMethods.SetImage(user.transform.Find("Image").GetComponent<Image>(), player.Name);
+            user.transform.Find("Text").GetComponent<Text>().text = username; 
+            HelperMethods.SetImage(user.transform.Find("Image").GetComponent<Image>(), player.Name);
         }
     }
 
@@ -193,8 +192,7 @@ public class AccountController : MonoBehaviour
             Transform inOrOut = request.transform.Find("Image/InOrOut");
             inOrOut.GetComponent<Image>().sprite = incomingSprite;
             inOrOut.GetComponent<Image>().color = incomingColor;
-            if (string.IsNullOrEmpty(incomingRequests.Sender.ProfileImage)) 
-                HelperMethods.SetImage(request.transform.Find("Image").GetComponent<Image>(), incomingRequests.Sender.Name);
+            HelperMethods.SetImage(request.transform.Find("Image").GetComponent<Image>(), incomingRequests.Sender.Name);
         }
         foreach (GameRequest outgoingRequests in response.Outgoing)
         {
@@ -206,8 +204,7 @@ public class AccountController : MonoBehaviour
             Transform inOrOut = request.transform.Find("Image/InOrOut");
             inOrOut.GetComponent<Image>().sprite = outgoingSprite;
             inOrOut.GetComponent<Image>().color = outgoingColor;
-            if (string.IsNullOrEmpty(outgoingRequests.Recipient.ProfileImage)) 
-                HelperMethods.SetImage(request.transform.Find("Image").GetComponent<Image>(), outgoingRequests.Recipient.Name);
+            HelperMethods.SetImage(request.transform.Find("Image").GetComponent<Image>(), outgoingRequests.Recipient.Name);
         }
     }
 

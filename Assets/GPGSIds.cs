@@ -24,9 +24,10 @@
 
 public static class GPGSIds
 {
-        public const string leaderboard_highscores = "CgkI-f_-2q4eEAIQAQ"; // <GPGSID>
-        public const string achievement_test = "CgkI-f_-2q4eEAIQAg"; // <GPGSID>
-        public const string event_test = "CgkI-f_-2q4eEAIQAw"; // <GPGSID>
+        public const string achievement_explorer = "CgkI-f_-2q4eEAIQAg"; // <GPGSID>
+        public const string leaderboard_highscore = "CgkI-f_-2q4eEAIQAQ"; // <GPGSID>
+        public const string achievement_dominator = "CgkI-f_-2q4eEAIQBg"; // <GPGSID>
+        public const string achievement_contributor = "CgkI-f_-2q4eEAIQBw"; // <GPGSID>
 
 }
 

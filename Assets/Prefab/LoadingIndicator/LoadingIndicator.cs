@@ -43,8 +43,8 @@ public class LoadingIndicator : MonoBehaviour
     
     public void ShowWithoutBlockingUI()
     {
-        _image.rectTransform.sizeDelta = new Vector2(150f, 150f);
-        _image.transform.localPosition = new Vector2(-183.0f, 213.0f);
+        _image.rectTransform.sizeDelta = new Vector2(125f, 125f);
+        _image.transform.localPosition = new Vector2(-146.0f, 210.0f);
         _canvasGroup.alpha = 1;
         _animator.enabled = true;
     }

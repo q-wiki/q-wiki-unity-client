@@ -276,12 +276,13 @@ namespace Controllers {
         /// </summary>
         /// <param name="isNewTurn">Indicates if a new turn started.</param>
         public async void RefreshGameState(bool isNewTurn) {
+            
             Debug.Log($"isNewTurn:{isNewTurn}");
 
             /*
              * this is called whenever something happens (MiniGame finished, player made a turn, etc.)
              */
-
+            
             _game = await Communicator.GetCurrentGameState();
 
             /*
@@ -298,6 +299,22 @@ namespace Controllers {
             ScoreHandler.SetGameId(_game.Id);
             ScoreHandler.Show();
             ScoreHandler.UpdatePoints(_game.Tiles, PlayerId(), _game.Opponent.Id);
+            
+                        
+            /*
+             * only for AI bot: if actions points are zero, but client has the next move, manual update
+             */
+
+            if (_game.Opponent.Id == "ffffffff-ffff-ffff-ffff-ffffffffffff")
+            {
+                if (isNewTurn == false &&
+                    PlayerPrefs.GetInt($"{_game.Id}/{REMAINING_ACTION_POINTS}", -1) == 1 &&
+                    _game.NextMovePlayerId == _game.Me.Id)
+                {
+                    RefreshGameState(true);
+                    return;
+                }
+            }
 
             /**
              * if current update happens in a new turn, update turn count

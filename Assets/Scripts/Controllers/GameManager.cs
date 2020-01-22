@@ -451,6 +451,15 @@ namespace Controllers {
             PlayerPrefs.SetInt(IS_WAITING_FOR_OPPONENT,
                 isWaitingForOpponent ? 1 : 0);
         }
+        
+        /// <summary>
+        /// Checks if client is waiting for opponent
+        /// </summary>
+        /// <returns>If client is waiting for opponent</returns>
+        public bool IsWaitingForOpponent()
+        {
+            return _isWaitingForOpponent;
+        }
 
         /// <summary>
         /// Use this to request a rematch while in the current game

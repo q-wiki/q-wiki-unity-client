@@ -268,7 +268,11 @@ namespace Controllers.UI {
             accountPanel.Hide();
             qrPanel.Hide();
             highscorePanel.Hide();
-
+            
+            LoadingIndicator.Instance.Hide();
+            if (view.name == "StartPanel" && GameManager.IsWaitingForOpponent())
+                LoadingIndicator.Instance.ShowWithoutBlockingUI();
+            
             view.Show();
 
 

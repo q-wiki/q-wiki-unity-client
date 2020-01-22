@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using Controllers.Map;
 using Controllers.UI.User;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using WikidataGame.Models;
 
 namespace Controllers.UI
 {
@@ -130,6 +128,8 @@ namespace Controllers.UI
             if(gameManager == null)
                 throw new Exception("GameManager is not allowed to be null at this (or any) point.");
             
+            gameManager.CancelWaiting();
+            gameManager.CheckTurnStatusForScoreHandler();
             gameManager.ChangeToStartScene();
         }
 

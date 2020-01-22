@@ -17,7 +17,7 @@ public class AccountController : MonoBehaviour
 {
     public List<Player> FriendsList { get; private set; }
 
-    private StartUIController _uiController => (StartUIController) GameManager.Instance.UIController();
+    private StartUIController _uiController;
 
     [SerializeField] private GameObject userPrefab;
     [SerializeField] private GameObject friendPrefab;
@@ -39,6 +39,11 @@ public class AccountController : MonoBehaviour
 
     // Start is called before the first frame update
     async void Start(){
+        
+        _uiController = GameManager.Instance.UIController() as StartUIController;
+        if (_uiController == null)
+            throw new Exception("Start UI Controller is not allowed to be null");
+        
         if (!string.IsNullOrEmpty(PlayerPrefs.GetString(Communicator.PLAYERPREFS_AUTH_TOKEN))) {
             SetHeadline();
             await RetrieveGames();
@@ -84,7 +89,6 @@ public class AccountController : MonoBehaviour
         if(_uiController != null)
             _uiController.findUserInput.onValueChanged.RemoveAllListeners();
     }
-
 
     /// <summary>
     /// Set Username and Avatar Image (if available) in the headline
@@ -215,7 +219,9 @@ public class AccountController : MonoBehaviour
         foreach (Transform child in gamesScrollViewContent.transform) {
             Destroy(child.gameObject);
         }
-        foreach (WikidataGame.Models.GameInfo game in response) {
+        foreach (var game in response)
+        {
+            if (game.IsAwaitingOpponentToJoin == true) continue;
             GameObject currentGameObject = Instantiate(gameInstancePrefab, gamesScrollViewContent.transform);
             string username = HelperMethods.GetUsernameWithoutPrefix(game.Opponent.Name);
             currentGameObject.transform.Find("ForfeitGameButton").GetComponent<Button>().onClick.AddListener(delegate { ForfeitGame(game.GameId, currentGameObject); });

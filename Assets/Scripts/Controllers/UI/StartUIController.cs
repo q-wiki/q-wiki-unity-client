@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -45,40 +46,45 @@ namespace Controllers.UI {
 
         private static GameManager GameManager => GameManager.Instance;
 
+        public void Start()
+        {
+            newGameButton.onClick.AddListener(delegate { InitializeGame(true); });
+        }
+
         /// <summary>
         ///     This function is used to initialize a new game.
         /// </summary>
-        public async void InitializeGame() {
-            // disable all buttons so we don't initialize multiple games
-            var startGameText = newGameButton.GetComponentInChildren<Text>().text;
-            newGameButton.GetComponentInChildren<Text>().text = "Searching for Opponent...";
-            newGameButton.GetComponentInChildren<Text>().fontSize = 56;
-
-            LoadingIndicator.Instance.ShowWithoutBlockingUI();
-            newGameButton.enabled = false;
-
+        public async void InitializeGame(bool isNewGame) {
+            
+            
             if (!Communicator.IsConnected()) {
                 Debug.Log("You are not connected to any game");
-                // reset the interface so we can try initializing a game again
-                newGameButton.GetComponentInChildren<Text>().text = startGameText;
-                newGameButton.enabled = true;
                 return;
             }
-
+            
+            // disable all buttons so we don't initialize multiple games
+            var startGameText = newGameButton.GetComponentInChildren<Text>().text;
+            newGameButton.GetComponentInChildren<Text>().text = "";
+            newGameButton.GetComponentInChildren<Text>().fontSize = 56;
+            
             // show button to abort the game initialization
-            cancelGameButton.Show();
+            newGameButton.onClick.RemoveAllListeners();
+            newGameButton.onClick.AddListener(CancelGameInitialization);
 
-            var isStartingNewGame = await GameManager.WaitForOpponent(true);
+            LoadingIndicator.Instance.ShowWithoutBlockingUI();
+
+
+            var isStartingNewGame = await GameManager.WaitForOpponent(isNewGame);
 
             if (isStartingNewGame) {
-
                 LoadingIndicator.Instance.Hide();
-
             }
             else {
                 // reset the interface so we can try initializing a game again
+
                 newGameButton.GetComponentInChildren<Text>().text = startGameText;
-                newGameButton.enabled = true;
+                newGameButton.onClick.RemoveAllListeners();
+                newGameButton.onClick.AddListener(delegate { InitializeGame(true); });
 
                 // make the abort button invisible again
                 cancelGameButton.Hide();

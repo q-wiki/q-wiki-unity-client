@@ -28,7 +28,6 @@ namespace Controllers {
         private const string IS_WAITING_FOR_OPPONENT = "IS_WAITING_FOR_OPPONENT";
         private const string CURRENT_GAME_BLOCK_TURN_UPDATE = "CURRENT_GAME_BLOCK_TURN_UPDATE";
         private const string REMAINING_ACTION_POINTS = "REMAINING_ACTION_POINTS";
-        private const string CURRENT_GAME_TURNS_PLAYED = "CURRENT_GAME_TURNS_PLAYED";
 
         /// <summary>
         ///     When game controller is enabled, an event handler to handle scene changes is registered.
@@ -81,9 +80,14 @@ namespace Controllers {
              * delete action point indicator from player prefs to prevent inconsistencies
              */
 
+            StartUIController startUiController = _uiController as StartUIController;
+            if (startUiController == null)
+                throw new Exception("StartUIController should not be null at this point.");
 
             if (PlayerPrefs.GetInt(IS_WAITING_FOR_OPPONENT, 0) == 1)
-                WaitForOpponent(false);
+            {
+                startUiController.InitializeGame(false);
+            }
         }
 
         /// <summary>
@@ -171,14 +175,17 @@ namespace Controllers {
 
             // we'll be checking the game state until another player joins
             while (_game.AwaitingOpponentToJoin ?? true)
-                if (_isWaitingForOpponent) {
+            {
+                if (_isWaitingForOpponent)
+                {
                     Debug.Log("Waiting for Opponent.");
 
                     // wait for 3 seconds
                     await Task.Delay(3000);
                     _game = await Communicator.GetCurrentGameState();
                 }
-                else {
+                else
+                {
                     Debug.Log("Stop connection to game...");
 
                     var id = _game.Id;
@@ -191,6 +198,7 @@ namespace Controllers {
 
                     return false;
                 }
+            }
 
             // another player joined
             Debug.Log("Found opponent, starting game.");
@@ -332,23 +340,23 @@ namespace Controllers {
         ///     An appropriate message is shown to the user depending on the outcome.
         /// </summary>
         private void HandleGameFinishedState() {
-            if (_game.WinningPlayerIds != null && _game.WinningPlayerIds.Count > 0) {
-                Debug.Log("Checking state of the finished game...");
+            if (_game.WinningPlayerIds == null || _game.WinningPlayerIds.Count <= 0) return;
+            
+            Debug.Log("Checking state of the finished game...");
 
-                short state;
+            short state;
 
-                if (_game.WinningPlayerIds.Count == 1 && _game.WinningPlayerIds.Contains(_game.Me.Id))
-                    state = 0;
-                else if (_game.WinningPlayerIds.Count == 1 && _game.WinningPlayerIds.Contains(_game.Opponent.Id))
-                    state = 1;
-                else if (_game.WinningPlayerIds.Count == 2 && _game.WinningPlayerIds.Contains(_game.Opponent.Id) &&
-                         _game.WinningPlayerIds.Contains(_game.Me.Id))
-                    state = 2;
-                else throw new Exception("This game state is illegal.");
+            if (_game.WinningPlayerIds.Count == 1 && _game.WinningPlayerIds.Contains(_game.Me.Id))
+                state = 0;
+            else if (_game.WinningPlayerIds.Count == 1 && _game.WinningPlayerIds.Contains(_game.Opponent.Id))
+                state = 1;
+            else if (_game.WinningPlayerIds.Count == 2 && _game.WinningPlayerIds.Contains(_game.Opponent.Id) &&
+                     _game.WinningPlayerIds.Contains(_game.Me.Id))
+                state = 2;
+            else throw new Exception("This game state is illegal.");
 
-                AccountController.PostScore(ScoreHandler.Instance.playerScore);
-                _uiController.HandleGameFinished(state);
-            }
+            AccountController.PostScore(ScoreHandler.Instance.playerScore);
+            _uiController.HandleGameFinished(state);
         }
 
         /// <summary>
@@ -465,9 +473,32 @@ namespace Controllers {
         /// This is used to report a user.
         /// </summary>
         /// <param name="userId">ID of the user</param>
-        public void ReportUser(string userId)
+        public void ReportUser(string userId, string userName)
         {
-            Debug.Log($"Reporting user {userId} to the organization.");
+            Debug.Log($"Reporting user {userId} with user name {userName} to the organization.");
+            HelperMethods.SendEmail(userId, userName);
+        }
+
+        /// <summary>
+        /// Checks if turn handler needs to be blocked from upping turn count when game is loaded the next time
+        /// </summary>
+        public void CheckTurnStatusForScoreHandler()
+        {
+            if (_game != null)
+            {
+                if (_game.NextMovePlayerId == _game.Me.Id)
+                    PlayerPrefs.SetInt($"{_game.Id}/{CURRENT_GAME_BLOCK_TURN_UPDATE}", 1);
+                else
+                    PlayerPrefs.SetInt($"{_game.Id}/{CURRENT_GAME_BLOCK_TURN_UPDATE}", 0);
+            }
+        }
+
+        /// <summary>
+        /// Cancel waiting state for current game.
+        /// </summary>
+        public void CancelWaiting()
+        {
+            _isWaitingState = false;
         }
 
         /// <summary>
@@ -509,23 +540,46 @@ namespace Controllers {
         ///     Reset turn update values when application is shut down.
         ///     If application is quit while user is searching for an opponent, keep on searching.
         /// </summary>
-        public async void OnApplicationQuit() {
-            if (_game != null) {
-                if (_game.NextMovePlayerId == _game.Me.Id)
-                    PlayerPrefs.SetInt($"{_game.Id}/{CURRENT_GAME_BLOCK_TURN_UPDATE}", 1);
-                else
-                    PlayerPrefs.SetInt($"{_game.Id}/{CURRENT_GAME_BLOCK_TURN_UPDATE}", 0);
-            }
+        public void OnApplicationQuit() {
+            CheckTurnStatusForScoreHandler();
         }
 #endif
 
 #if UNITY_ANDROID
 
         /// <summary>
-        ///     This function can be called on adroid phones to manually update the game state in the game manager.
+        ///     This function can be called on android phones to manually update the game state in the game manager.
         /// </summary>
-        public async void UpdateGameStateManually() {
-            _game = await Communicator.GetCurrentGameState();
+        public void Android_RefreshGame(string gameId) 
+        {
+            if (_game != null && _game.Id == gameId)
+            {
+                Debug.Log($"Refreshing game state of game with id {gameId}");
+                RefreshGameState(true);
+            }
+        }
+
+        public void Android_GameWon(string gameId)
+        {
+            if (_game != null && _game.Id == gameId)
+            {
+                Debug.Log($"Handling won game with id {gameId}");
+                _uiController.HandleGameFinished(0);
+            }
+        }
+        
+        public void Android_GameLost(string gameId)
+        {
+            if (_game != null && _game.Id == gameId)
+            {
+                Debug.Log($"Handling lost game with id {gameId}");
+                _uiController.HandleGameFinished(2);
+            }
+        }
+        
+        public void Android_RequestReceived()
+        {
+            Debug.Log("You received a new game request.");
         }
 
         /// <summary>
@@ -533,13 +587,8 @@ namespace Controllers {
         ///     Reset turn update values when application is shut down.
         ///     If application is quit while user is searching for an opponent, keep on searching.
         /// </summary>
-        public async void OnApplicationPause() {
-            if (_game != null) {
-                if (_game.NextMovePlayerId == _game.Me.Id)
-                    PlayerPrefs.SetInt($"{_game.Id}/{CURRENT_GAME_BLOCK_TURN_UPDATE}", 1);
-                else
-                    PlayerPrefs.SetInt($"{_game.Id}/{CURRENT_GAME_BLOCK_TURN_UPDATE}", 0);
-            }
+        public void OnApplicationPause() {
+            CheckTurnStatusForScoreHandler();
         }
 #endif
     }

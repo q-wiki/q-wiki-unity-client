@@ -472,7 +472,7 @@ PrefabInstance:
     - target: {fileID: 2569854283858120173, guid: c7821263fb7962d4186ee07e1bb708c4,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 300
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2569854283858120173, guid: c7821263fb7962d4186ee07e1bb708c4,
         type: 3}
@@ -882,7 +882,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 519399263}
   m_HandleRect: {fileID: 519399262}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 0.0000017951517
   m_Size: 0.97875
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -985,7 +985,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 9ff30b63b51e841ec9b95b3562cd911b, type: 3}
+    m_Font: {fileID: 12800000, guid: b126ee85cfc074f12bd344bf9ec6ac40, type: 3}
     m_FontSize: 40
     m_FontStyle: 0
     m_BestFit: 1
@@ -1141,7 +1141,7 @@ PrefabInstance:
     - target: {fileID: 8178374425887846982, guid: 4b448fa8361efca4c89e7004276d03bb,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 300
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8178374425887846982, guid: 4b448fa8361efca4c89e7004276d03bb,
         type: 3}
@@ -1329,8 +1329,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 524030476}
   m_HandleRect: {fileID: 524030475}
   m_Direction: 0
-  m_Value: -0.0000017951645
-  m_Size: 0.97875017
+  m_Value: 0.0000017951517
+  m_Size: 0.97875
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2121,14 +2121,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.63529414, g: 0.8235294, b: 0.7490196, a: 1}
+  m_Color: {r: 0.2538715, g: 0.3301887, b: 0.3301887, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: a5e6174ec43444906b39c95f17afef2e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: bccf030e63b65401e80c3a98c9431671, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2671,7 +2671,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1947699540}
   m_HandleRect: {fileID: 1947699539}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -3220,7 +3220,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1214943178}
   m_HandleRect: {fileID: 1214943177}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -3679,18 +3679,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 488687849}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 81477407}
-        m_MethodName: InitializeGame
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &488687849
@@ -3713,7 +3702,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: a5e6174ec43444906b39c95f17afef2e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: bccf030e63b65401e80c3a98c9431671, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4965,7 +4954,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -20}
+  m_AnchoredPosition: {x: 0, y: -27}
   m_SizeDelta: {x: -20, y: -60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &766543742
@@ -4989,8 +4978,8 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 9ff30b63b51e841ec9b95b3562cd911b, type: 3}
-    m_FontSize: 32
+    m_Font: {fileID: 12800000, guid: b126ee85cfc074f12bd344bf9ec6ac40, type: 3}
+    m_FontSize: 40
     m_FontStyle: 0
     m_BestFit: 1
     m_MinSize: 3
@@ -5001,7 +4990,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Direct Challenge
+  m_Text: Direct
 --- !u!222 &766543743
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5142,7 +5131,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 9ff30b63b51e841ec9b95b3562cd911b, type: 3}
+    m_Font: {fileID: 12800000, guid: b126ee85cfc074f12bd344bf9ec6ac40, type: 3}
     m_FontSize: 40
     m_FontStyle: 0
     m_BestFit: 1
@@ -5496,7 +5485,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &831283531
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5513,7 +5502,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -335, y: 0}
+  m_AnchoredPosition: {x: -140, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &831283532
@@ -5681,7 +5670,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &861013056
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5698,7 +5687,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -335, y: 0}
+  m_AnchoredPosition: {x: -141, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &861013057
@@ -6861,7 +6850,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 9ff30b63b51e841ec9b95b3562cd911b, type: 3}
+    m_Font: {fileID: 12800000, guid: b126ee85cfc074f12bd344bf9ec6ac40, type: 3}
     m_FontSize: 40
     m_FontStyle: 0
     m_BestFit: 1
@@ -8197,7 +8186,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 27, y: 0}
+  m_AnchoredPosition: {x: 53, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1344121292
@@ -8222,7 +8211,7 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 12800000, guid: 9ff30b63b51e841ec9b95b3562cd911b, type: 3}
-    m_FontSize: 50
+    m_FontSize: 60
     m_FontStyle: 0
     m_BestFit: 1
     m_MinSize: 0
@@ -8233,7 +8222,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: New Game
+  m_Text: Find
 --- !u!222 &1344121293
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -8861,7 +8850,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -1760, y: 0}
+  m_AnchoredPosition: {x: -1787, y: 0}
   m_SizeDelta: {x: 240, y: 800}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &1564851671
@@ -10006,7 +9995,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 9ff30b63b51e841ec9b95b3562cd911b, type: 3}
+    m_Font: {fileID: 12800000, guid: b126ee85cfc074f12bd344bf9ec6ac40, type: 3}
     m_FontSize: 40
     m_FontStyle: 0
     m_BestFit: 1
@@ -10888,12 +10877,12 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 9ff30b63b51e841ec9b95b3562cd911b, type: 3}
-    m_FontSize: 50
+    m_Font: {fileID: 12800000, guid: b126ee85cfc074f12bd344bf9ec6ac40, type: 3}
+    m_FontSize: 40
     m_FontStyle: 0
     m_BestFit: 1
     m_MinSize: 4
-    m_MaxSize: 62
+    m_MaxSize: 50
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
@@ -11399,7 +11388,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: Practise
+  m_Text: Bot
 --- !u!222 &1873587533
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -12637,18 +12626,18 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 12800000, guid: 9ff30b63b51e841ec9b95b3562cd911b, type: 3}
-    m_FontSize: 8
+    m_FontSize: 60
     m_FontStyle: 0
     m_BestFit: 1
-    m_MinSize: 8
-    m_MaxSize: 37
+    m_MinSize: 6
+    m_MaxSize: 60
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Scan QR-Code for direkt challenge
+  m_Text: Scan QR Code
 --- !u!222 &2042952302
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -12953,7 +12942,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e35e77d2b2e20427ca01f140c8bcfd67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  qrCode: {fileID: 1114290710}
+  qrCode: {fileID: 592898997}
 --- !u!4 &2082586937
 Transform:
   m_ObjectHideFlags: 0
@@ -13017,12 +13006,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: LoginPanel
       objectReference: {fileID: 0}
-    - target: {fileID: 3101964634160849991, guid: 6a940944ffb36ce40a38e9aedc14b6f2,
-        type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: eefb119346f14a54eadfef395d0fdf7f,
-        type: 3}
     - target: {fileID: 3101964634263895146, guid: 6a940944ffb36ce40a38e9aedc14b6f2,
         type: 3}
       propertyPath: m_Text
@@ -13159,6 +13142,12 @@ PrefabInstance:
       propertyPath: m_Text
       value: Sign in Anonymously
       objectReference: {fileID: 0}
+    - target: {fileID: 3101964634160849991, guid: 6a940944ffb36ce40a38e9aedc14b6f2,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: eefb119346f14a54eadfef395d0fdf7f,
+        type: 3}
     - target: {fileID: 3101964632991205838, guid: 6a940944ffb36ce40a38e9aedc14b6f2,
         type: 3}
       propertyPath: m_SizeDelta.x

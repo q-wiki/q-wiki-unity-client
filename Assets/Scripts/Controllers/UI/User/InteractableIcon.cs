@@ -61,7 +61,7 @@ namespace Controllers.UI.User
 
                 addButton.interactable = true;
                 
-                reportButton.onClick.AddListener(delegate { GameManager.ReportUser(opponent.Id); });
+                reportButton.onClick.AddListener(delegate { GameManager.ReportUser(opponent.Id, opponent.Name); });
 
                 var isFriend = await GameManager.IsFriend(opponent.Id);
                 if (!isFriend)

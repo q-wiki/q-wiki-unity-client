@@ -44,7 +44,7 @@ namespace Controllers.Authentication {
         }
 
         /* private fields */
-        private StartUIController _uiController => (StartUIController)GameManager.Instance.UIController();
+        private StartUIController _uiController;
 
         /* private constants */
         private const string SIGNED_IN_TEXT_GOOGLE = "Sign Out of Google Play";
@@ -59,6 +59,11 @@ namespace Controllers.Authentication {
         /// When the SignInController is initialized, the play games API is constructed.
         /// </summary>
         void Start() {
+            
+            _uiController = GameManager.Instance.UIController() as StartUIController;
+            if (_uiController == null)
+                throw new Exception("Start UI Controller is not allowed to be null");
+            
             var config = new PlayGamesClientConfiguration.Builder()
                 .RequestServerAuthCode(true)
                 .Build();

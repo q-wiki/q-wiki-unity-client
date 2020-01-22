@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public static class HelperMethods {
@@ -69,5 +70,17 @@ public static class HelperMethods {
             pw += valid[UnityEngine.Random.Range(0, valid.Length)];
         }
         return pw;
+    }
+    
+    public static void SendEmail(string userId, string userName)
+    {
+        string email = "playstore@maltegoetz.com";
+        string subject = ConstructEscapeURL("[Q-Wiki] Abuse / Spam Report");
+        string body = ConstructEscapeURL($"User ID: {userId}\r\nUsername: {userName}\r\n");
+        Application.OpenURL("mailto:" + email + "?subject=" + subject + "&body=" + body);
+    }
+    private static string ConstructEscapeURL(string url)
+    {
+        return UnityWebRequest.EscapeURL(url).Replace("+","%20");
     }
 }

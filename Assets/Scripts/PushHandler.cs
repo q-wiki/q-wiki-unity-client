@@ -69,26 +69,46 @@ public class PushHandler : Singleton<PushHandler>
     private void OnMessageReceived(object sender, MessageReceivedEventArgs e)
     {
         Debug.Log($"Firebase: Received a new message from: {e.Message.From}");
-        
+
+        var gameManager = GameManager.Instance;
+        if(gameManager == null)
+            throw new ArgumentException("GameManager should not be null at any point.");
+
         var data = e.Message.Data;
-        
+
         foreach (var entry in data)
         {
             Debug.Log($"Firebase: (Key: {entry.Key} / Value: {entry.Value})");
             
-            if (entry.Key == "action" && 
+            if (entry.Key == "Action" && 
                 entry.Value == "refresh")
             {
                 Debug.Log("Firebase: Refreshing game state of the client...");
-                GameManager.Instance.UpdateGameStateManually();
+                gameManager.Android_RefreshGame(data["GameId"]);
                 return;
             }
             
-            if (entry.Key == "action" && 
-                entry.Value == "refresh")
+            if (entry.Key == "Action" && 
+                entry.Value == "won")
             {
-                Debug.Log("Firebase: Deleting game state of the client...");
-                GameManager.Instance.LeaveGame();
+                Debug.Log("Firebase: Submitting win message to client...");
+                gameManager.Android_GameWon(data["GameId"]);
+                return;
+            }
+            
+            if (entry.Key == "Action" && 
+                entry.Value == "lost")
+            {
+                Debug.Log("Firebase: Submitting losing message to client...");
+                gameManager.Android_GameLost(data["GameId"]);
+                return;
+            }
+            
+            if (entry.Key == "Action" && 
+                entry.Value == "request")
+            {
+                Debug.Log("Firebase: Submitting new game request...");
+                gameManager.Android_RequestReceived();
                 return;
             }
 

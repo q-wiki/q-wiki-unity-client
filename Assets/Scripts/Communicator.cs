@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Controllers.Authentication;
@@ -398,10 +400,16 @@ public class Communicator : MonoBehaviour
         Debug.Log("Deleting Game");
 
         try {
-            HttpOperationResponse response = null;
-            response = await _gameApi.DeleteGameWithHttpMessagesAsync(gameId);
+            var response = await _gameApi.DeleteGameWithHttpMessagesAsync(gameId);
+            if (response.Response.StatusCode == HttpStatusCode.NoContent)
+            {
+                Debug.Log($"Game {gameId} was successfully deleted.");
+                return true;
+            }
 
-            return true;
+            Debug.LogWarning($"Game {gameId} could not be deleted.");
+            return false;
+
         }
         catch (HttpOperationException e) {
             var response = e.Response;

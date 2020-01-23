@@ -72,6 +72,11 @@ public static class HelperMethods {
         return pw;
     }
     
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="userName"></param>
     public static void SendEmail(string userId, string userName)
     {
         string email = "playstore@maltegoetz.com";
@@ -79,6 +84,12 @@ public static class HelperMethods {
         string body = ConstructEscapeURL($"User ID: {userId}\r\nUsername: {userName}\r\n");
         Application.OpenURL("mailto:" + email + "?subject=" + subject + "&body=" + body);
     }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="url"></param>
+    /// <returns></returns>
     private static string ConstructEscapeURL(string url)
     {
         return UnityWebRequest.EscapeURL(url).Replace("+","%20");

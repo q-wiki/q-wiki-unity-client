@@ -5,6 +5,7 @@ using Controllers.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Handlers;
 using UnityEngine;
 using UnityEngine.UI;
 using ZXing;
@@ -39,25 +40,32 @@ public class QRController : MonoBehaviour {
             counter++;
             //Read QR Codes every 15 Frames
             if (counter%15 == 0) {
-                try {
+                try
+                {
                     IBarcodeReader barcodeReader = new BarcodeReader();
                     // decode the current frame
                     var result = barcodeReader.Decode(camTexture.GetPixels32(),
-                      camTexture.width, camTexture.height);
-                    if (result != null) {
+                        camTexture.width, camTexture.height);
+                    if (result != null)
+                    {
                         Debug.Log("DECODED TEXT FROM QR: " + result.Text);
-                        try {
+                        try
+                        {
                             //Challenge user via the user id from their QR code and open the game request view
                             await Communicator.ChallengeUser(result.Text);
                             stopQRReader();
                             _uiController.DisplayGameRequestView();
                         }
-                        catch {
-                            Debug.Log("Couldn't challenge user");
+                        catch (Exception)
+                        {
+                            ErrorHandler.Instance.Error("Couldn't challenge user");
                         }
                     }
                 }
-                catch (Exception ex) { Debug.LogWarning(ex.Message); }
+                catch (Exception ex)
+                {
+                    Debug.LogWarning(ex.Message);
+                }
             }
 
         }

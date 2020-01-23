@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Controllers;
+using Controllers.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -39,7 +40,6 @@ namespace Minigame
         public Sprite sendButtonSprite;
         public Timer timerPrefab;
         private List<GameObject> sortedChoices = new List<GameObject>();
-        private GameObject ClosePanel => transform.Find("ClosePanel").gameObject;
         private Hideable FeedbackButton => transform.Find("FeedbackButton")
             .GetComponent<Hideable>();
 
@@ -64,6 +64,10 @@ namespace Minigame
             AssignChoices(_answerOptions);
             
             FeedbackButton.Hide();
+            
+            /* reset listeners */
+            sendButton.onClick.RemoveAllListeners();
+            sendButton.onClick.AddListener(Submit);
 
             /**
              * match difficulty to timer value
@@ -122,9 +126,6 @@ namespace Minigame
         {
             Debug.Log("Sorry, you were too slow");
             transform.Find("BlockPanel").GetComponentInChildren<CanvasGroup>().blocksRaycasts = true;
-            sendButton.GetComponent<Image>().color = new Color32(195, 98, 98, 255);
-            sendButton.GetComponentInChildren<Text>().text = "Close Minigame";
-            sendButtonImage.sprite = closeButtonSprite;
             Submit();
         }
 
@@ -205,10 +206,12 @@ namespace Minigame
                         text.color = Color.red;
                     }
                 }
-
-            ClosePanel.SetActive(true);
-            sendButton.GetComponent<Image>().color = new Color32(195, 98, 98, 255);
-            sendButton.GetComponentInChildren<Text>().text = "Close Minigame";
+            
+            /* reset listeners */
+            sendButton.onClick.RemoveAllListeners();
+            sendButton.onClick.AddListener(Close);
+            sendButton.GetComponent<Image>().color = new Color32(84, 84, 84, 255);
+            sendButton.GetComponentInChildren<Text>().text = "Continue";
             sendButtonImage.sprite = closeButtonSprite;
         }
         
@@ -235,7 +238,6 @@ namespace Minigame
             {
                 c.transform.GetChild(2).gameObject.SetActive(false);
             }
-            ClosePanel.SetActive(false);
         }
 
         /// <summary>

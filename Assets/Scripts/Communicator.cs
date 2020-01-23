@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Controllers.Authentication;
+using Handlers;
 using Microsoft.Rest;
 using UnityEngine;
 using WikidataGame;
@@ -241,8 +242,9 @@ public class Communicator : MonoBehaviour
         {
             var response = e.Response;
             Debug.LogError(
-                $"Error while trying to connect to API: {response.StatusCode} ({(int)response.StatusCode}) / {e.Response.Content}");
+                $"Error while trying to connect to API: {response.StatusCode} ({(int)response.StatusCode}) / {response.Content}");
             Debug.LogError(e.StackTrace);
+            ErrorHandler.Instance.Error(response.Content);
             return null;
         }
     }
@@ -257,10 +259,8 @@ public class Communicator : MonoBehaviour
 
         try
         {
-            HttpOperationResponse<GameRequest> response = null;
-            response = await _gameApi.RequestMatchWithHttpMessagesAsync(userID);
+            var response = await _gameApi.RequestMatchWithHttpMessagesAsync(userID);
             var request = response.Body;
-
             return request;
         }
         catch (HttpOperationException e)
@@ -269,6 +269,7 @@ public class Communicator : MonoBehaviour
             Debug.LogError(
                 $"Error while trying to connect to API: {response.StatusCode} ({(int)response.StatusCode}) / {e.Response.Content}");
             Debug.LogError(e.StackTrace);
+            ErrorHandler.Instance.Error(response.Content);
             return null;
         }
     }
@@ -286,7 +287,7 @@ public class Communicator : MonoBehaviour
             HttpOperationResponse response = null;
             response = await _gameApi.DeleteGameRequestWithHttpMessagesAsync(requestID);
 
-            return true;
+            return response.Response.IsSuccessStatusCode;
         }
         catch (HttpOperationException e)
         {
@@ -294,6 +295,7 @@ public class Communicator : MonoBehaviour
             Debug.LogError(
                 $"Error while trying to connect to API: {response.StatusCode} ({(int)response.StatusCode}) / {e.Response.Content}");
             Debug.LogError(e.StackTrace);
+            ErrorHandler.Instance.Error(response.Content);
             return false;
         }
     }
@@ -318,6 +320,7 @@ public class Communicator : MonoBehaviour
             Debug.LogError(
                 $"Error while trying to connect to API: {response.StatusCode} ({(int)response.StatusCode}) / {e.Response.Content}");
             Debug.LogError(e.StackTrace);
+            ErrorHandler.Instance.Error(response.Content);
             return null;
         }
     }
@@ -342,6 +345,7 @@ public class Communicator : MonoBehaviour
             Debug.LogError(
                 $"Error while trying to connect to API: {response.StatusCode} ({(int)response.StatusCode}) / {e.Response.Content}");
             Debug.LogError(e.StackTrace);
+            ErrorHandler.Instance.Error(response.Content);
             return null;
         }
     }
@@ -365,6 +369,7 @@ public class Communicator : MonoBehaviour
             Debug.LogError(
                 $"Error while trying to connect to API: {response.StatusCode} ({(int)response.StatusCode}) / {e.Response.Content}");
             Debug.LogError(e.StackTrace);
+            ErrorHandler.Instance.Error(response.Content);
             return null;
         }
     }
@@ -388,6 +393,7 @@ public class Communicator : MonoBehaviour
             Debug.LogError(
                 $"Error while trying to connect to API: {response.StatusCode} ({(int)response.StatusCode}) / {e.Response.Content}");
             Debug.LogError(e.StackTrace);
+            ErrorHandler.Instance.Error(response.Content);
             return null;
         }
     }
@@ -416,6 +422,7 @@ public class Communicator : MonoBehaviour
             Debug.LogError(
                 $"Error while trying to connect to API: {response.StatusCode} ({(int)response.StatusCode}) / {e.Response.Content}");
             Debug.LogError(e.StackTrace);
+            ErrorHandler.Instance.Error(response.Content);
             return false;
         }
     }
@@ -439,6 +446,7 @@ public class Communicator : MonoBehaviour
             Debug.LogError(
                 $"Error while trying to connect to API: {response.StatusCode} ({(int)response.StatusCode}) / {e.Response.Content}");
             Debug.LogError(e.StackTrace);
+            ErrorHandler.Instance.Error(response.Content);
             return null;
         }
     }
@@ -462,6 +470,7 @@ public class Communicator : MonoBehaviour
             Debug.LogError(
                 $"Error while trying to connect to API: {response.StatusCode} ({(int)response.StatusCode}) / {e.Response.Content}");
             Debug.LogError(e.StackTrace);
+            ErrorHandler.Instance.Error(response.Content);
             return null;
         }
     }
@@ -487,6 +496,7 @@ public class Communicator : MonoBehaviour
             Debug.LogError(
                 $"Error while trying to create or join a game: {response.StatusCode} ({(int) response.StatusCode}) / {e.Response.Content}");
             Debug.LogError(e.StackTrace);
+            ErrorHandler.Instance.Error(response.Content);
             return false;
         }
     }

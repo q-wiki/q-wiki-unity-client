@@ -32,12 +32,11 @@ namespace Minigame
          * public fields
          */
         
-        public GameObject sendButton;
+        public Button sendButton;
         public Image sendButtonImage;
         public Sprite sendButtonSprite;
         public Timer timerPrefab;
 
-        private GameObject ClosePanel => transform.Find("ClosePanel").gameObject;
         private Hideable FeedbackButton => transform.Find("FeedbackButton")
             .GetComponent<Hideable>();
 
@@ -63,6 +62,10 @@ namespace Minigame
             AssignChoices(_answerOptions);
             
             FeedbackButton.Hide();
+            
+            /* reset listeners */
+            sendButton.onClick.RemoveAllListeners();
+            sendButton.onClick.AddListener(Submit);
 
             /**
              * match difficulty to timer value
@@ -97,7 +100,7 @@ namespace Minigame
             
             transform.Find("BlockPanel").GetComponentInChildren<CanvasGroup>().blocksRaycasts = false;
             gameObject.SetActive(false);
-            ClosePanel.SetActive(false);
+
         }
 
         /// <summary>
@@ -112,8 +115,11 @@ namespace Minigame
             Debug.Log("Sorry, you were too slow");
             transform.Find("BlockPanel").GetComponentInChildren<CanvasGroup>().blocksRaycasts = true;
 
-            sendButton.GetComponent<Image>().color = new Color32(195, 98, 98, 255);
-            sendButton.GetComponentInChildren<Text>().text = "Close Minigame";
+            /* reset listeners */
+            sendButton.onClick.RemoveAllListeners();
+            sendButton.onClick.AddListener(Close);
+            sendButton.GetComponent<Image>().color = new Color32(84, 84, 84, 255);
+            sendButton.GetComponentInChildren<Text>().text = "Continue";
             sendButtonImage.sprite = closeButtonSprite;
 
             if (_checkedChoice == null)
@@ -196,9 +202,11 @@ namespace Minigame
                 }
             }
 
-            ClosePanel.SetActive(true);
-            sendButton.GetComponent<Image>().color = new Color32(195, 98, 98, 255);
-            sendButton.GetComponentInChildren<Text>().text = "Close Minigame";
+            /* reset listeners */
+            sendButton.onClick.RemoveAllListeners();
+            sendButton.onClick.AddListener(Close);
+            sendButton.GetComponent<Image>().color = new Color32(84, 84, 84, 255);
+            sendButton.GetComponentInChildren<Text>().text = "Continue";
             sendButtonImage.sprite = closeButtonSprite;
         }
 
@@ -207,10 +215,7 @@ namespace Minigame
         /// </summary>
         public void Update()
         {
-            if (_checkedChoice == null)
-                sendButton.GetComponent<Button>().interactable = false;
-            else
-                sendButton.GetComponent<Button>().interactable = true;
+            sendButton.interactable = _checkedChoice != null;
         }
 
         /// <summary>

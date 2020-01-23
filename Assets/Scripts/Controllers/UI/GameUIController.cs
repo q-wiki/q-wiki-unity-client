@@ -168,7 +168,7 @@ namespace Controllers.UI
         /// </summary>
         public void Unblock()
         {
-            blockActionPanel.Hide();
+            if(blockActionPanel != null) blockActionPanel.Hide();
         }
 
         /// <summary>

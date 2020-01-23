@@ -93,7 +93,7 @@ public class ActionPointHandler : Singleton<ActionPointHandler>
         if (fetchedPoints == -1)
         {
             _remainingActionPoints = TOTAL_ACTION_POINTS;
-            turnIndicator.text = "your turn:";
+            turnIndicator.text = "Actions:";
             foreach (var actionPoint in actionPoints)
                 actionPoint.SetActive(true);
         }
@@ -102,14 +102,14 @@ public class ActionPointHandler : Singleton<ActionPointHandler>
             _remainingActionPoints = fetchedPoints;
             if (_remainingActionPoints > 0)
             {
-                turnIndicator.text = "your turn:";
+                turnIndicator.text = "Actions:";
                 for (var i = 0; i < actionPoints.Count; i++) actionPoints[i].SetActive(i < _remainingActionPoints);
             }
             else
             {
                 _resetFailedCount++;
 
-                turnIndicator.text = "your turn:";
+                turnIndicator.text = "Actions:";
                 foreach (var actionPoint in actionPoints)
                     actionPoint.SetActive(false);
 

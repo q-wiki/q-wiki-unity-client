@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Controllers.Authentication;
 using Controllers.Map;
 using Controllers.UI;
+using Handlers;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using WikidataGame.Models;
@@ -46,7 +47,7 @@ namespace Controllers {
 
             // player is waiting for their turn
             if (_isWaitingState && !_isHandling
-                && _currentScene.name == "GameScene")
+                                && _currentScene.name == "GameScene")
                 HandleWaitingState();
         }
 
@@ -275,81 +276,84 @@ namespace Controllers {
         ///     Depending on the state, different functions are called.
         /// </summary>
         /// <param name="isNewTurn">Indicates if a new turn started.</param>
-        public async void RefreshGameState(bool isNewTurn) {
-            
-            Debug.Log($"isNewTurn:{isNewTurn}");
-
-            /*
-             * this is called whenever something happens (MiniGame finished, player made a turn, etc.)
-             */
-            
-            _game = await Communicator.GetCurrentGameState();
-
-            /*
-             * redraw the grid
-             */
-
-            foreach (Transform child in _gridController.transform) Destroy(child.gameObject);
-            _gridController.GenerateGrid(_game.Tiles);
-
-            /**
-             * adjust UI to new score
-             */
-            
-            ScoreHandler.SetGameId(_game.Id);
-            ScoreHandler.Show();
-            ScoreHandler.UpdatePoints(_game.Tiles, PlayerId(), _game.Opponent.Id);
-            
-                        
-            /*
-             * only for AI bot: if actions points are zero, but client has the next move, manual update
-             */
-
-            if (_game.Opponent.Id == "ffffffff-ffff-ffff-ffff-ffffffffffff")
+        public async void RefreshGameState(bool isNewTurn)
+        {
+            while (true)
             {
-                if (isNewTurn == false &&
-                    PlayerPrefs.GetInt($"{_game.Id}/{REMAINING_ACTION_POINTS}", -1) == 1 &&
-                    _game.NextMovePlayerId == _game.Me.Id)
+                Debug.Log($"isNewTurn:{isNewTurn}");
+
+                /*
+                * this is called whenever something happens (MiniGame finished, player made a turn, etc.)
+                */
+
+                _game = await Communicator.GetCurrentGameState();
+
+                /*
+                * redraw the grid
+                */
+
+                foreach (Transform child in _gridController.transform) Destroy(child.gameObject);
+                _gridController.GenerateGrid(_game.Tiles);
+
+                /**
+                 * adjust UI to new score
+                */
+
+                ScoreHandler.SetGameId(_game.Id);
+                ScoreHandler.Show();
+                ScoreHandler.UpdatePoints(_game.Tiles, PlayerId(), _game.Opponent.Id);
+
+
+                /*
+                * only for AI bot: if actions points are zero, but client has the next move, manual update
+                */
+
+                if (_game.Opponent.Id == "ffffffff-ffff-ffff-ffff-ffffffffffff")
                 {
-                    RefreshGameState(true);
-                    return;
+                    if (isNewTurn == false 
+                        && PlayerPrefs.GetInt($"{_game.Id}/{REMAINING_ACTION_POINTS}", -1) == 1 &&
+                        _game.NextMovePlayerId == _game.Me.Id)
+                    {
+                        isNewTurn = true;
+                        continue;
+                    }
                 }
+
+                /**
+                * if current update happens in a new turn, update turn count
+                */
+
+                if (isNewTurn) ScoreHandler.UpdateTurns();
+
+
+                /**
+                * simple function to update action points in game controller
+                */
+
+                ActionPointHandler.SetGameId(_game.Id);
+                ActionPointHandler.RebuildActionPointsFromPrefs();
+                ActionPointHandler.Instance.UpdateState(PlayerId(), _game.NextMovePlayerId, isNewTurn);
+
+                /**
+                * check for game over
+                */
+
+                HandleGameFinishedState();
+
+                /*
+                * highlight possible moves for current player
+                * */
+
+                _gridController.ShowPossibleMoves(PlayerId());
+
+
+                /*
+                * if current player is not me, go to loop / block interaction
+                */
+
+                if (_game.NextMovePlayerId != _game.Me.Id) _isWaitingState = true;
+                break;
             }
-
-            /**
-             * if current update happens in a new turn, update turn count
-             */
-
-            if (isNewTurn)
-                ScoreHandler.UpdateTurns();
-
-
-            /**
-             * simple function to update action points in game controller
-             */
-
-            ActionPointHandler.SetGameId(_game.Id);
-            ActionPointHandler.RebuildActionPointsFromPrefs();
-            ActionPointHandler.Instance.UpdateState(PlayerId(), _game.NextMovePlayerId, isNewTurn);
-
-            /**
-            * check for game over
-            */
-
-            HandleGameFinishedState();
-
-            /*
-             * highlight possible moves for current player
-             * */
-
-            _gridController.ShowPossibleMoves(PlayerId());
-
-
-            /**
-             * if current player is not me, go to loop / block interaction
-             */
-
-            if (_game.NextMovePlayerId != _game.Me.Id) _isWaitingState = true;
         }
 
         /// <summary>
@@ -426,19 +430,15 @@ namespace Controllers {
         /// </summary>
         private void HandleAppClosing() {
             if (Input.GetKeyDown(KeyCode.Escape)) {
-                if (!_uiController.AreSettingsVisible()) _uiController.ToggleSettings();
-                else {
-                    var interactionController = InteractionController.Instance;
+                var interactionController = InteractionController.Instance;
                     if (interactionController != null
                         && interactionController.HasActiveMinigamePanel()) {
-                        Debug.LogWarning("App is not closed because there is still an active MiniGame.");
+                        ErrorHandler.Instance.Error("App cannot be shutdown because there is still an active MiniGame.");
                         return;
                     }
 
                     Debug.Log("Closing App...");
                     Application.Quit();
-
-                }
             }
         }
 

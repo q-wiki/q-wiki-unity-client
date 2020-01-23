@@ -15,6 +15,7 @@ namespace Controllers.UI {
         public Hideable loginPanel;
         public Hideable qrPanel;
         public Hideable highscorePanel;
+        public Hideable dialogPanel;
 
         [SerializeField] private Hideable accountPanel;
         [SerializeField] private Hideable gameRequestPanel;
@@ -167,6 +168,26 @@ namespace Controllers.UI {
 
         public void DisplayLoginStart() {
             DisplayView(loginPanel, settingsViewButton);
+        }
+
+        /// <summary>
+        ///     This function is used to close the dialog box.
+        /// </summary>
+        public void CloseDialog() {
+            dialogPanel.Hide();
+        }
+
+        /// <summary>
+        ///     This function is used to open a confirmation dialog for a given method.
+        /// </summary>
+        public void OpenConfirmDialog(string headline, string message, UnityEngine.Events.UnityAction functionOnConfirm) {
+            Button button = dialogPanel.transform.Find("MenuGrid/ConfirmButton").GetComponent<Button>();
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(functionOnConfirm);
+            button.onClick.AddListener(delegate { CloseDialog(); });
+            dialogPanel.transform.Find("Headline/Text").GetComponent<Text>().text = headline;
+            dialogPanel.transform.Find("Text").GetComponent<Text>().text = message;
+            dialogPanel.Show();
         }
 
         /// <summary>

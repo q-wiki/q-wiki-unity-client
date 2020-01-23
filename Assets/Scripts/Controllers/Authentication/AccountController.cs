@@ -235,7 +235,13 @@ public class AccountController : MonoBehaviour
         GameManager.Instance.ChangeToGameScene();
     }
 
-    private async void ForfeitGame(string id, GameObject gameInstance) {
+    private void ForfeitGame(string id, GameObject gameInstance) {
+        string headline = "Forfeit game";
+        string message = "Are you sure you want to forfeit this game? This counts as a loss.";
+        _uiController.OpenConfirmDialog(headline, message, delegate { ForfeitGameConfirm(id, gameInstance); });
+    }
+
+    private async void ForfeitGameConfirm(string id, GameObject gameInstance) {
         bool success = await Communicator.DeleteGame(id);
         if (success) {
             Destroy(gameInstance);
@@ -278,16 +284,23 @@ public class AccountController : MonoBehaviour
         Player newFriend = await Communicator.AddFriend(userID);
         FriendsList.Add(newFriend);
         //Display the friend list with the newly added friend
-        DisplayUsersInScrollView(FriendsList, friendPrefab, "DeleteFriendButton", DeleteFriend);
+        DisplayUsersInScrollView(FriendsList, friendPrefab, FRIEND_CORNERBUTTON_NAME, DeleteFriend);
         _uiController.DisplayFriendsListUI();
     }
 
-    public async void DeleteFriend(string userID) {
+    public void DeleteFriend(string userID) {
+        string headline = "Remove user from friends";
+        string message = "Are you sure you want to remove this user from your friends list?";
+        _uiController.OpenConfirmDialog(headline, message, delegate { DeleteFriendConfirm(userID); });
+    }
+
+    private async void DeleteFriendConfirm(string userID) {
         Player formerFriend = await Communicator.DeleteFriend(userID);
         FriendsList.RemoveAll(x => x.Id == userID);
         //Display the friend list without the deleted friend
-        DisplayUsersInScrollView(FriendsList, friendPrefab, "DeleteFriendButton", DeleteFriend);
+        DisplayUsersInScrollView(FriendsList, friendPrefab, FRIEND_CORNERBUTTON_NAME, DeleteFriend);
     }
+
 
     /// <summary>
     /// Retrieve all open games of the player that is currently logged in

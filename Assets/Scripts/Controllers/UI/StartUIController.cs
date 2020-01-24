@@ -29,8 +29,12 @@ namespace Controllers.UI {
         [SerializeField] private Button highscoreViewButton;
         [SerializeField] private Button settingsViewButton;
 
+        [SerializeField] private Sprite cancelIcon;
+        [SerializeField] private Sprite findGameIcon;
+
         [SerializeField] private Color inactiveColor;
         [SerializeField] private Color activeColor;
+        [SerializeField] private Color abortGameColor;
 
         private bool _settingsToggle;
 
@@ -64,13 +68,14 @@ namespace Controllers.UI {
             }
             
             // disable all buttons so we don't initialize multiple games
-            var startGameText = newGameButton.GetComponentInChildren<Text>().text;
             newGameButton.GetComponentInChildren<Text>().text = "";
+            newGameButton.transform.Find("Image").GetComponent<Image>().sprite = cancelIcon;
             newGameButton.GetComponentInChildren<Text>().fontSize = 56;
             
             // show button to abort the game initialization
             newGameButton.onClick.RemoveAllListeners();
             newGameButton.onClick.AddListener(CancelGameInitialization);
+            newGameButton.GetComponent<Image>().color = abortGameColor;
 
             LoadingIndicator.Instance.ShowWithoutBlockingUI();
 
@@ -83,12 +88,11 @@ namespace Controllers.UI {
             else {
                 // reset the interface so we can try initializing a game again
 
-                newGameButton.GetComponentInChildren<Text>().text = startGameText;
+                newGameButton.GetComponentInChildren<Text>().text = "Find";
                 newGameButton.onClick.RemoveAllListeners();
                 newGameButton.onClick.AddListener(delegate { InitializeGame(true); });
-
-                // make the abort button invisible again
-                cancelGameButton.Hide();
+                newGameButton.GetComponent<Image>().color = inactiveColor;
+                newGameButton.transform.Find("Image").GetComponent<Image>().sprite = findGameIcon;
 
                 LoadingIndicator.Instance.Hide();
             }

@@ -26,13 +26,11 @@ public class AccountController : MonoBehaviour
     [SerializeField] private GameObject userScrollViewContent;
     [SerializeField] private GameObject requestScrollViewContent;
     [SerializeField] private GameObject gamesScrollViewContent;
-    [SerializeField] private Sprite incomingSprite;
-    [SerializeField] private Sprite outgoingSprite;
     [SerializeField] private Text usernameText;
     [SerializeField] private Image avatarImage;
+    [SerializeField] private Color yourTurnColor;
+    [SerializeField] private Color oppentTurnColor;
 
-    private Color incomingColor = Color.white;
-    private Color outgoingColor = Color.red;
     private const string GAME_MATCH_MESSAGE = "You matched with ";
     private const string USER_CORNERBUTTON_NAME = "AddFriendButton";
     private const string FRIEND_CORNERBUTTON_NAME = "DeleteFriendButton";
@@ -165,7 +163,7 @@ public class AccountController : MonoBehaviour
         foreach (Player player in players) {
             GameObject user = Instantiate(prefab, userScrollViewContent.transform);
             string username = HelperMethods.GetUsernameWithoutPrefix(player.Name);
-            user.GetComponent<Button>().onClick.AddListener(delegate { ChallengeUser(player.Id); });
+            user.transform.Find("ChallengeFriendButton").GetComponent<Button>().onClick.AddListener(delegate { ChallengeUser(player.Id); });
             user.transform.Find(buttonName).GetComponent<Button>().onClick.AddListener(delegate { buttonFunction(player.Id); });
             user.transform.Find("Text").GetComponent<Text>().text = username; 
             HelperMethods.SetImage(user.transform.Find("Image").GetComponent<Image>(), player.Name);
@@ -189,9 +187,6 @@ public class AccountController : MonoBehaviour
             request.transform.Find("RefuseRequestButton").GetComponent<Button>().onClick.AddListener(delegate { DeleteRequest(incomingRequests.Id, request); });
             request.transform.Find("AcceptRequestButton").GetComponent<Button>().onClick.AddListener(delegate { AcceptRequest(incomingRequests.Id, request); });
             request.transform.Find("Text").GetComponent<Text>().text = username;
-            Transform inOrOut = request.transform.Find("Image/InOrOut");
-            inOrOut.GetComponent<Image>().sprite = incomingSprite;
-            inOrOut.GetComponent<Image>().color = incomingColor;
             HelperMethods.SetImage(request.transform.Find("Image").GetComponent<Image>(), incomingRequests.Sender.Name);
         }
         foreach (GameRequest outgoingRequests in response.Outgoing)
@@ -201,9 +196,6 @@ public class AccountController : MonoBehaviour
             request.transform.Find("RefuseRequestButton").GetComponent<Button>().onClick.AddListener(delegate { DeleteRequest(outgoingRequests.Id, request); });
             request.transform.Find("AcceptRequestButton").gameObject.SetActive(false);
             request.transform.Find("Text").GetComponent<Text>().text = username;
-            Transform inOrOut = request.transform.Find("Image/InOrOut");
-            inOrOut.GetComponent<Image>().sprite = outgoingSprite;
-            inOrOut.GetComponent<Image>().color = outgoingColor;
             HelperMethods.SetImage(request.transform.Find("Image").GetComponent<Image>(), outgoingRequests.Recipient.Name);
         }
     }
@@ -226,7 +218,7 @@ public class AccountController : MonoBehaviour
             currentGameObject.transform.Find("Text").GetComponent<Text>().text = GAME_MATCH_MESSAGE + username;
             HelperMethods.SetImage(currentGameObject.transform.Find("Image").GetComponent<Image>(), game.Opponent.Name);
             bool yourTurn = game.NextMovePlayerId != game.Opponent.Id;
-            currentGameObject.transform.Find("Image/YourTurn").gameObject.SetActive(yourTurn);
+            currentGameObject.GetComponent<Image>().color = yourTurn ? yourTurnColor : oppentTurnColor;
         }
     }
 

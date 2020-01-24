@@ -10,12 +10,14 @@ using UnityEngine.UI;
 public static class HelperMethods {
 
     private static List<Sprite> defaultSprites = new List<Sprite>();
+    private static Sprite botAvatarSprite;
 
     /// <summary>
     /// Loads default textures to use as avatars.
     /// </summary>
     public static void LoadDefaultTextures() {
         defaultSprites.AddRange(Resources.LoadAll<Sprite>("Animals/"));
+        botAvatarSprite = Resources.Load<Sprite>("robot");
     }
 
     /// <summary>
@@ -34,6 +36,9 @@ public static class HelperMethods {
     /// <param name="username">Username</param>
     /// <returns>Sprite that holds the avatar</returns>
     private static Sprite GetAvatarSpriteFromUsername(string username) {
+        if(username == "AI Bot") {
+            return botAvatarSprite;
+        }
         int index = (username.Length + Math.Abs(username.GetHashCode())) % defaultSprites.Count;
         return defaultSprites[index];
     }

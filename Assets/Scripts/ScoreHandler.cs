@@ -18,12 +18,12 @@ public class ScoreHandler : Singleton<ScoreHandler>
      */ 
     
     public long playerScore;
+    public long opponentScore;
     
     /**
      * private fields
      */
 
-    private long _opponentScore;
     private Text _opponentScoreText;
     private Text _playerScoreText;
     private int _turnsPlayed;
@@ -81,7 +81,7 @@ public class ScoreHandler : Singleton<ScoreHandler>
          * reset player scores before counting again
          */
         playerScore = 0;
-        _opponentScore = 0;
+        opponentScore = 0;
 
         // flatten input to one dimension
         var tiles = t.SelectMany(x => x);
@@ -104,7 +104,7 @@ public class ScoreHandler : Singleton<ScoreHandler>
             if (tile.OwnerId == myId)
                 playerScore += difficulty;
             else
-                _opponentScore += difficulty;
+                opponentScore += difficulty;
         }
 
         /**
@@ -112,7 +112,7 @@ public class ScoreHandler : Singleton<ScoreHandler>
          */
 
         _playerScoreText.text = $"{playerScore}";
-        _opponentScoreText.text = $"{_opponentScore}";
+        _opponentScoreText.text = $"{opponentScore}";
     }
 
     /// <summary>

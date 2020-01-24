@@ -10,6 +10,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using ZXing;
 using ZXing.QrCode;
+using UnityEngine.Android;
 
 public class QRController : MonoBehaviour {
 
@@ -108,6 +109,11 @@ public class QRController : MonoBehaviour {
     }
 
     public void openQRReader() {
+#if PLATFORM_ANDROID
+        if (!Permission.HasUserAuthorizedPermission(Permission.Camera)) {
+            Permission.RequestUserPermission(Permission.Camera);
+        }
+#endif
         if (camTexture != null) {
             camTexture.Play();
             displayCameraOverlay = true;

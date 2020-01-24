@@ -12,10 +12,13 @@ using Controllers.UI.User;
 using UnityEngine;
 using UnityEngine.UI;
 using WikidataGame.Models;
+using System.Linq;
 
 public class AccountController : MonoBehaviour
 {
     public List<Player> FriendsList { get; private set; }
+
+    private static List<FinishedGame> gameHistory;
 
     private StartUIController _uiController;
 
@@ -35,6 +38,8 @@ public class AccountController : MonoBehaviour
     private const string USER_CORNERBUTTON_NAME = "AddFriendButton";
     private const string FRIEND_CORNERBUTTON_NAME = "DeleteFriendButton";
 
+    private const string PLAYERPREFS_GAMEHISTORY = "GameHistory";
+
     // Start is called before the first frame update
     async void Start(){
         
@@ -43,10 +48,7 @@ public class AccountController : MonoBehaviour
             throw new Exception("Start UI Controller is not allowed to be null");
         
         if (!string.IsNullOrEmpty(PlayerPrefs.GetString(Communicator.PLAYERPREFS_AUTH_TOKEN))) {
-            SetHeadline();
-            await RetrieveGames();
-            await RetrieveGameRequests();
-            await RetrieveFriends();
+            InitialSetup();
         }
 
         //_uiController.findUserInput.onEndEdit.RemoveAllListeners();
@@ -54,6 +56,14 @@ public class AccountController : MonoBehaviour
 
         //_uiController.findUserInput.onEndEdit.AddListener(delegate { inputSubmitCallBack(); });
         _uiController.findUserInput.onValueChanged.AddListener(delegate { inputChangedCallBack(); });
+    }
+
+    public async void InitialSetup() {
+            SetHeadline();
+            await RetrieveGames();
+            await RetrieveGameRequests();
+            await RetrieveFriends();
+            await RetrieveGamesForGameHistory();
     }
 
     // Update is called once per frame
@@ -225,20 +235,30 @@ public class AccountController : MonoBehaviour
     /// <summary>
     /// Clears the ScrollView and adds an overview of the last 5 games you played.
     /// </summary>
-    private void DisplayGameHistoryInScrollView(IList<WikidataGame.Models.GameInfo> response) {
+    public void DisplayGameHistoryInScrollView() {
         // Remove all Elements currently in the scrollview
         foreach (Transform child in gamesScrollViewContent.transform) {
             Destroy(child.gameObject);
         }
-        //foreach (var game in response) {
-        //    if (game.IsAwaitingOpponentToJoin == true) continue;
-        //    GameObject currentGameObject = Instantiate(gameInstancePrefab, gamesScrollViewContent.transform);
-        //    string username = HelperMethods.GetUsernameWithoutPrefix(game.Opponent.Name);
-        //    currentGameObject.transform.Find("Text").GetComponent<Text>().text = GAME_MATCH_MESSAGE + username;
-        //    HelperMethods.SetImage(currentGameObject.transform.Find("Image").GetComponent<Image>(), game.Opponent.Name);
-        //    bool yourTurn = game.NextMovePlayerId != game.Opponent.Id;
-        //    currentGameObject.GetComponent<Image>().color = yourTurn ? yourTurnColor : oppentTurnColor;
-        //}
+        foreach (FinishedGame game in gameHistory) {
+            GameObject currentGameObject = Instantiate(gameInstancePrefab, gamesScrollViewContent.transform);
+            string username = HelperMethods.GetUsernameWithoutPrefix(game.Opponent.Name);
+            currentGameObject.transform.Find("Text").GetComponent<Text>().text = $"{game.PlayerScore} : {game.OpponentScore}";
+            HelperMethods.SetImage(currentGameObject.transform.Find("Image").GetComponent<Image>(), game.Opponent.Name);
+            if (game.GameResult < 0) {
+                currentGameObject.GetComponent<Image>().color = yourTurnColor;
+            }
+            else if (game.GameResult > 0) {
+                currentGameObject.GetComponent<Image>().color = oppentTurnColor;
+            }
+            else {
+                currentGameObject.GetComponent<Image>().color = Color.blue;
+            }
+        }
+    }
+
+    private void AddGameToGameHistory(string gameID, int scorePlayer, int scoreOpponent) {
+
     }
 
     private void ContinueGame(string gameId) {
@@ -394,8 +414,69 @@ public class AccountController : MonoBehaviour
         });
     }
 
-    private string GetPrefixFreeUsername(string username) {
-        return username.Contains("anon-") ? username.Substring(5) : username;
+    private async Task<bool> RetrieveGamesForGameHistory() {
+        string history = PlayerPrefs.GetString(PLAYERPREFS_GAMEHISTORY);
+
+        if (string.IsNullOrEmpty(history)) {
+            gameHistory = new List<FinishedGame>(); 
+            return false; 
+        }
+
+        List<string> finishedGames = history.Split(';').ToList();
+
+        foreach(string finishedGameAsString in finishedGames) {
+            List<string> gameAsStrings = finishedGameAsString.Split(':').ToList();
+            Game game = await Communicator.RetrieveGame(gameAsStrings[0]);
+            int playerScore = 0;
+            int opponentScore = 0;
+            bool isParsable1 = int.TryParse(gameAsStrings[1], out playerScore);
+            bool isParsable2 = int.TryParse(gameAsStrings[2], out opponentScore);
+
+            if(isParsable1 && isParsable2) {
+                FinishedGame finishedGame = new FinishedGame(game, playerScore, opponentScore );
+            }
+            else {
+                Debug.LogError("Couldn't parse scores for GameHistory.");
+                return false;
+            }
+        }
+        return true;
+
     }
 
+
+    /// <summary>
+    /// Add the recently finished game to the players game history
+    /// </summary>
+    public static void AddGameToHistory(Game game, int playerScore, int opponentScore) {
+        gameHistory.Add(new FinishedGame(game, playerScore, opponentScore));
+        if(gameHistory.Count > 5) {
+            gameHistory.RemoveAt(0);
+        }
+
+        string updatedPlayerprefs = "";
+        foreach(FinishedGame finishedGame in gameHistory) {
+            updatedPlayerprefs += finishedGame.ToString();
+        }
+        PlayerPrefs.SetString(PLAYERPREFS_GAMEHISTORY, updatedPlayerprefs);
+    }
+
+}
+
+internal class FinishedGame {
+    internal Game Game { get; set; }
+    internal string GameID { get { return Game.Id; } }
+    internal Player Opponent { get { return Game.Opponent; } }
+    internal int OpponentScore { get; }
+    internal int PlayerScore { get; }
+    internal int GameResult { get { return PlayerScore - OpponentScore; } }
+    public FinishedGame(Game game, int playerScore, int opponentScore) {
+        Game = game;
+        PlayerScore = playerScore;
+        OpponentScore = opponentScore;
+    }
+
+    public override string ToString() {
+        return $"{GameID}:{PlayerScore}:{OpponentScore};";
+    }
 }

@@ -398,6 +398,26 @@ public class Communicator : MonoBehaviour
         }
     }
 
+    internal static async Task<Game> RetrieveGame(string gameID) {
+        Debug.Log($"Retrieving Game {gameID}");
+
+        try {
+            HttpOperationResponse<Game> response = null;
+            response = await _gameApi.RetrieveGameStateWithHttpMessagesAsync(gameID);
+            var game = response.Body;
+
+            return game;
+        }
+        catch (HttpOperationException e) {
+            var response = e.Response;
+            Debug.LogError(
+                $"Error while trying to connect to API: {response.StatusCode} ({(int)response.StatusCode}) / {e.Response.Content}");
+            Debug.LogError(e.StackTrace);
+            ErrorHandler.Instance.Error(response.Content);
+            return null;
+        }
+    }
+
     /// <summary>
     ///     Deletes the specified game
     /// </summary>

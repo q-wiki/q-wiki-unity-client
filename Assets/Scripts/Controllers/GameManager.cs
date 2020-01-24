@@ -377,6 +377,8 @@ namespace Controllers {
             else throw new Exception("This game state is illegal.");
 
             AccountController.PostScore(ScoreHandler.Instance.playerScore);
+            AccountController.AddGameToHistory(_game, (int)ScoreHandler.Instance.playerScore, (int)ScoreHandler.Instance.opponentScore);
+
             _uiController.HandleGameFinished(state);
         }
 

@@ -222,6 +222,25 @@ public class AccountController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Clears the ScrollView and adds an overview of the last 5 games you played.
+    /// </summary>
+    private void DisplayGameHistoryInScrollView(IList<WikidataGame.Models.GameInfo> response) {
+        // Remove all Elements currently in the scrollview
+        foreach (Transform child in gamesScrollViewContent.transform) {
+            Destroy(child.gameObject);
+        }
+        //foreach (var game in response) {
+        //    if (game.IsAwaitingOpponentToJoin == true) continue;
+        //    GameObject currentGameObject = Instantiate(gameInstancePrefab, gamesScrollViewContent.transform);
+        //    string username = HelperMethods.GetUsernameWithoutPrefix(game.Opponent.Name);
+        //    currentGameObject.transform.Find("Text").GetComponent<Text>().text = GAME_MATCH_MESSAGE + username;
+        //    HelperMethods.SetImage(currentGameObject.transform.Find("Image").GetComponent<Image>(), game.Opponent.Name);
+        //    bool yourTurn = game.NextMovePlayerId != game.Opponent.Id;
+        //    currentGameObject.GetComponent<Image>().color = yourTurn ? yourTurnColor : oppentTurnColor;
+        //}
+    }
+
     private void ContinueGame(string gameId) {
         Communicator.SetCurrentGameId(gameId);
         GameManager.Instance.ChangeToGameScene();

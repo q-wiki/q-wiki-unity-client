@@ -307,11 +307,16 @@ MonoBehaviour:
   qrViewButton: {fileID: 264481748}
   highscoreViewButton: {fileID: 1273928361}
   settingsViewButton: {fileID: 1994725440}
+  runningGamesTab: {fileID: 873093276}
+  gameHistoryTab: {fileID: 1990892716}
+  refreshRunningGamesButton: {fileID: 1657807958}
   cancelIcon: {fileID: 21300000, guid: 28f10292b85333a4093d63d6c55de696, type: 3}
   findGameIcon: {fileID: 21300000, guid: e831432cadea5453584c22aa6a0158db, type: 3}
   inactiveColor: {r: 0.3137255, g: 0.61960787, b: 0.61960787, a: 1}
   activeColor: {r: 0.32941177, g: 0.32941177, b: 0.32941177, a: 1}
   abortGameColor: {r: 0.6603774, g: 0.09656461, b: 0.17710952, a: 1}
+  activeTabColor: {r: 0.882353, g: 0.8941177, b: 0.8588236, a: 1}
+  inactiveTabColor: {r: 0.91372555, g: 0.9294118, b: 0.8705883, a: 1}
   usernameInput: {fileID: 82277953}
   findUserInput: {fileID: 1695135402}
   googleAuthButtonText: {fileID: 577382481}
@@ -5426,7 +5431,29 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 873093274}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1038043114}
+        m_MethodName: RetrieveRunningGamesVoid
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 81477407}
+        m_MethodName: DisplayGameView
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!1 &890768788
@@ -6450,6 +6477,8 @@ MonoBehaviour:
   requestPrefab: {fileID: 4843730018595406333, guid: 9aa170d790a5c0043a30bbed3bea145c,
     type: 3}
   gameInstancePrefab: {fileID: 7859839665842565001, guid: 001c366ff15802c42818a81a3e3d8647,
+    type: 3}
+  gameHistoryPrefab: {fileID: 7859839665842565001, guid: abb46d96d818b9f4f906afc709ddd36c,
     type: 3}
   userScrollViewContent: {fileID: 913517301}
   requestScrollViewContent: {fileID: 1206180661}

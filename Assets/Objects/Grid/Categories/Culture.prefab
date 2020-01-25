@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 7606608762973335904}
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.0195599, y: 2.0195599, z: 2.0195599}
+  m_LocalScale: {x: 2.1609292, y: 2.1609292, z: 2.1609292}
   m_Children:
   - {fileID: 7609660127355748970}
   - {fileID: 7603365596314615862}
@@ -44,7 +44,7 @@ GameObject:
   - component: {fileID: 7629664056674876256}
   - component: {fileID: 7622003318301633256}
   m_Layer: 0
-  m_Name: bookThick2048 (3)
+  m_Name: BlueBook
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -58,7 +58,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7606817993534321742}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.208, y: 0.086, z: 0}
+  m_LocalPosition: {x: 0.173, y: 0.062, z: 0}
   m_LocalScale: {x: 17.02027, y: 4.0001297, z: 14.42649}
   m_Children: []
   m_Father: {fileID: 7603403740935324802}
@@ -89,8 +89,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 59fcaaed686c65848ae8fd093b7224f2, type: 2}
-  - {fileID: 2100000, guid: 042d0100332144b42b8c830ebd703875, type: 2}
+  - {fileID: 2100000, guid: 80fd7fb6c35594fa3885295228ab9ece, type: 2}
+  - {fileID: 2100000, guid: bd0c4c423d7deee4ebdd8409f2a267bc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -122,7 +122,7 @@ GameObject:
   - component: {fileID: 7632747694814557300}
   - component: {fileID: 7622149985196733102}
   m_Layer: 0
-  m_Name: bookThick2048 (5)
+  m_Name: RedBook
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -136,7 +136,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7607177315808311034}
   m_LocalRotation: {x: 0.9968328, y: -0, z: -0, w: -0.07952717}
-  m_LocalPosition: {x: 0.23, y: -0.08, z: 0}
+  m_LocalPosition: {x: 0.198, y: -0.08, z: 0}
   m_LocalScale: {x: 17.02027, y: 4.0001297, z: 14.42649}
   m_Children: []
   m_Father: {fileID: 7603403740935324802}
@@ -167,8 +167,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 59fcaaed686c65848ae8fd093b7224f2, type: 2}
-  - {fileID: 2100000, guid: 042d0100332144b42b8c830ebd703875, type: 2}
+  - {fileID: 2100000, guid: f0a79a45d68fcbf46915d6ddd9f6ab3a, type: 2}
+  - {fileID: 2100000, guid: bd0c4c423d7deee4ebdd8409f2a267bc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

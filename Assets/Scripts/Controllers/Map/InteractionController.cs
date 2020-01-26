@@ -18,6 +18,8 @@ namespace Controllers.Map
         [SerializeField] private Text levelText;
         [SerializeField] private Button[] categoryButtons;
 
+        [HideInInspector] public string CurrentMinigameId;
+        
         private static GameManager GameManager => GameManager.Instance;
 
                 
@@ -44,6 +46,8 @@ namespace Controllers.Map
             
             if (miniGame.Type == null)
                 throw new Exception($"The provided MiniGame {miniGame.Id} has no type.");
+
+            CurrentMinigameId = miniGame.Id;
 
             /* if minigame has an image type, construct it from given values */
 
@@ -73,7 +77,10 @@ namespace Controllers.Map
              * get difficulty level from tile controller and initialize miniGame with it
              */
 
-            miniGameInstance.Initialize(miniGame.Id, miniGame.TaskDescription, miniGame.AnswerOptions, selectedTile.difficulty, image);
+            var taskDescription = HelperMethods.ReplaceGermanUmlauts(miniGame.TaskDescription);
+            taskDescription = HelperMethods.Readable(taskDescription);
+
+            miniGameInstance.Initialize(miniGame.Id, taskDescription, miniGame.AnswerOptions, selectedTile.difficulty, image);
 
             LoadingIndicator.Instance.Hide();
             CameraBehaviour.Instance.Toggle();
@@ -100,14 +107,20 @@ namespace Controllers.Map
         /// <param name="difficulty">The difficulty of the tile</param>
         public void HandleOwnTileSelected(int difficulty)
         {
-            SetActiveAllChildren(actionCanvas.transform, true);
-            actionCanvas.SetActive(true);
-            if (captureButton.activeSelf &&
-                attackButton.activeSelf)
-            {
-                captureButton.SetActive(false);
-                attackButton.SetActive(false);
-            }
+
+            if (difficulty < 2)
+            { 
+                SetActiveAllChildren(actionCanvas.transform, true);
+                actionCanvas.SetActive(true);
+                if (captureButton.activeSelf &&
+                   attackButton.activeSelf)
+                {
+                    captureButton.SetActive(false);
+                    attackButton.SetActive(false);
+                }
+            } 
+            
+            else SetActiveAllChildren(actionCanvas.transform, false);
 
             levelText.text = $"Tile Level: {difficulty + 1}";
         }

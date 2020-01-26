@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Controllers;
+using Handlers;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
-using WikidataGame.Models;
 
 namespace Minigame
 {
@@ -19,13 +19,14 @@ namespace Minigame
         /**
          * private fields
          */
-
+        
         private GameObject _checkedChoice;
         private string _id;
         private string _taskDescription;
         private Timer _timer;
         private Sprite _sprite;
         private string _license;
+        private bool _gameOver;
 
 
         /**
@@ -33,6 +34,7 @@ namespace Minigame
          */
 
         public Image imagePlaceholder;
+        public Button licenseImageButton;
         public TextMeshProUGUI licensePlaceholder;
         public Sprite boxSprite;
         public Sprite checkSprite;
@@ -74,7 +76,7 @@ namespace Minigame
             /* reset listeners */
             sendButton.onClick.RemoveAllListeners();
             sendButton.onClick.AddListener(Submit);
-            
+
             FeedbackButton.Hide();
 
             /**
@@ -121,6 +123,8 @@ namespace Minigame
             
             if(_id == null)
                 throw new Exception("Id cannot be null at this point.");
+
+            _gameOver = true;
             
             Debug.Log("Sorry, you were too slow");
             transform.Find("BlockPanel").GetComponentInChildren<CanvasGroup>().blocksRaycasts = true;
@@ -128,9 +132,12 @@ namespace Minigame
             /* reset listeners */
             sendButton.onClick.RemoveAllListeners();
             sendButton.onClick.AddListener(Close);
+            sendButton.interactable = true;
             sendButton.GetComponent<Image>().color = new Color32(84, 84, 84, 255);
             sendButton.GetComponentInChildren<Text>().text = "Continue";
             sendButtonImage.sprite = closeButtonSprite;
+
+            ReplaceImageNameInLicense();
 
             if (_checkedChoice == null)
             {
@@ -180,6 +187,7 @@ namespace Minigame
             LoadingIndicator.Instance.Hide();
             
             FeedbackButton.Show();
+            ReplaceImageNameInLicense();
 
             /**
              * use block panel to block further interaction by user
@@ -226,7 +234,7 @@ namespace Minigame
         /// </summary>
         public void Update()
         {
-            if (_checkedChoice == null)
+            if (!_gameOver && _checkedChoice == null)
                 sendButton.GetComponent<Button>().interactable = false;
             else
                 sendButton.GetComponent<Button>().interactable = true;
@@ -269,6 +277,7 @@ namespace Minigame
         private void AssignImage(Sprite sprite)
         {
             imagePlaceholder.sprite = sprite;
+            imagePlaceholder.preserveAspect = true;
         }
         
         /// <summary>
@@ -277,7 +286,155 @@ namespace Minigame
         /// <param name="license">Provided license</param>
         private void AssignLicense(string license)
         {
-            licensePlaceholder.text = license;
+            licenseImageButton.gameObject.SetActive(true);
+            licenseImageButton.onClick.RemoveAllListeners();
+            
+            var text = licenseImageButton.transform.Find("Alt")
+                .GetComponent<Text>();
+            
+            /* check if name of author has a link */
+            var result = Regex.Split(license, ">[\\s]*,");
+
+            if (result.Length != 3)
+            {
+                Debug.LogWarning($"License text seems to be malformed: {license}");
+                licensePlaceholder.text = license;
+                text.gameObject.SetActive(false);
+                licenseImageButton.gameObject.SetActive(false);
+                return;
+            }
+
+
+            string owner = GetOwnerOfImage(result[0]+">");
+            string nameOfImage = GetHiddenImageLink(result[1]+">");
+
+            licensePlaceholder.text = owner + "\r\n" + nameOfImage;
+            
+            Sprite sprite = GetSpriteForLicense(result[2]);
+
+            /* if there is no sprite, use text component to display license */
+            if (sprite == null)
+            {
+                var value = LicenseHandler.GetLinkAndValue(result[2]).Item2;
+                licenseImageButton.GetComponent<Image>().color = new Color(68f, 68f, 68f);
+                text.gameObject.SetActive(true);
+                text.text = value;
+            }
+            
+            /* if there is a sprite, use it and disable text component */
+            else
+            {
+                licenseImageButton.GetComponent<Image>().color = Color.white;
+                licenseImageButton.GetComponent<Image>()
+                    .sprite = sprite;
+                text.gameObject.SetActive(false);
+            }
+
+            var link = LicenseHandler.GetLinkAndValue(result[2]).Item1;
+            if (link != null)
+            {
+                Debug.Log($"Applying link {link} to button");
+                licenseImageButton
+                    .onClick.AddListener(() => Application.OpenURL(link));
+            }
+        }
+        
+        /// <summary>
+        /// Replace the hidden name of the image with its original name
+        /// </summary>
+        private void ReplaceImageNameInLicense()
+        {
+            licenseImageButton.gameObject.SetActive(true);
+            var text = licenseImageButton.transform.Find("Alt")
+                .GetComponent<Text>();
+
+            var result = Regex.Split(_license, ">[\\s]*,");
+
+            if (result.Length != 3)
+            {
+                Debug.LogWarning($"License text seems to be malformed: {_license}");
+                licensePlaceholder.text = _license;
+                text.gameObject.SetActive(false);
+                licenseImageButton.gameObject.SetActive(false);
+                return;
+            }
+            
+            string owner = GetOwnerOfImage(result[0]+">");
+            string nameOfImage = GetNameOfImage(result[1]+">");
+
+            licensePlaceholder.text = owner + "\r\n" + nameOfImage;
+        }
+
+        /// <summary>
+        /// Returns a sprite for the provided license
+        /// </summary>
+        /// <param name="str">License as string</param>
+        /// <returns>Sprite associated with the according license</returns>
+        private Sprite GetSpriteForLicense(string str)
+        {
+
+            if (HelperMethods.Contains(str, "Public Domain", StringComparison.OrdinalIgnoreCase))
+                return Resources.Load<Sprite>("CC/publicdomain");
+            
+            var tuple = LicenseHandler.GetLinkAndValue(str);
+            
+            Debug.Log($"Value of CC: {tuple.Item2}");
+            
+            var value = tuple.Item2;
+            if (HelperMethods.Contains(value, "BY-SA", StringComparison.OrdinalIgnoreCase))
+                return Resources.Load<Sprite>("CC/by-sa");
+            if (HelperMethods.Contains(value, "BY-ND", StringComparison.OrdinalIgnoreCase))
+                return Resources.Load<Sprite>("CC/by-nd");
+            if (HelperMethods.Contains(value, "BY", StringComparison.OrdinalIgnoreCase))
+                return Resources.Load<Sprite>("CC/by");
+            if (HelperMethods.Contains(value, "CC0", StringComparison.OrdinalIgnoreCase))
+                return Resources.Load<Sprite>("CC/cc-zero");
+            return HelperMethods.Contains(value, "Public Domain", StringComparison.OrdinalIgnoreCase) ? Resources.Load<Sprite>("CC/publicdomain") : null;
+        }
+
+        /// <summary>
+        /// Returns the owner of the image as TMP string
+        /// </summary>
+        /// <param name="str">Owner as string</param>
+        /// <returns>Owner as TMP string</returns>
+        private string GetOwnerOfImage(string str)
+        {
+            var tuple = LicenseHandler.GetLinkAndValue(str);
+            
+            if (tuple.Item1 == null)
+                return tuple.Item2;
+
+            return $"by <style=NameLink>{str}</style>";
+        }
+        
+        /// <summary>
+        /// Returns the name of the image as a hidden TMP variant
+        /// </summary>
+        /// <param name="str">The name of the image as string</param>
+        /// <returns>The name of the image as hidden TMP variant</returns>
+        private string GetHiddenImageLink(string str)
+        {
+            var tuple = LicenseHandler.GetLinkAndValue(str);
+            
+            if (tuple.Item1 == null)
+                return tuple.Item2;
+
+            return $"<style=Link><link=\"{tuple.Item1}\">(show name of image)</link></style>";
+        }
+
+        /// <summary>
+        /// Returns the name of the image as TMP string
+        /// </summary>
+        /// <param name="str">The name of the image as string</param>
+        /// <returns>The name of the image as TMP string</returns>
+        private string GetNameOfImage(string str)
+        {
+            var tuple = LicenseHandler.GetLinkAndValue(str);
+            
+            if (tuple.Item1 == null)
+                return tuple.Item2;
+
+            return $"<style=NameLink>({str})</style>";
         }
 
         /// <summary>

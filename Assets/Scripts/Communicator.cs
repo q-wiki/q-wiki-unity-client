@@ -567,11 +567,30 @@ public class Communicator : MonoBehaviour
         if (_currentGameId == null)
             throw new Exception("Client is not part of any game.");
         
-        var init = new MiniGameInit(tileId, categoryId);
-        var minigame = await _gameApi.InitalizeMinigameAsync(_currentGameId, init);
-        Debug.Log($"TASK:{minigame.TaskDescription}");
-        Debug.Log($"Started minigame with id {minigame.Id} on tile {tileId} with category {categoryId}");
-        return minigame;
+        try {
+            
+            var init = new MiniGameInit(tileId, categoryId);
+            var response = await _gameApi.InitalizeMinigameWithHttpMessagesAsync(_currentGameId, init);
+
+            if (response.Response.IsSuccessStatusCode)
+            {
+                var miniGame = response.Body;
+                Debug.Log($"TASK:{miniGame.TaskDescription}");
+                Debug.Log($"Started minigame with id {miniGame.Id} on tile {tileId} with category {categoryId}");
+                return miniGame;
+            }
+
+            Debug.LogError(response.Response.Content);
+            return null;
+        }
+        catch (HttpOperationException e) {
+            var response = e.Response;
+            Debug.LogError(
+                $"Error while trying initialize mini game: {response.StatusCode} ({(int)response.StatusCode}) / {e.Response.Content}");
+            Debug.LogError(e.StackTrace);
+            ErrorHandler.Instance.Error(response.Content);
+            return null;
+        }
     }
 
     /// <summary>

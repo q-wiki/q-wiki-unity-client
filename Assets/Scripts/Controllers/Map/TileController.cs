@@ -120,7 +120,7 @@ namespace Controllers.Map
                 .material = tileMaterials[2];
 
             /* Tile is owned */
-            if (ownerId == _myId && difficulty < 2)
+            if (ownerId == _myId)
             {
                 interactionController.HandleOwnTileSelected(difficulty);
             }
@@ -138,7 +138,7 @@ namespace Controllers.Map
             }
             else
             {
-                Debug.Log($"Tile {id} is already at their maximum Level - no actions can be done here.");
+                Debug.LogError($"Tile {id} seems to be broken - no actions can be done here.");
             }
         }
 

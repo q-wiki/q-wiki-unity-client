@@ -22,6 +22,8 @@ namespace Minigame
         private string _id;
         private string _taskDescription;
         private Timer _timer;
+        private bool _gameOver;
+        
         public Sprite boxSprite;
         public Sprite checkSprite;
         public List<GameObject> choices;
@@ -111,6 +113,8 @@ namespace Minigame
             
             if(_id == null)
                 throw new Exception("Id cannot be null at this point.");
+
+            _gameOver = true;
             
             Debug.Log("Sorry, you were too slow");
             transform.Find("BlockPanel").GetComponentInChildren<CanvasGroup>().blocksRaycasts = true;
@@ -215,7 +219,7 @@ namespace Minigame
         /// </summary>
         public void Update()
         {
-            sendButton.interactable = _checkedChoice != null;
+            sendButton.interactable = _gameOver || _checkedChoice != null;
         }
 
         /// <summary>

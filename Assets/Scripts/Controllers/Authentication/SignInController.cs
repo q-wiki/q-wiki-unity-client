@@ -334,10 +334,10 @@ namespace Controllers.Authentication {
         /// </summary>
         public void SignOutAnon() {
             // sign out
-            IsLoggedInAnon = false;
             PlayerPrefs.SetString(Communicator.PLAYERPREFS_SIGNIN_METHOD, METHOD_NONE);
             _uiController.anonAuthButtonText.text = (IsLoggedInAnon) ? SIGNED_IN_TEXT_ANON : SIGNED_OUT_TEXT_ANON;
             _uiController.signInAnonButton.gameObject.SetActive(true);
+            IsLoggedInAnon = false;
             Debug.Log("Signing out");
 
         }

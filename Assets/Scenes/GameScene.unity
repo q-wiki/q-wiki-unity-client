@@ -28,7 +28,7 @@ RenderSettings:
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
   m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
   m_HaloStrength: 0.5
-  m_FlareStrength: 1
+  m_FlareStrength: 0.431
   m_FlareFadeSpeed: 3
   m_HaloTexture: {fileID: 0}
   m_SpotCookie: {fileID: 10001, guid: 0000000000000000e000000000000000, type: 0}
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657838, g: 0.49641234, b: 0.57481676, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -96,7 +96,7 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ShowResolutionOverlay: 1
     m_ExportTrainingData: 0
-  m_LightingDataAsset: {fileID: 112000000, guid: 5bad3dc333270794c81db7a94b3df7e0,
+  m_LightingDataAsset: {fileID: 112000000, guid: 1bc9b76b7e2484a4ab2d1c62046f8d4e,
     type: 2}
   m_UseShadowmask: 1
 --- !u!196 &4
@@ -12444,36 +12444,6 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 200
       objectReference: {fileID: 0}
-    - target: {fileID: 4926077891231768840, guid: 5247b8ca5200d4038a2cf2f5a9997f93,
-        type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4926077891231768840, guid: 5247b8ca5200d4038a2cf2f5a9997f93,
-        type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4926077891231768840, guid: 5247b8ca5200d4038a2cf2f5a9997f93,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 750
-      objectReference: {fileID: 0}
-    - target: {fileID: 4926077891231768840, guid: 5247b8ca5200d4038a2cf2f5a9997f93,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -850
-      objectReference: {fileID: 0}
-    - target: {fileID: 4926077891231768840, guid: 5247b8ca5200d4038a2cf2f5a9997f93,
-        type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 1500
-      objectReference: {fileID: 0}
-    - target: {fileID: 4926077891231768840, guid: 5247b8ca5200d4038a2cf2f5a9997f93,
-        type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 200
-      objectReference: {fileID: 0}
     - target: {fileID: 4926077891474504516, guid: 5247b8ca5200d4038a2cf2f5a9997f93,
         type: 3}
       propertyPath: m_AnchorMin.y
@@ -12530,6 +12500,36 @@ PrefabInstance:
       value: 1500
       objectReference: {fileID: 0}
     - target: {fileID: 4926077892800377841, guid: 5247b8ca5200d4038a2cf2f5a9997f93,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 4926077891231768840, guid: 5247b8ca5200d4038a2cf2f5a9997f93,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4926077891231768840, guid: 5247b8ca5200d4038a2cf2f5a9997f93,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4926077891231768840, guid: 5247b8ca5200d4038a2cf2f5a9997f93,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 750
+      objectReference: {fileID: 0}
+    - target: {fileID: 4926077891231768840, guid: 5247b8ca5200d4038a2cf2f5a9997f93,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -850
+      objectReference: {fileID: 0}
+    - target: {fileID: 4926077891231768840, guid: 5247b8ca5200d4038a2cf2f5a9997f93,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 1500
+      objectReference: {fileID: 0}
+    - target: {fileID: 4926077891231768840, guid: 5247b8ca5200d4038a2cf2f5a9997f93,
         type: 3}
       propertyPath: m_SizeDelta.y
       value: 200
@@ -13096,7 +13096,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1600, y: 1000}
+  m_SizeDelta: {x: 1800, y: 1000}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &6204374056921464808
 GameObject:

@@ -219,7 +219,7 @@ namespace Minigame
         /// </summary>
         public void Update()
         {
-            sendButton.interactable = !_gameOver && _checkedChoice != null;
+            sendButton.interactable = _gameOver || _checkedChoice != null;
         }
 
         /// <summary>

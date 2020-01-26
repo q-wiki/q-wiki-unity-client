@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -22,15 +23,52 @@ public static class HelperMethods {
     }
     
     /// <summary>
-    /// 
+    /// Performs a null-check if string contains another string
     /// </summary>
-    /// <param name="source"></param>
-    /// <param name="toCheck"></param>
-    /// <param name="comp"></param>
-    /// <returns></returns>
-    public static bool Contains(string source, string toCheck, StringComparison comp)
+    /// <param name="source">Source string</param>
+    /// <param name="toCheck">string to look for</param>
+    /// <param name="comparison">comparison options</param>
+    /// <returns>If source string contains another string</returns>
+    public static bool Contains(string source, string toCheck, StringComparison comparison)
     {
-        return source?.IndexOf(toCheck, comp) >= 0;
+        return source?.IndexOf(toCheck, comparison) >= 0;
+    }
+    
+    /// <summary>
+    /// Replaces all german umlauts with their respective meanings.
+    /// </summary>
+    /// <param name="str">Input string</param>
+    /// <returns>String with replaced umlauts</returns>
+    public static string ReplaceGermanUmlauts(string str) {
+        var result = str;
+        result = result.Replace( "ä", "ae" );
+        result = result.Replace( "ö", "oe" );
+        result = result.Replace( "ü", "ue" );
+        result = result.Replace( "Ä", "Ae" );
+        result = result.Replace( "Ö", "Oe" );
+        result = result.Replace( "Ü", "Ue" );
+        result = result.Replace( "ß", "ss" );
+        return result;
+    }
+
+    /// <summary>
+    /// Generates a 'readable' string of the source string.
+    /// This is achieved by replacing all characters which are not in our basic font.
+    /// </summary>
+    /// <param name="str">Source string</param>
+    /// <returns>'readable' string</returns>
+    public static string Readable(string str)
+    {
+        String normalizedString = str.Normalize(NormalizationForm.FormD);
+        StringBuilder stringBuilder = new StringBuilder();
+
+        foreach (var c in normalizedString)
+        {
+            if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                stringBuilder.Append(c);
+        }
+
+        return stringBuilder.ToString();
     }
 
     /// <summary>

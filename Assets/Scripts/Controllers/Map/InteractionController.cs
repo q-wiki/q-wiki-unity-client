@@ -76,8 +76,11 @@ namespace Controllers.Map
             /**
              * get difficulty level from tile controller and initialize miniGame with it
              */
-            
-            miniGameInstance.Initialize(miniGame.Id, miniGame.TaskDescription, miniGame.AnswerOptions, selectedTile.difficulty, image);
+
+            var taskDescription = HelperMethods.ReplaceGermanUmlauts(miniGame.TaskDescription);
+            taskDescription = HelperMethods.Readable(taskDescription);
+
+            miniGameInstance.Initialize(miniGame.Id, taskDescription, miniGame.AnswerOptions, selectedTile.difficulty, image);
 
             LoadingIndicator.Instance.Hide();
             CameraBehaviour.Instance.Toggle();

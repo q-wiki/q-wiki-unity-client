@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Vuforia;
 using WikidataGame.Models;
 using Random = UnityEngine.Random;
 
@@ -117,7 +118,7 @@ namespace Controllers.Map
 
                     if (tileController.chosenCategoryId != null)
                     {
-                        var categoryPlaceholder = tile
+                        var placeholder = tile
                             .transform
                             .Find("TileAssetsL0/CategoryPlaceholder")
                             .gameObject;
@@ -130,12 +131,14 @@ namespace Controllers.Map
                             .First(c => c.Id == tileController.chosenCategoryId)
                             .Title;
 
-                        foreach (var cat in categoryObjects)
-                            if (cat.name == categoryName)
-                            {
-                                var categoryItem = Instantiate(cat, categoryPlaceholder.transform, true);
-                                tile.transform.position = new Vector3(0, 0, 0);
-                            }
+                        /* instantiate category asset according to the name of the category */
+                        var obj = categoryObjects.First(o => o.name == categoryName);
+                        Instantiate(
+                            obj,
+                            obj.transform.position,
+                            obj.transform.rotation,
+                            placeholder.transform);
+                        tile.transform.position = Vector2.zero;
                     }
 
                     if (tileSystem[x][z].Difficulty > 0) tile.GetComponent<Animator>().SetBool("BaseA", true);

@@ -107,14 +107,20 @@ namespace Controllers.Map
         /// <param name="difficulty">The difficulty of the tile</param>
         public void HandleOwnTileSelected(int difficulty)
         {
-            SetActiveAllChildren(actionCanvas.transform, true);
-            actionCanvas.SetActive(true);
-            if (captureButton.activeSelf &&
-                attackButton.activeSelf)
-            {
-                captureButton.SetActive(false);
-                attackButton.SetActive(false);
-            }
+
+            if (difficulty < 2)
+            { 
+                SetActiveAllChildren(actionCanvas.transform, true);
+                actionCanvas.SetActive(true);
+                if (captureButton.activeSelf &&
+                   attackButton.activeSelf)
+                {
+                    captureButton.SetActive(false);
+                    attackButton.SetActive(false);
+                }
+            } 
+            
+            else SetActiveAllChildren(actionCanvas.transform, false);
 
             levelText.text = $"Tile Level: {difficulty + 1}";
         }

@@ -361,7 +361,7 @@ namespace Controllers {
         ///     An appropriate message is shown to the user depending on the outcome.
         /// </summary>
         private void HandleGameFinishedState() {
-            if (_game.WinningPlayerIds == null || _game.WinningPlayerIds.Count <= 0) return;
+            if ( _game.WinningPlayerIds == null || _game.WinningPlayerIds.Count <= 0) return;
             
             Debug.Log("Checking state of the finished game...");
 
@@ -377,6 +377,8 @@ namespace Controllers {
             else throw new Exception("This game state is illegal.");
 
             AccountController.PostScore(ScoreHandler.Instance.playerScore);
+            AccountController.AddGameToHistory(_game.Opponent, (int)ScoreHandler.Instance.playerScore, (int)ScoreHandler.Instance.opponentScore);
+
             _uiController.HandleGameFinished(state);
         }
 

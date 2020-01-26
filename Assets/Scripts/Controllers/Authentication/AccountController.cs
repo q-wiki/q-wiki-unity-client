@@ -12,10 +12,13 @@ using Controllers.UI.User;
 using UnityEngine;
 using UnityEngine.UI;
 using WikidataGame.Models;
+using System.Linq;
 
 public class AccountController : MonoBehaviour
 {
     public List<Player> FriendsList { get; private set; }
+
+    private static List<FinishedGame> gameHistory;
 
     private StartUIController _uiController;
 
@@ -23,6 +26,7 @@ public class AccountController : MonoBehaviour
     [SerializeField] private GameObject friendPrefab;
     [SerializeField] private GameObject requestPrefab;
     [SerializeField] private GameObject gameInstancePrefab;
+    [SerializeField] private GameObject gameHistoryPrefab;
     [SerializeField] private GameObject userScrollViewContent;
     [SerializeField] private GameObject requestScrollViewContent;
     [SerializeField] private GameObject gamesScrollViewContent;
@@ -30,23 +34,24 @@ public class AccountController : MonoBehaviour
     [SerializeField] private Image avatarImage;
     [SerializeField] private Color yourTurnColor;
     [SerializeField] private Color oppentTurnColor;
-
+    private const string BOT_NAME = "AI Bot";
     private const string GAME_MATCH_MESSAGE = "You matched with ";
     private const string USER_CORNERBUTTON_NAME = "AddFriendButton";
     private const string FRIEND_CORNERBUTTON_NAME = "DeleteFriendButton";
 
+    private const string PLAYERPREFS_GAMEHISTORY = "GameHistory";
+
     // Start is called before the first frame update
     async void Start(){
-        
+
+        gameHistory = new List<FinishedGame>();
+
         _uiController = GameManager.Instance.UIController() as StartUIController;
         if (_uiController == null)
             throw new Exception("Start UI Controller is not allowed to be null");
         
         if (!string.IsNullOrEmpty(PlayerPrefs.GetString(Communicator.PLAYERPREFS_AUTH_TOKEN))) {
-            SetHeadline();
-            await RetrieveGames();
-            await RetrieveGameRequests();
-            await RetrieveFriends();
+            InitialSetup();
         }
 
         //_uiController.findUserInput.onEndEdit.RemoveAllListeners();
@@ -54,6 +59,14 @@ public class AccountController : MonoBehaviour
 
         //_uiController.findUserInput.onEndEdit.AddListener(delegate { inputSubmitCallBack(); });
         _uiController.findUserInput.onValueChanged.AddListener(delegate { inputChangedCallBack(); });
+    }
+
+    public async void InitialSetup() {
+            SetHeadline();
+            await RetrieveGames();
+            await RetrieveGameRequests();
+            await RetrieveFriends();
+            RetrieveGamesForGameHistory();
     }
 
     // Update is called once per frame
@@ -163,7 +176,8 @@ public class AccountController : MonoBehaviour
         foreach (Player player in players) {
             GameObject user = Instantiate(prefab, userScrollViewContent.transform);
             string username = HelperMethods.GetUsernameWithoutPrefix(player.Name);
-            user.transform.Find("ChallengeFriendButton").GetComponent<Button>().onClick.AddListener(delegate { ChallengeUser(player.Id); });
+            Button challengeButton = user.transform.Find("ChallengeFriendButton").GetComponent<Button>();
+            challengeButton.onClick.AddListener(delegate { ChallengeUser(player.Id, challengeButton.gameObject); });
             user.transform.Find(buttonName).GetComponent<Button>().onClick.AddListener(delegate { buttonFunction(player.Id); });
             user.transform.Find("Text").GetComponent<Text>().text = username; 
             HelperMethods.SetImage(user.transform.Find("Image").GetComponent<Image>(), player.Name);
@@ -175,6 +189,7 @@ public class AccountController : MonoBehaviour
     /// </summary>
     private void DisplayGameRequestsInScrollView(GameRequestList response)
     {
+
         // Remove all Elements currently in the scrollview
         foreach (Transform child in requestScrollViewContent.transform)
         {
@@ -213,7 +228,7 @@ public class AccountController : MonoBehaviour
             if (game.IsAwaitingOpponentToJoin == true) continue;
             GameObject currentGameObject = Instantiate(gameInstancePrefab, gamesScrollViewContent.transform);
             string username = HelperMethods.GetUsernameWithoutPrefix(game.Opponent.Name);
-            currentGameObject.transform.Find("ForfeitGameButton").GetComponent<Button>().onClick.AddListener(delegate { ForfeitGame(game.GameId, currentGameObject); });
+            currentGameObject.transform.Find("ForfeitGameButton").GetComponent<Button>().onClick.AddListener(delegate { ForfeitGame(game.GameId, currentGameObject, game.Opponent); });
             currentGameObject.GetComponent<Button>().onClick.AddListener(delegate { ContinueGame(game.GameId); });
             currentGameObject.transform.Find("Text").GetComponent<Text>().text = GAME_MATCH_MESSAGE + username;
             HelperMethods.SetImage(currentGameObject.transform.Find("Image").GetComponent<Image>(), game.Opponent.Name);
@@ -222,20 +237,51 @@ public class AccountController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Clears the ScrollView and adds an overview of the last 5 games you played.
+    /// </summary>
+    public void DisplayGameHistoryInScrollView() {
+        _uiController.DisplayGameHistoryTabUI();
+
+        // Remove all Elements currently in the scrollview
+        foreach (Transform child in gamesScrollViewContent.transform) {
+            Destroy(child.gameObject);
+        }
+        foreach (FinishedGame game in gameHistory) {
+            GameObject currentGameObject = Instantiate(gameHistoryPrefab, gamesScrollViewContent.transform);
+            currentGameObject.transform.SetAsFirstSibling();
+            currentGameObject.transform.Find("Text").GetComponent<Text>().text = game.GameDescription;
+            Button rematchButton = currentGameObject.transform.Find("RematchButton").GetComponent<Button>();
+            rematchButton.onClick.AddListener(delegate { ChallengeUser(game.OpponentID, rematchButton.gameObject); });
+            rematchButton.gameObject.SetActive(game.OpponentName != BOT_NAME);
+            Button addFriendButton = currentGameObject.transform.Find("AddFriendButton").GetComponent<Button>();
+            addFriendButton.onClick.AddListener(delegate { 
+                AddFriend(game.OpponentID);
+                addFriendButton.gameObject.SetActive(false);
+            });
+            bool alreadyFriends = FriendsList.Any(friend => friend.Id == game.OpponentID);
+            addFriendButton.gameObject.SetActive(!alreadyFriends && game.OpponentName != BOT_NAME);
+
+            HelperMethods.SetImage(currentGameObject.transform.Find("Image").GetComponent<Image>(), game.OpponentName);
+            currentGameObject.GetComponent<Image>().color = game.ResultColor;
+        }
+    }
+
     private void ContinueGame(string gameId) {
         Communicator.SetCurrentGameId(gameId);
         GameManager.Instance.ChangeToGameScene();
     }
 
-    private void ForfeitGame(string id, GameObject gameInstance) {
+    private void ForfeitGame(string id, GameObject gameInstance, Player opponent) {
         string headline = "Forfeit game";
         string message = "Are you sure you want to forfeit this game? This counts as a loss.";
-        _uiController.OpenConfirmDialog(headline, message, delegate { ForfeitGameConfirm(id, gameInstance); });
+        _uiController.OpenConfirmDialog(headline, message, delegate { ForfeitGameConfirm(id, gameInstance, opponent); });
     }
 
-    private async void ForfeitGameConfirm(string id, GameObject gameInstance) {
+    private async void ForfeitGameConfirm(string id, GameObject gameInstance, Player opponent) {
         bool success = await Communicator.DeleteGame(id);
         if (success) {
+            AddGameToHistory(opponent, 0, 60);
             Destroy(gameInstance);
         }
         else {
@@ -243,14 +289,12 @@ public class AccountController : MonoBehaviour
         }
     }
 
-    private async void AcceptRequest(string gameId, GameObject requestObject)
+    private async void AcceptRequest(string requestId, GameObject requestObject)
     {
-        WikidataGame.Models.GameInfo newGameInfo = await Communicator.AcceptGameRequest(gameId);
-        PlayerPrefs.SetString(Communicator.PLAYERPREFS_CURRENT_GAME_ID, gameId);
+        WikidataGame.Models.GameInfo newGameInfo = await Communicator.AcceptGameRequest(requestId);
         if (newGameInfo != null){
             Destroy(requestObject);
-            //Communicator.SetCurrentGameId(gameId);
-            //GameManager.Instance.ChangeToGameScene();
+            ContinueGame(newGameInfo.GameId);
         }
         else{
             Debug.LogError("An Error occurred. Couldn't accept game request");
@@ -268,7 +312,8 @@ public class AccountController : MonoBehaviour
         }
     }
 
-    public async void ChallengeUser(string userID) {
+    public async void ChallengeUser(string userID, GameObject challengeButton) {
+        challengeButton.SetActive(false);
         GameRequest request = await Communicator.ChallengeUser(userID);
     }
 
@@ -375,8 +420,103 @@ public class AccountController : MonoBehaviour
         });
     }
 
-    private string GetPrefixFreeUsername(string username) {
-        return username.Contains("anon-") ? username.Substring(5) : username;
+    private bool RetrieveGamesForGameHistory() {
+        string history = PlayerPrefs.GetString(PLAYERPREFS_GAMEHISTORY);
+
+        if (string.IsNullOrEmpty(history)) {
+            Debug.Log("Game History not found"); 
+            return false; 
+        }
+        Debug.Log(history);
+        List<string> finishedGames = history.Split(';').ToList();
+
+        foreach(string finishedGameAsString in finishedGames) {
+            Debug.Log(finishedGameAsString);
+            List<string> gameAsStrings = finishedGameAsString.Split(':').ToList();
+            string opponentID = gameAsStrings[0];
+            string opponentName = gameAsStrings[1];
+            bool isParsable1 = int.TryParse(gameAsStrings[2], out int playerScore);
+            bool isParsable2 = int.TryParse(gameAsStrings[3], out int opponentScore);
+
+            if(isParsable1 && isParsable2) {
+                FinishedGame finishedGame = new FinishedGame(opponentID, opponentName, playerScore, opponentScore );
+                gameHistory.Add(finishedGame);
+            }
+            else {
+                Debug.LogError("Couldn't parse scores for GameHistory.");
+                return false;
+            }
+        }
+        return true;
+
     }
 
+
+    /// <summary>
+    /// Add the recently finished game to the players game history
+    /// </summary>
+    public static void AddGameToHistory(Player opponent, int playerScore, int opponentScore) {
+        gameHistory.Add(new FinishedGame(opponent.Id, opponent.Name, playerScore, opponentScore));
+        if(gameHistory.Count > 5) {
+            gameHistory.RemoveAt(0);
+        }
+
+        string updatedPlayerprefs = "";
+        foreach(FinishedGame finishedGame in gameHistory) {
+            updatedPlayerprefs += finishedGame.ToString();
+        }
+        updatedPlayerprefs = updatedPlayerprefs.Substring(0, updatedPlayerprefs.Length - 1);
+        PlayerPrefs.SetString(PLAYERPREFS_GAMEHISTORY, updatedPlayerprefs);
+    }
+
+}
+
+internal class FinishedGame {
+    internal string OpponentName { get; }
+    internal string OpponentID { get; }
+    internal int OpponentScore { get; }
+    internal int PlayerScore { get; }
+    internal int GameResult { get { return PlayerScore - OpponentScore; } }
+
+    internal string GameDescription {
+        get {
+            if (GameResult < 0) {
+                return $"You lost {PlayerScore} : {OpponentScore} vs {HelperMethods.GetUsernameWithoutPrefix(OpponentName)}";
+            }
+            else if (GameResult > 0) {
+                return $"You won {PlayerScore} : {OpponentScore} vs {HelperMethods.GetUsernameWithoutPrefix(OpponentName)}";
+            }
+            else {
+                return $"Draw! {PlayerScore} : {OpponentScore} vs {HelperMethods.GetUsernameWithoutPrefix(OpponentName)}";
+            }
+        }
+    }
+
+    private Color drawColor = new Color(187f/255, 204f/255, 170f/255);
+    private Color winColor = new Color(80f/255, 158f/255, 158f/255);
+    private Color loseColor = new Color(79f/255, 106f/255, 106f/255, 212f/255);
+
+    internal Color ResultColor {
+        get {
+            if (GameResult < 0) {
+                return loseColor;
+            }
+            else if (GameResult > 0) {
+                return winColor;
+            }
+            else {
+                return drawColor;
+            }
+        }
+    }
+    public FinishedGame(string opponentID, string opponentName, int playerScore, int opponentScore) {
+        OpponentID = opponentID;
+        OpponentName = opponentName;
+        OpponentScore = opponentScore;
+        PlayerScore = playerScore;
+    }
+
+    public override string ToString() {
+        return $"{OpponentID}:{OpponentName}:{PlayerScore}:{OpponentScore};";
+    }
 }

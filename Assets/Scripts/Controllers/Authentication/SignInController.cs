@@ -212,6 +212,7 @@ namespace Controllers.Authentication {
                 await Communicator.SetupApiConnection();
                 _uiController.CloseUsernamePanel();
                 _uiController.CloseLoginPanel();
+                GameObject.Find("AccountController").GetComponent<AccountController>().InitialSetup();
                 Debug.Log($"Auth token received: {authToken}");
                 Debug.Log($"Avatar: {authInfo.User.ProfileImage}");
                 _uiController.anonAuthButtonText.text = (IsLoggedInAnon) ?
@@ -300,6 +301,7 @@ namespace Controllers.Authentication {
                 await Communicator.SetupApiConnection();
                 _uiController.CloseUsernamePanel();
                 _uiController.CloseLoginPanel();
+                GameObject.Find("AccountController").GetComponent<AccountController>().InitialSetup();
                 Debug.Log($"Auth token received: {authToken}");
                 _uiController.googleAuthButtonText.text = (IsLoggedInGoogle) ?
                     SIGNED_IN_TEXT_GOOGLE : SIGNED_OUT_TEXT_GOOGLE;

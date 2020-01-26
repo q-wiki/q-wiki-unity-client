@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Android;
 using UnityEngine.UI;
 
 namespace Controllers.UI {
@@ -28,6 +29,9 @@ namespace Controllers.UI {
         [SerializeField] private Button qrViewButton;
         [SerializeField] private Button highscoreViewButton;
         [SerializeField] private Button settingsViewButton;
+        [SerializeField] private Button runningGamesTab;
+        [SerializeField] private Button gameHistoryTab;
+        [SerializeField] private Button refreshRunningGamesButton;
 
         [SerializeField] private Sprite cancelIcon;
         [SerializeField] private Sprite findGameIcon;
@@ -35,6 +39,8 @@ namespace Controllers.UI {
         [SerializeField] private Color inactiveColor;
         [SerializeField] private Color activeColor;
         [SerializeField] private Color abortGameColor;
+        [SerializeField] private Color activeTabColor;
+        [SerializeField] private Color inactiveTabColor;
 
         private bool _settingsToggle;
 
@@ -240,6 +246,18 @@ namespace Controllers.UI {
         /// </summary>
         public void DisplayGameView() {
             DisplayView(startPanel, gameViewButton);
+            DisplayGameTabUI();
+        }
+
+        internal void DisplayGameTabUI() {
+            runningGamesTab.GetComponent<Image>().color = activeTabColor;
+            gameHistoryTab.GetComponent<Image>().color = inactiveTabColor;
+            refreshRunningGamesButton.gameObject.SetActive(true);
+        }
+        internal void DisplayGameHistoryTabUI() {
+            runningGamesTab.GetComponent<Image>().color = inactiveTabColor;
+            gameHistoryTab.GetComponent<Image>().color = activeTabColor;
+            refreshRunningGamesButton.gameObject.SetActive(false);
         }
 
         /// <summary>

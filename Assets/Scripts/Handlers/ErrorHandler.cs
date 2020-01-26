@@ -63,7 +63,10 @@ namespace Handlers
             if (type == LogType.Exception)
             {
                 Error(logString);
+                LoadingIndicator.Instance.Hide();
             }
+            
+            
         }
     }
 }

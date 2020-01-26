@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
@@ -19,6 +20,18 @@ public static class HelperMethods {
         defaultSprites.AddRange(Resources.LoadAll<Sprite>("Animals/"));
         botAvatarSprite = Resources.Load<Sprite>("robot");
     }
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="toCheck"></param>
+    /// <param name="comp"></param>
+    /// <returns></returns>
+    public static bool Contains(string source, string toCheck, StringComparison comp)
+    {
+        return source?.IndexOf(toCheck, comp) >= 0;
+    }
 
     /// <summary>
     /// Finds an image belonging to a username and sets it
@@ -29,6 +42,7 @@ public static class HelperMethods {
         // img.color = GetColorFromUsername(username);
         img.sprite = GetAvatarSpriteFromUsername(username);
     }
+    
 
     /// <summary>
     /// Calculates an image dependent on the username

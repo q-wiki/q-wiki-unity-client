@@ -18,6 +18,8 @@ namespace Controllers.Map
         [SerializeField] private Text levelText;
         [SerializeField] private Button[] categoryButtons;
 
+        [HideInInspector] public string CurrentMinigameId;
+        
         private static GameManager GameManager => GameManager.Instance;
 
                 
@@ -44,6 +46,8 @@ namespace Controllers.Map
             
             if (miniGame.Type == null)
                 throw new Exception($"The provided MiniGame {miniGame.Id} has no type.");
+
+            CurrentMinigameId = miniGame.Id;
 
             /* if minigame has an image type, construct it from given values */
 
@@ -72,7 +76,7 @@ namespace Controllers.Map
             /**
              * get difficulty level from tile controller and initialize miniGame with it
              */
-
+            
             miniGameInstance.Initialize(miniGame.Id, miniGame.TaskDescription, miniGame.AnswerOptions, selectedTile.difficulty, image);
 
             LoadingIndicator.Instance.Hide();

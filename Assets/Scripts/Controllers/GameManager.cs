@@ -403,6 +403,28 @@ namespace Controllers {
             }
             else {
                 Debug.Log($"Trying to delete game {_game.Id}.");
+                AccountController.PostScore(ScoreHandler.Instance.playerScore);
+                AccountController.AddGameToHistory(_game.Opponent, 0, (int)ScoreHandler.Instance.opponentScore);
+                await Communicator.AbortCurrentGame();
+                Debug.Log("Game was successfully deleted.");
+            }
+
+            LoadingIndicator.Instance.Hide();
+            _isWaitingState = false;
+            Debug.Log("Returning to start scene...");
+            ChangeToStartScene();
+        }
+
+        /// <summary>
+        ///     This function is used to delete / leave a game after it has ended.
+        /// </summary>
+        public async Task LeaveGameWithoutConceding() {
+            LoadingIndicator.Instance.Show();
+            if (_game == null) {
+                Debug.Log("Game was already deleted.");
+            }
+            else {
+                Debug.Log($"Trying to delete game {_game.Id}.");
                 await Communicator.AbortCurrentGame();
                 Debug.Log("Game was successfully deleted.");
             }

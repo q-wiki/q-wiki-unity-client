@@ -114,7 +114,7 @@ namespace Controllers.UI
                 throw new Exception("GameManager is not allowed to be null at this (or any) point.");
             
             await gameManager.RequestRematch();
-            await gameManager.LeaveGame();
+            await gameManager.LeaveGameWithoutConceding();
 
         }
         
@@ -144,6 +144,18 @@ namespace Controllers.UI
                 throw new Exception("GameManager is not allowed to be null at this (or any) point.");
             
             await GameManager.Instance.LeaveGame();
+        }
+
+        /// <summary>
+        ///     This function is used to delete / leave a game after it has ended.
+        ///     The game manager is called by cross referencing.
+        /// </summary>
+        public async void LeaveGameWithoutConceding() {
+            var gameManager = GameManager.Instance;
+            if (gameManager == null)
+                throw new Exception("GameManager is not allowed to be null at this (or any) point.");
+
+            await GameManager.Instance.LeaveGameWithoutConceding();
         }
 
         /// <summary>

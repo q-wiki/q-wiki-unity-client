@@ -160,6 +160,10 @@ public class AccountController : MonoBehaviour
             return true;
         }
     }
+
+    /// <summary>
+    /// Used to call the RetrieveFriends Function from Unity Editor Button Component
+    /// </summary>
     public async void RetrieveFriendsVoid() {
         await RetrieveFriends();
     }

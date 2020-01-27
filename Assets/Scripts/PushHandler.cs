@@ -105,6 +105,14 @@ public class PushHandler : Singleton<PushHandler>
             }
             
             if (entry.Key == "Action" && 
+                entry.Value == "draw")
+            {
+                Debug.Log("Firebase: Submitting draw message to client...");
+                gameManager.Android_GameDraw(data["GameId"]);
+                return;
+            }
+            
+            if (entry.Key == "Action" && 
                 entry.Value == "request")
             {
                 Debug.Log("Firebase: Submitting new game request...");

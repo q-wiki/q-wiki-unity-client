@@ -58,6 +58,11 @@ namespace Controllers.UI
 
             gameOverCanvas.SetActive(true);
             gameOverText.text = state;
+
+            gameOverCanvas.transform
+                    .Find("GameOverContainer/Layout/Buttons/RematchButton")
+                    .GetComponent<Button>().interactable =
+                GameManager.Instance.Opponent().Id != "ffffffff-ffff-ffff-ffff-ffffffffffff";
         }
 
         /// <summary>

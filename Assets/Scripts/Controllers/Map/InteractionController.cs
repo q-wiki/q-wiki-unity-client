@@ -58,7 +58,7 @@ namespace Controllers.Map
                 var rect = new Rect(0, 0, texture.width, texture.height);
                 var pivot = new Vector2(0.5f, 0.5f);
                 var sprite = Sprite.Create(texture, rect, pivot);
-                image = new MinigameImage(sprite, miniGame.LicenseInfo);
+                image = new MinigameImage(sprite, miniGame.ImageInfo);
             }
 
             // using IMinigame interface to get miniGame depending on given type

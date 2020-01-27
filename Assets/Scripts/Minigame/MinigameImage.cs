@@ -1,28 +1,27 @@
 using UnityEngine;
+using WikidataGame.Models;
 
 namespace Minigame
 {
     public class MinigameImage
     {
         private Sprite _sprite;
-        private string _license;
+        private ImageInfo _imageInfo;
 
-        public MinigameImage(Sprite sprite, string license)
+        public MinigameImage(Sprite sprite, ImageInfo imageInfo)
         {
             _sprite = sprite;
-            _license = license;
+            _imageInfo = imageInfo;
         }
 
         public Sprite Sprite
         {
             get => _sprite;
-            set => _sprite = value;
         }
 
-        public string License
+        public ImageInfo ImageInfo
         {
-            get => _license;
-            set => _license = value;
+            get => _imageInfo;
         }
     }
 }

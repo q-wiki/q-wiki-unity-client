@@ -609,6 +609,10 @@ namespace Controllers {
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gameId"></param>
         public void Android_GameWon(string gameId)
         {
             if (_game != null && _game.Id == gameId)
@@ -620,6 +624,23 @@ namespace Controllers {
             }
         }
         
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gameId"></param>
+        public void Android_GameDraw(string gameId)
+        {
+            if (_game != null && _game.Id == gameId)
+            {
+                Debug.Log($"Handling draw game with id {gameId}");
+                _uiController.HandleGameFinished(1);
+            }
+        }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gameId"></param>
         public void Android_GameLost(string gameId)
         {
             if (_game != null && _game.Id == gameId)
@@ -630,7 +651,10 @@ namespace Controllers {
                 _uiController.HandleGameFinished(2);
             }
         }
-        
+
+        /// <summary>
+        /// 
+        /// </summary>
         public void Android_RequestReceived()
         {
             Debug.Log("You received a new game request.");

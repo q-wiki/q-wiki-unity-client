@@ -6,6 +6,7 @@ using Handlers;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using WikidataGame.Models;
 
 namespace Minigame
 {
@@ -25,7 +26,7 @@ namespace Minigame
         private string _taskDescription;
         private Timer _timer;
         private Sprite _sprite;
-        private string _license;
+        private ImageInfo _imageInfo;
         private bool _gameOver;
 
 
@@ -67,10 +68,10 @@ namespace Minigame
             _taskDescription = taskDescription;
             _answerOptions = answerOptions;
             _sprite = minigameImage.Sprite;
-            _license = minigameImage.License;
+            _imageInfo = minigameImage.ImageInfo;
             AssignDescription(_taskDescription);
             AssignImage(_sprite);
-            AssignLicense(_license);
+            AssignImageInfo(_imageInfo);
             AssignChoices(_answerOptions);
             
             /* reset listeners */
@@ -283,42 +284,30 @@ namespace Minigame
         /// <summary>
         ///     Assign provided license to on-screen placeholder
         /// </summary>
-        /// <param name="license">Provided license</param>
-        private void AssignLicense(string license)
+        /// <param name="imageInfo">Provided license</param>
+        private void AssignImageInfo(ImageInfo imageInfo)
         {
-            licenseImageButton.gameObject.SetActive(true);
             licenseImageButton.onClick.RemoveAllListeners();
             
             var text = licenseImageButton.transform.Find("Alt")
                 .GetComponent<Text>();
+
+            var imageName = imageInfo.Name;
+            var author = imageInfo.Artist;
+            var licenseName = imageInfo.LicenseName;
+
+            licensePlaceholder.text = GetOwnerOfImage(author) +
+                                      "\r\n" +
+                                      GetHiddenImageLink(imageName);
             
-            /* check if name of author has a link */
-            var result = Regex.Split(license, ">[\\s]*,");
-
-            if (result.Length != 3)
-            {
-                Debug.LogWarning($"License text seems to be malformed: {license}");
-                licensePlaceholder.text = license;
-                text.gameObject.SetActive(false);
-                licenseImageButton.gameObject.SetActive(false);
-                return;
-            }
-
-
-            string owner = GetOwnerOfImage(result[0]+">");
-            string nameOfImage = GetHiddenImageLink(result[1]+">");
-
-            licensePlaceholder.text = owner + "\r\n" + nameOfImage;
-            
-            Sprite sprite = GetSpriteForLicense(result[2]);
+            var sprite = GetSpriteForLicense(licenseName);
 
             /* if there is no sprite, use text component to display license */
             if (sprite == null)
             {
-                var value = LicenseHandler.GetLinkAndValue(result[2]).Item2;
                 licenseImageButton.GetComponent<Image>().color = new Color(68f, 68f, 68f);
                 text.gameObject.SetActive(true);
-                text.text = value;
+                text.text = licenseName;
             }
             
             /* if there is a sprite, use it and disable text component */
@@ -329,13 +318,12 @@ namespace Minigame
                     .sprite = sprite;
                 text.gameObject.SetActive(false);
             }
-
-            var link = LicenseHandler.GetLinkAndValue(result[2]).Item1;
-            if (link != null)
+            
+            if (!String.IsNullOrEmpty(imageInfo.LicenseUrl))
             {
-                Debug.Log($"Applying link {link} to button");
+                Debug.Log($"Applying link {imageInfo.LicenseUrl} to button");
                 licenseImageButton
-                    .onClick.AddListener(() => Application.OpenURL(link));
+                    .onClick.AddListener(() => Application.OpenURL(imageInfo.LicenseUrl));
             }
         }
         
@@ -344,25 +332,9 @@ namespace Minigame
         /// </summary>
         private void ReplaceImageNameInLicense()
         {
-            licenseImageButton.gameObject.SetActive(true);
-            var text = licenseImageButton.transform.Find("Alt")
-                .GetComponent<Text>();
-
-            var result = Regex.Split(_license, ">[\\s]*,");
-
-            if (result.Length != 3)
-            {
-                Debug.LogWarning($"License text seems to be malformed: {_license}");
-                licensePlaceholder.text = _license;
-                text.gameObject.SetActive(false);
-                licenseImageButton.gameObject.SetActive(false);
-                return;
-            }
-            
-            string owner = GetOwnerOfImage(result[0]+">");
-            string nameOfImage = GetNameOfImage(result[1]+">");
-
-            licensePlaceholder.text = owner + "\r\n" + nameOfImage;
+            licensePlaceholder.text = GetOwnerOfImage(_imageInfo.Artist) +
+                                      "\r\n" +
+                                      GetNameOfImage(_imageInfo.Name);
         }
 
         /// <summary>
@@ -375,12 +347,10 @@ namespace Minigame
 
             if (HelperMethods.Contains(str, "Public Domain", StringComparison.OrdinalIgnoreCase))
                 return Resources.Load<Sprite>("CC/publicdomain");
-            
-            var tuple = LicenseHandler.GetLinkAndValue(str);
-            
-            Debug.Log($"Value of CC: {tuple.Item2}");
-            
-            var value = tuple.Item2;
+
+
+            var value = str;
+            Debug.Log($"Value of CC: {value}");
             if (HelperMethods.Contains(value, "BY-SA", StringComparison.OrdinalIgnoreCase))
                 return Resources.Load<Sprite>("CC/by-sa");
             if (HelperMethods.Contains(value, "BY-ND", StringComparison.OrdinalIgnoreCase))

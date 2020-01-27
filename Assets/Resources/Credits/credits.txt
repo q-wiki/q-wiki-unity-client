@@ -1,0 +1,136 @@
+<b>Q-Wiki</b>
+<i>A strategic Wikidata based knowledge game</i>
+
+This project was developed over the course of two semesters (April 2019 - February 2020).
+It is a cooperation between the University of Applied Sciences Berlin (HTW Berlin) and Wikimedia Germany.
+
+Master Program International Media and Computing
+
+Students: 
+Antonia Berger
+Jonas Fichtmüller
+Malte Götz
+Jennifer Lindner
+David Müller
+Arne Schlüter
+Eko Supardjo
+Laura Wölbeling 
+
+Supervisors (HTW): 
+Prof. Dr. Debora Weber-Wulff 
+Prof. Dr.-Ing. David Strippgen
+
+Supervisors (Wikimedia):
+Alaa Sarhan
+Lucas Werkmeister
+
+This project is licensed under the GPL-3 License.
+Please visit one of the following links if you want to contribute or get more information on the project in general:
+<style=Link><link="https://q-wiki.github.io/">https://q-wiki.github.io/</link></style>
+<style=Link><link="https://github.com/q-wiki">https://github.com/q-wiki</link></style>
+
+_____________________________________
+
+ASSETS USED (in no particular order):
+_____________________________________
+
+Developer3.5Pro:
+Rocket:
+https://sketchfab.com/3d-models/rocket-f266c4284e8344a08c41eff1aa81c9e0
+
+Korveen:
+LowPoly Environment Pack
+https://assetstore.unity.com/packages/3d/environments/landscapes/lowpoly-environment-pack-99479
+
+TotSamiyDanya:
+HQ Old Books (colors modified)
+https://assetstore.unity.com/packages/3d/props/hq-old-books-96841
+
+Ursa Rigler:
+Dinosaur Puzzle Toy
+https://www.cgtrader.com/free-3d-models/animals/dinosaur/dinosaur-puzzle-toy
+
+Acorn Bringer:
+Simplistic Low Poly Nature (Mushroom)
+https://assetstore.unity.com/packages/3d/environments/simplistic-low-poly-nature-93894
+
+Tom Poon:
+Stylized Cartoony Sandwich
+https://assetstore.unity.com/packages/3d/props/food/stylized-cartoony-sandwich-102301
+
+Volleyball by Rocket Sales Studio
+https://www.turbosquid.com/FullPreview/Index.cfm/ID/763175
+
+juhemarten:
+LowPoly Earth and Moon
+https://www.cgtrader.com/free-3d-models/space/planet/low-poly-earth-f1171419-eb81-4eaf-83a1-fcfec630afa8
+
+Will_LaPuerta:
+Theobromine Molecule Model
+https://www.turbosquid.com/3d-models/3d-theobromine-molecule-chocolate-model/409427
+
+Jhan Gutierrez:
+Low Poly Nature Pack
+https://jhan-gutierrez.itch.io/low-poly-nature-pack?download
+
+Broken Vector:
+Free Low Poly Pack
+https://assetstore.unity.com/packages/3d/free-low-poly-pack-65375
+
+Synty Studios:
+Polygon Nature Pack
+https://assetstore.unity.com/packages/3d/vegetation/trees/polygon-nature-pack-120152
+
+DropGames:
+Low Poly Campament 3D
+https://www.turbosquid.com/3d-models/ready-assets-unity3d-3d-model-1316022
+
+AurynSky:
+Simple Gems Ultimate Animated Customizable Pack (Star)
+https://assetstore.unity.com/packages/3d/props/simple-gems-ultimate-animated-customizable-pack-73764
+
+_____________________________________
+
+SPRITES USED (in no particular order):
+_____________________________________
+
+astr999:
+simple icon pastel tone
+https://assetstore.unity.com/packages/2d/gui/icons/simple-icon-pastel-tone-107568
+
+Arisan:
+Flat Icoon & UI - 2D Puzzle Game UI
+https://assetstore.unity.com/packages/2d/gui/icons/flat-icoon-ui-2d-puzzle-game-ui-69370
+
+Vectors Market (Flaticon):
+Animal Icon Pack
+https://www.flaticon.com/packs/animals-33
+
+Freepik (Flaticon):
+Question Mark
+https://www.flaticon.com/free-icon/question-mark_36601
+QR-Code
+https://www.flaticon.com/free-icon/qr-code_1441544
+Robot
+https://www.flaticon.com/free-icon/robot_1533123
+
+_____________________________________
+
+FONTS USED (in no particular order):
+_____________________________________
+
+BD Cartoon Shout
+http://allfont.net/download/bd-cartoon-shout/
+
+Lato
+http://www.latofonts.com/lato-free-fonts/
+
+_____________________________________
+
+OTHERS (in no particular order):
+_____________________________________
+
+Lunar Mobile Console 
+https://github.com/SpaceMadness/lunar-unity-console
+Licensed under Apache License, v2
+http://www.apache.org/licenses/LICENSE-2.0

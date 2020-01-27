@@ -52,6 +52,10 @@ namespace Controllers.UI.User
             if (!userPanel.IsVisible)
             {
                 var opponent = GameManager.Opponent();
+
+                if (opponent.Id == "ffffffff-ffff-ffff-ffff-ffffffffffff")
+                    return;
+                
                 var userName = userPanel.GetComponentInChildren<Text>();
                 var userAvatar = userPanel.transform
                     .Find("Layout/UserGrid/User")

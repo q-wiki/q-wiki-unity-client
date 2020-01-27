@@ -592,6 +592,8 @@ namespace Controllers {
             if (_game != null && _game.Id == gameId)
             {
                 Debug.Log($"Handling won game with id {gameId}");
+                AccountController.PostScore(ScoreHandler.Instance.playerScore);
+                AccountController.AddGameToHistory(_game.Opponent, (int)ScoreHandler.Instance.playerScore, (int)ScoreHandler.Instance.opponentScore);
                 _uiController.HandleGameFinished(0);
             }
         }
@@ -601,6 +603,8 @@ namespace Controllers {
             if (_game != null && _game.Id == gameId)
             {
                 Debug.Log($"Handling lost game with id {gameId}");
+                AccountController.PostScore(ScoreHandler.Instance.playerScore);
+                AccountController.AddGameToHistory(_game.Opponent, (int)ScoreHandler.Instance.playerScore, (int)ScoreHandler.Instance.opponentScore);
                 _uiController.HandleGameFinished(2);
             }
         }

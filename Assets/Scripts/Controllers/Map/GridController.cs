@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Vuforia;
 using WikidataGame.Models;
 using Random = UnityEngine.Random;
 

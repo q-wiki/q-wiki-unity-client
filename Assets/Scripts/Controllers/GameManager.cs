@@ -470,15 +470,18 @@ namespace Controllers {
         /// </summary>
         private void HandleAppClosing() {
             if (Input.GetKeyDown(KeyCode.Escape)) {
+                
+                /*
                 var interactionController = InteractionController.Instance;
                     if (interactionController != null
                         && interactionController.HasActiveMinigamePanel()) {
                         ErrorHandler.Instance.Error("App cannot be shutdown because there is still an active MiniGame.");
                         return;
                     }
-
-                    Debug.Log("Closing App...");
-                    Application.Quit();
+                    */
+                
+                Debug.Log("Closing App...");
+                Application.Quit();
             }
         }
 

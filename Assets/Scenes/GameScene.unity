@@ -3424,6 +3424,7 @@ GameObject:
   - component: {fileID: 578701145}
   - component: {fileID: 578701147}
   - component: {fileID: 578701148}
+  - component: {fileID: 578701149}
   m_Layer: 0
   m_Name: pointsHighlight
   m_TagString: Untagged
@@ -3512,6 +3513,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsShownInitially: 0
+--- !u!95 &578701149
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 578701143}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: cbaa1e8c465384258942a2c700ce5bd1, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &600491510
 GameObject:
   m_ObjectHideFlags: 0
@@ -3560,6 +3580,7 @@ MonoBehaviour:
   settingsContainer: {fileID: 808307917}
   cancellationPanel: {fileID: 4162761224347545711}
   userPanel: {fileID: 215729336}
+  settingsButton: {fileID: 2119592303}
   userIcon: {fileID: 1818379901}
   gameOverCanvas: {fileID: 6204374056921464808}
   gameOverText: {fileID: 6204374056624807584}
@@ -7528,6 +7549,7 @@ GameObject:
   - component: {fileID: 1507926131}
   - component: {fileID: 1507926133}
   - component: {fileID: 1507926134}
+  - component: {fileID: 1507926135}
   m_Layer: 0
   m_Name: actionHighlight
   m_TagString: Untagged
@@ -7567,7 +7589,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.9176471, g: 0.9294118, b: 0.8745099, a: 0.39215687}
+  m_Color: {r: 0.9176471, g: 0.9294118, b: 0.8745099, a: 0.78431374}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -7616,6 +7638,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsShownInitially: 0
+--- !u!95 &1507926135
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1507926129}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: cbaa1e8c465384258942a2c700ce5bd1, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &1509557400
 GameObject:
   m_ObjectHideFlags: 0
@@ -11568,6 +11609,37 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 2119592300}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2119592302 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2883826693956972615, guid: 936003986aafeb940a0c45a4dc373ac2,
+    type: 3}
+  m_PrefabInstance: {fileID: 2119592300}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2119592303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2119592302}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb16c69e504e4e0bbd35cfa25ad2c987, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  IsShownInitially: 1
+--- !u!225 &2119592304
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2119592302}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &2127098771
 GameObject:
   m_ObjectHideFlags: 0

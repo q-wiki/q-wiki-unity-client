@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Controllers.Map;
 using Controllers.UI.User;
 using UnityEngine;
@@ -14,6 +15,7 @@ namespace Controllers.UI
         public Hideable settingsContainer;
         public Hideable cancellationPanel;
         public Hideable userPanel;
+        public Hideable settingsButton;
         public InteractableIcon userIcon;
         public GameObject gameOverCanvas;
         public Text gameOverText;
@@ -51,14 +53,20 @@ namespace Controllers.UI
         /// Handle the end of the game for the client
         /// </summary>
         /// <param name="index">An indicator which represents the state of the game when finished.</param>
-        public void HandleGameFinished(short index)
+        public async void HandleGameFinished(short index)
         {
+
+            var interactionController = InteractionController.Instance;
+            while (interactionController != null &&
+                   interactionController.HasActiveMinigamePanel()) 
+                await Task.Delay(1);
+
             var state = _states[index];
             Debug.Log(state);
-
+            
+            settingsButton.Hide();
             gameOverCanvas.SetActive(true);
             gameOverText.text = state;
-
             gameOverCanvas.transform
                     .Find("GameOverContainer/Layout/Buttons/RematchButton")
                     .GetComponent<Button>().interactable =

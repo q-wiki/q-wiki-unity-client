@@ -12,15 +12,15 @@ using WikidataGame.Models;
 public class ScoreHandler : Singleton<ScoreHandler>
 {
     private const string PLAYERPREFS_CURRENT_GAME_TURNS_PLAYED = "CURRENT_GAME_TURNS_PLAYED";
-    
+
     /*
      * public fields
-     */ 
-    
+     */
+
     public long playerScore;
     public long opponentScore;
     internal int turnsPlayed;
-    
+
     /**
      * private fields
      */
@@ -49,7 +49,7 @@ public class ScoreHandler : Singleton<ScoreHandler>
     {
         _turnsPlayedText.text = $"{turnsPlayed} / 6 Turns";
     }
-    
+
     /// <summary>
     ///     Sets the current game id.
     /// </summary>
@@ -58,7 +58,21 @@ public class ScoreHandler : Singleton<ScoreHandler>
     {
         _gameId = gameId;
     }
-    
+
+    /// <summary>
+    /// This is used to externally modify the count in the UI.
+    /// </summary>
+    /// <param name="gameId"></param>
+    /// <param name="count"></param>
+    public void ShowCountInUI(string gameId, int count)
+    {
+        if (_gameId == gameId)
+        {
+            _turnsPlayed = count;
+            _turnsPlayedText.text = $"{_turnsPlayed} / 6 Turns";
+        }
+    }
+
     /// <summary>
     /// Reads the current turn count from player prefs
     /// </summary>
@@ -120,9 +134,11 @@ public class ScoreHandler : Singleton<ScoreHandler>
     /// </summary>
     public void UpdateTurns()
     {
-        turnsPlayed++;
-        PlayerPrefs.SetInt($"{_gameId}/{PLAYERPREFS_CURRENT_GAME_TURNS_PLAYED}", turnsPlayed);
-        _turnsPlayedText.text = $"{turnsPlayed} / 6 Turns";
+        _turnsPlayed = PlayerPrefs.GetInt(
+            $"{_gameId}/{CURRENT_GAME_TURNS_PLAYED}", 0);
+        _turnsPlayed++;
+        PlayerPrefs.SetInt($"{_gameId}/{CURRENT_GAME_TURNS_PLAYED}", _turnsPlayed);
+        _turnsPlayedText.text = $"{_turnsPlayed} / 6 Turns";
     }
 
     /// <summary>

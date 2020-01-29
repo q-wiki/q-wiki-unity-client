@@ -306,11 +306,11 @@ namespace Controllers.UI {
             tutorialButton.onClick.RemoveAllListeners();
             if (tutorialEnabled) {
                 buttonText.text = "Disable Tutorial";
-                tutorialButton.onClick.AddListener(delegate{ TutorialController.DismissTutorial(); });
+                tutorialButton.onClick.AddListener(delegate{ TutorialController.DismissTutorial(); DisplaySettingsView(); });
             }
             else {
                 buttonText.text = "Enable Tutorial";
-                tutorialButton.onClick.AddListener(delegate { TutorialController.ActivateTutorial(); });
+                tutorialButton.onClick.AddListener(delegate { TutorialController.ActivateTutorial(); DisplaySettingsView(); });
             }
 
 

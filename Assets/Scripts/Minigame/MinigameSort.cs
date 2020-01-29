@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Controllers;
 using Controllers.UI;
+using Minigame.Helpers;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -229,7 +230,12 @@ namespace Minigame
         /// </summary>
         public void Close()
         {
-            GameManager.Instance.RefreshGameState(false);
+            
+            if (!MinigameHelpers.IsNextUpdateBlocked()) 
+                GameManager.Instance.RefreshGameState(false);
+            else MinigameHelpers.UnblockUpdates();
+            CameraBehaviour.Instance.Toggle();
+            
             CameraBehaviour.Instance.Toggle();
             
             transform.Find("BlockPanel").GetComponentInChildren<CanvasGroup>().blocksRaycasts = false;

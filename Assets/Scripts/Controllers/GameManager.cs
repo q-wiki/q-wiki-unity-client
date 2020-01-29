@@ -7,6 +7,7 @@ using Controllers.Authentication;
 using Controllers.Map;
 using Controllers.UI;
 using Handlers;
+using Minigame.Helpers;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using WikidataGame.Models;
@@ -298,13 +299,15 @@ namespace Controllers {
         /// <param name="isNewTurn">Indicates if a new turn started.</param>
         public async void RefreshGameState(bool isNewTurn)
         {
-            Debug.Log($"isNewTurn:{isNewTurn}");
-
+            
             /*
             * this is called whenever something happens (MiniGame finished, player made a turn, etc.)
             */
 
             _game = await Communicator.GetCurrentGameState();
+
+            
+            Debug.Log($"isNewTurn:{isNewTurn}");
 
             /*
             * redraw the grid
@@ -660,10 +663,13 @@ namespace Controllers {
             PlayerPrefs.SetInt($"{gameId}/CURRENT_GAME_TURNS_PLAYED", playedTurns+1);
             if(_currentScene.name == "GameScene")
                 ScoreHandler.ShowCountInUI(gameId, playedTurns+1);
-            
+
             if (_game != null && _game.Id == gameId)
+            {
                 RefreshGameState(true);
-            
+                MinigameHelpers.BlockNextMiniGameUpdate();
+            }
+
         }
 
         /// <summary>

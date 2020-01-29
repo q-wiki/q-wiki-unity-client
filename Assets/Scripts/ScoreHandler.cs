@@ -68,8 +68,8 @@ public class ScoreHandler : Singleton<ScoreHandler>
     {
         if (_gameId == gameId)
         {
-            _turnsPlayed = count;
-            _turnsPlayedText.text = $"{_turnsPlayed} / 6 Turns";
+            turnsPlayed = count;
+            _turnsPlayedText.text = $"{turnsPlayed} / 6 Turns";
         }
     }
 
@@ -134,11 +134,11 @@ public class ScoreHandler : Singleton<ScoreHandler>
     /// </summary>
     public void UpdateTurns()
     {
-        _turnsPlayed = PlayerPrefs.GetInt(
-            $"{_gameId}/{CURRENT_GAME_TURNS_PLAYED}", 0);
-        _turnsPlayed++;
-        PlayerPrefs.SetInt($"{_gameId}/{CURRENT_GAME_TURNS_PLAYED}", _turnsPlayed);
-        _turnsPlayedText.text = $"{_turnsPlayed} / 6 Turns";
+        turnsPlayed = PlayerPrefs.GetInt(
+            $"{_gameId}/{PLAYERPREFS_CURRENT_GAME_TURNS_PLAYED}", 0);
+        turnsPlayed++;
+        PlayerPrefs.SetInt($"{_gameId}/{PLAYERPREFS_CURRENT_GAME_TURNS_PLAYED}", turnsPlayed);
+        _turnsPlayedText.text = $"{turnsPlayed} / 6 Turns";
     }
 
     /// <summary>

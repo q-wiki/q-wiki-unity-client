@@ -162,13 +162,11 @@ namespace Controllers {
 
 
             /*
-             * If the tutorial setting is active (checked in tutorialController, not here) and the first tutorial panel has not been shown yet, the tutorialController shows the first tutorial page.
-             * This happens only if the currently running game is the tutorial game
+             * Initialize the tutorial controller. If this is the players first game or the tutorial option has been re-enabled, it starts a new tutorial as long as its a freshly started game
+             * If the player returns to a running tutorial game, it continues to display the last displayed page
              */
             if (tutorialController != null) {
-                if(ScoreHandler.turnsPlayed == 0 && TutorialController.pageCounter == 0 && _game.Id == TutorialController.tutorialID) {
-                    tutorialController.ShowAppropriateTutorialPanel();
-                }
+                tutorialController.InitialSetup();
             }
             else {
                 Debug.LogError("Tutorial Controller is null");

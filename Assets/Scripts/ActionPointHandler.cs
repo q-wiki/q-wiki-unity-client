@@ -30,6 +30,11 @@ public class ActionPointHandler : Singleton<ActionPointHandler>
     
     public List<GameObject> actionPoints;
     public Text turnIndicator;
+    internal int actionPointsRemaining { 
+        get { return PlayerPrefs.GetInt($"{_gameId}/{PLAYERPREFS_REMAINING_ACTION_POINTS}", -1); }
+        private set { } 
+    }
+
     private CanvasGroup _canvasGroup => GetComponent<CanvasGroup>();
 
     /// <summary>
@@ -93,6 +98,7 @@ public class ActionPointHandler : Singleton<ActionPointHandler>
         if (fetchedPoints == -1)
         {
             _remainingActionPoints = TOTAL_ACTION_POINTS;
+            PlayerPrefs.SetInt($"{_gameId}/{PLAYERPREFS_REMAINING_ACTION_POINTS}", _remainingActionPoints);
             turnIndicator.text = "Actions:";
             foreach (var actionPoint in actionPoints)
                 actionPoint.SetActive(true);

@@ -308,6 +308,7 @@ namespace Minigame
         public void SendFeedbackToPlatform()
         {
             Communicator.SendFeedbackToPlatform(_id);
+            AccountController.UnlockContributorAchievement();
         }
     }
 }

@@ -391,6 +391,9 @@ namespace Controllers {
 
             AccountController.PostScore(ScoreHandler.Instance.playerScore);
             AccountController.AddGameToHistory(_game.Opponent, (int)ScoreHandler.Instance.playerScore, (int)ScoreHandler.Instance.opponentScore);
+            if ((int)ScoreHandler.Instance.opponentScore == 0) {
+                AccountController.UnlockDominatorAchievement();
+            }
 
             _uiController.HandleGameFinished(state);
         }
@@ -644,6 +647,7 @@ namespace Controllers {
                 Debug.Log($"Handling won game with id {gameId}");
                 AccountController.PostScore(ScoreHandler.Instance.playerScore);
                 AccountController.AddGameToHistory(_game.Opponent, (int)ScoreHandler.Instance.playerScore, (int)ScoreHandler.Instance.opponentScore);
+                AccountController.UnlockExplorerAchievement();
                 _uiController.HandleGameFinished(0);
             }
         }

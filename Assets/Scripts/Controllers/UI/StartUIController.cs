@@ -33,6 +33,7 @@ namespace Controllers.UI {
         [SerializeField] private Button gameHistoryTab;
         [SerializeField] private Button refreshRunningGamesButton;
         [SerializeField] private Button tutorialButton;
+        [SerializeField] internal Button signInWithGoogleButton;
 
         [SerializeField] private Sprite cancelIcon;
         [SerializeField] private Sprite findGameIcon;
@@ -328,7 +329,9 @@ namespace Controllers.UI {
             accountPanel.Hide();
             qrPanel.Hide();
             highscorePanel.Hide();
-            
+
+            HighscoreButtonSetActiveState(Social.localUser.authenticated);
+
             LoadingIndicator.Instance.Hide();
             if (view.name == "StartPanel" && GameManager.IsWaitingForOpponent())
                 LoadingIndicator.Instance.ShowWithoutBlockingUI();
@@ -405,11 +408,10 @@ namespace Controllers.UI {
         }
 
         /// <summary>
-        ///     This function is used to open the LegalNoticePanel in the settings.
+        ///     This function is used to show the Terms of Service from the settings.
         /// </summary>
         public void OpenLegalNoticePanel() {
-            legalNoticePanel.Show();
-            settingsPanel.Hide();
+            Application.OpenURL("https://wikidatagame.azurewebsites.net/tos");
         }
 
         /// <summary>

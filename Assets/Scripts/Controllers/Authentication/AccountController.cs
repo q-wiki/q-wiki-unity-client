@@ -407,19 +407,39 @@ public class AccountController : MonoBehaviour
     }
 
     /// <summary>
-    /// Use this to unlock achievements.
+    /// Use this to unlock the explorer achievements.
     /// </summary>
-    public static void UnlockAchievements() {
-        PlayGamesPlatform.Instance.IncrementAchievement("CgkI-f_-2q4eEAIQAg", 10, (bool success) => {
+    public static void UnlockExplorerAchievement() {
+        PlayGamesPlatform.Instance.ReportProgress("CgkI-f_-2q4eEAIQAg", 100.0f, (bool success) => {
             // handle success or failure
         });
     }
 
     /// <summary>
+    /// Use this to unlock the explorer achievements.
+    /// </summary>
+    public static void UnlockDominatorAchievement() {
+        PlayGamesPlatform.Instance.ReportProgress("CgkI-f_-2q4eEAIQBg", 100.0f, (bool success) => {
+            // handle success or failure
+        });
+    }
+
+    /// <summary>
+    /// Use this to unlock the explorer achievements.
+    /// </summary>
+    public static void UnlockContributorAchievement() {
+        PlayGamesPlatform.Instance.ReportProgress("CgkI-f_-2q4eEAIQBw", 100.0f, (bool success) => {
+            // handle success or failure
+        });
+    }
+
+
+    /// <summary>
     /// Use this to post the score.
     /// </summary>
     public static void PostScore(long score) {
-        Social.ReportScore(score, "CgkI-f_-2q4eEAIQAQ", (bool success) => {
+        Social.ReportScore((int)score, "CgkI-f_-2q4eEAIQAQ", (bool success) => {
+            Debug.Log($"Score posted to Leaderboard: {(int)score}");
             // handle success or failure
         });
     }

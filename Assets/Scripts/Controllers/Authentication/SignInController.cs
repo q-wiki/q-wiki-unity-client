@@ -38,6 +38,7 @@ namespace Controllers.Authentication {
         }
         public static bool reauthenticateWithGoogle = false;
         [SerializeField] private Image avatarPreview;
+        [SerializeField] private Toggle acceptTOS;
 
         public static bool isLoggedIn {
             get { return isLoggedInAnon || isLoggedInGoogle; }
@@ -85,6 +86,11 @@ namespace Controllers.Authentication {
             _uiController.usernameInput.onValueChanged.RemoveAllListeners();
             _uiController.usernameInput.onValueChanged.AddListener(delegate { inputChangedCallBack(); });
             _uiController.usernameInput.onEndEdit.AddListener(delegate { inputSubmitCallBack(); });
+
+            acceptTOS.onValueChanged.AddListener(delegate{
+                _uiController.signInAnonButton.enabled = acceptTOS.isOn;
+                _uiController.signInWithGoogleButton.enabled = acceptTOS.isOn;
+            });
         }
 
         /// <summary>

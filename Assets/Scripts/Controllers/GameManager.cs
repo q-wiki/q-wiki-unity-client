@@ -667,7 +667,10 @@ namespace Controllers {
             if (_game != null && _game.Id == gameId)
             {
                 RefreshGameState(true);
-                MinigameHelpers.BlockNextMiniGameUpdate();
+                if(_game.Opponent.Id == "ffffffff-ffff-ffff-ffff-ffffffffffff" && 
+                   _currentScene.name == "GameScene" &&
+                   InteractionController.Instance.HasActiveMinigamePanel())
+                    MinigameHelpers.BlockNextMiniGameUpdate();
             }
 
         }

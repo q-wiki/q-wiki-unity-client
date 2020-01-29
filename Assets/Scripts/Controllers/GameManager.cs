@@ -151,15 +151,15 @@ namespace Controllers {
              * update turn UI when it is the player's move directly after opening the app
              */
 
-            #if UNITY_EDITOR
-                if (PlayerPrefs.GetInt($"{_game.Id}/{CURRENT_GAME_BLOCK_TURN_UPDATE}", 0) == 0)
-                    ScoreHandler.UpdateTurns();
-            #endif
+#if UNITY_EDITOR
+            if (PlayerPrefs.GetInt($"{_game.Id}/{CURRENT_GAME_BLOCK_TURN_UPDATE}", 0) == 0)
+                ScoreHandler.UpdateTurns();
+#endif
             
-            #if UNITY_ANDROID
-                if(!PlayerPrefs.HasKey($"{_game.Id}/CURRENT_GAME_TURNS_PLAYED"))
-                    ScoreHandler.UpdateTurns();
-            #endif
+#if UNITY_ANDROID
+            if(!PlayerPrefs.HasKey($"{_game.Id}/CURRENT_GAME_TURNS_PLAYED"))
+                ScoreHandler.UpdateTurns();
+#endif
 
             /*
              * highlight possible moves for current player
@@ -298,84 +298,81 @@ namespace Controllers {
         /// <param name="isNewTurn">Indicates if a new turn started.</param>
         public async void RefreshGameState(bool isNewTurn)
         {
-            while (true)
+            Debug.Log($"isNewTurn:{isNewTurn}");
+
+            /*
+            * this is called whenever something happens (MiniGame finished, player made a turn, etc.)
+            */
+
+            _game = await Communicator.GetCurrentGameState();
+
+            /*
+            * redraw the grid
+            */
+
+            foreach (Transform child in _gridController.transform) Destroy(child.gameObject);
+            _gridController.GenerateGrid(_game.Tiles);
+
+            /**
+             * adjust UI to new score
+            */
+
+            ScoreHandler.SetGameId(_game.Id);
+            ScoreHandler.Show();
+            ScoreHandler.UpdatePoints(_game.Tiles, PlayerId(), _game.Opponent.Id);
+
+
+            /*
+            * only for AI bot: if actions points are zero, but client has the next move, manual update
+            */
+
+            if (_game.Opponent.Id == "ffffffff-ffff-ffff-ffff-ffffffffffff")
             {
-                Debug.Log($"isNewTurn:{isNewTurn}");
-
-                /*
-                * this is called whenever something happens (MiniGame finished, player made a turn, etc.)
-                */
-
-                _game = await Communicator.GetCurrentGameState();
-
-                /*
-                * redraw the grid
-                */
-
-                foreach (Transform child in _gridController.transform) Destroy(child.gameObject);
-                _gridController.GenerateGrid(_game.Tiles);
-
-                /**
-                 * adjust UI to new score
-                */
-
-                ScoreHandler.SetGameId(_game.Id);
-                ScoreHandler.Show();
-                ScoreHandler.UpdatePoints(_game.Tiles, PlayerId(), _game.Opponent.Id);
-
-
-                /*
-                * only for AI bot: if actions points are zero, but client has the next move, manual update
-                */
-
-                if (_game.Opponent.Id == "ffffffff-ffff-ffff-ffff-ffffffffffff")
+                if (isNewTurn == false 
+                    && PlayerPrefs.GetInt($"{_game.Id}/{ActionPointHandler.PLAYERPREFS_REMAINING_ACTION_POINTS}", -1) == 1 &&
+                    _game.NextMovePlayerId == _game.Me.Id)
                 {
-                    if (isNewTurn == false 
-                        && PlayerPrefs.GetInt($"{_game.Id}/{ActionPointHandler.PLAYERPREFS_REMAINING_ACTION_POINTS}", -1) == 1 &&
-                        _game.NextMovePlayerId == _game.Me.Id)
-                    {
-                        isNewTurn = true;
-                        continue;
-                    }
+                    isNewTurn = true;
                 }
-
-                /**
-                * if current update happens in a new turn, update turn count
-                */
-
-                #if UNITY_EDITOR
-                if (isNewTurn) ScoreHandler.UpdateTurns();
-                #endif
-
-
-                /**
-                * simple function to update action points in game controller
-                */
-
-                ActionPointHandler.SetGameId(_game.Id);
-                ActionPointHandler.RebuildActionPointsFromPrefs();
-                ActionPointHandler.Instance.UpdateState(PlayerId(), _game.NextMovePlayerId, isNewTurn);
-
-                /**
-                * check for game over
-                */
-
-                FinishGame();
-
-                /*
-                * highlight possible moves for current player
-                * */
-
-                _gridController.ShowPossibleMoves(PlayerId());
-
-
-                /*
-                * if current player is not me, go to loop / block interaction
-                */
-
-                if (_game.NextMovePlayerId != _game.Me.Id) _isWaitingState = true;
-                break;
             }
+
+            /**
+            * if current update happens in a new turn, update turn count
+            */
+
+#if UNITY_EDITOR
+            if (isNewTurn) ScoreHandler.UpdateTurns();
+#endif
+
+
+            /**
+            * simple function to update action points in game controller
+            */
+
+            ActionPointHandler.SetGameId(_game.Id);
+            ActionPointHandler.RebuildActionPointsFromPrefs();
+            ActionPointHandler.Instance.UpdateState(PlayerId(), _game.NextMovePlayerId, isNewTurn);
+
+            /**
+            * check for game over
+            */
+
+            FinishGame();
+
+            /*
+            * highlight possible moves for current player
+            * */
+
+            _gridController.ShowPossibleMoves(PlayerId());
+
+
+            /*
+            * if current player is not me, go to loop / block interaction
+            */
+
+            if (_game.NextMovePlayerId != _game.Me.Id)
+                _isWaitingState = true;
+        
         }
 
         /// <summary>

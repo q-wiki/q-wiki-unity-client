@@ -113,7 +113,7 @@ namespace Controllers {
 
             /* when in gamescene, check game over state */
 
-            HandleGameFinishedState();
+            FinishGame();
 
             /**
              * generate grid by reading tiles from game object
@@ -151,8 +151,15 @@ namespace Controllers {
              * update turn UI when it is the player's move directly after opening the app
              */
 
-            if (PlayerPrefs.GetInt($"{_game.Id}/{CURRENT_GAME_BLOCK_TURN_UPDATE}", 0) == 0)
-                ScoreHandler.UpdateTurns();
+            #if UNITY_EDITOR
+                if (PlayerPrefs.GetInt($"{_game.Id}/{CURRENT_GAME_BLOCK_TURN_UPDATE}", 0) == 0)
+                    ScoreHandler.UpdateTurns();
+            #endif
+            
+            #if UNITY_ANDROID
+                if(!PlayerPrefs.HasKey($"{_game.Id}/CURRENT_GAME_TURNS_PLAYED"))
+                    ScoreHandler.UpdateTurns();
+            #endif
 
             /*
              * highlight possible moves for current player
@@ -274,7 +281,7 @@ namespace Controllers {
             /**
              * check if game is over
              */
-            HandleGameFinishedState();
+            FinishGame();
 
             if (_game.NextMovePlayerId == _game.Me.Id) {
                 gameUiController.Unblock();
@@ -338,7 +345,9 @@ namespace Controllers {
                 * if current update happens in a new turn, update turn count
                 */
 
+                #if UNITY_EDITOR
                 if (isNewTurn) ScoreHandler.UpdateTurns();
+                #endif
 
 
                 /**
@@ -353,7 +362,7 @@ namespace Controllers {
                 * check for game over
                 */
 
-                HandleGameFinishedState();
+                FinishGame();
 
                 /*
                 * highlight possible moves for current player
@@ -375,25 +384,44 @@ namespace Controllers {
         ///     This function is used to handle the end of the game.
         ///     An appropriate message is shown to the user depending on the outcome.
         /// </summary>
-        private void HandleGameFinishedState() {
+        private void FinishGame() {
             if ( _game.WinningPlayerIds == null || _game.WinningPlayerIds.Count <= 0) return;
             
             Debug.Log("Checking state of the finished game...");
 
             short state;
 
-            if (_game.WinningPlayerIds.Count == 1 && _game.WinningPlayerIds.Contains(_game.Me.Id))
-                state = 0;
-            else if (_game.WinningPlayerIds.Count == 1 && _game.WinningPlayerIds.Contains(_game.Opponent.Id))
-                state = 1;
-            else if (_game.WinningPlayerIds.Count == 2 && _game.WinningPlayerIds.Contains(_game.Opponent.Id) &&
-                     _game.WinningPlayerIds.Contains(_game.Me.Id))
-                state = 2;
-            else throw new Exception("This game state is illegal.");
+            switch (_game.WinningPlayerIds.Count)
+            {
+                case 1 when _game.WinningPlayerIds.Contains(_game.Me.Id) 
+                            && !_game.WinningPlayerIds.Contains(_game.Opponent.Id):
+                    state = 0;
+                    break;
+                case 1 when _game.WinningPlayerIds.Contains(_game.Opponent.Id) 
+                            && !_game.WinningPlayerIds.Contains(_game.Me.Id):
+                    state = 1;
+                    break;
+                case 2 when _game.WinningPlayerIds.Contains(_game.Opponent.Id) 
+                            && _game.WinningPlayerIds.Contains(_game.Me.Id):
+                    state = 2;
+                    break;
+                default:
+                    throw new Exception("This game state is illegal.");
+            }
 
+            HandleGameFinishedState(state);
+        }
+
+        /// <summary>
+        /// This function is used to post scores of the finished game to the account.
+        /// It also calls the UI controller to show the result of the game to the user.
+        /// </summary>
+        /// <param name="state"></param>
+        private void HandleGameFinishedState(short state)
+        {
+            
             AccountController.PostScore(ScoreHandler.Instance.playerScore);
             AccountController.AddGameToHistory(_game.Opponent, (int)ScoreHandler.Instance.playerScore, (int)ScoreHandler.Instance.opponentScore);
-
             _uiController.HandleGameFinished(state);
         }
 
@@ -542,6 +570,7 @@ namespace Controllers {
         /// This is used to report a user.
         /// </summary>
         /// <param name="userId">ID of the user</param>
+        /// <param name="userName">Name of the user</param>
         public void ReportUser(string userId, string userName)
         {
             Debug.Log($"Reporting user {userId} with user name {userName} to the organization.");
@@ -628,11 +657,18 @@ namespace Controllers {
         /// </summary>
         public void Android_RefreshGame(string gameId) 
         {
+            
+            Debug.Log($"Refreshing game state of game with id {gameId}");
+            
+            /* update played turns */
+            var playedTurns = PlayerPrefs.GetInt($"{gameId}/CURRENT_GAME_TURNS_PLAYED", 0);
+            PlayerPrefs.SetInt($"{gameId}/CURRENT_GAME_TURNS_PLAYED", playedTurns+1);
+            if(_currentScene.name == "GameScene")
+                ScoreHandler.ShowCountInUI(gameId, playedTurns+1);
+            
             if (_game != null && _game.Id == gameId)
-            {
-                Debug.Log($"Refreshing game state of game with id {gameId}");
                 RefreshGameState(true);
-            }
+            
         }
 
         /// <summary>
@@ -644,9 +680,7 @@ namespace Controllers {
             if (_game != null && _game.Id == gameId)
             {
                 Debug.Log($"Handling won game with id {gameId}");
-                AccountController.PostScore(ScoreHandler.Instance.playerScore);
-                AccountController.AddGameToHistory(_game.Opponent, (int)ScoreHandler.Instance.playerScore, (int)ScoreHandler.Instance.opponentScore);
-                _uiController.HandleGameFinished(0);
+                HandleGameFinishedState(0);
             }
         }
         
@@ -659,7 +693,7 @@ namespace Controllers {
             if (_game != null && _game.Id == gameId)
             {
                 Debug.Log($"Handling draw game with id {gameId}");
-                _uiController.HandleGameFinished(1);
+                HandleGameFinishedState(2);
             }
         }
         
@@ -672,9 +706,7 @@ namespace Controllers {
             if (_game != null && _game.Id == gameId)
             {
                 Debug.Log($"Handling lost game with id {gameId}");
-                AccountController.PostScore(ScoreHandler.Instance.playerScore);
-                AccountController.AddGameToHistory(_game.Opponent, (int)ScoreHandler.Instance.playerScore, (int)ScoreHandler.Instance.opponentScore);
-                _uiController.HandleGameFinished(2);
+                HandleGameFinishedState(1);
             }
         }
 
@@ -691,8 +723,14 @@ namespace Controllers {
         ///     Reset turn update values when application is shut down.
         ///     If application is quit while user is searching for an opponent, keep on searching.
         /// </summary>
-        public void OnApplicationPause() {
-            CheckTurnStatusForScoreHandler();
+        public void OnApplicationPause(bool pauseStatus) {
+
+            Debug.Log($"Game Paused: {pauseStatus}");
+            
+            if (pauseStatus)
+            {
+                CheckTurnStatusForScoreHandler();
+            }
         }
 #endif
     }

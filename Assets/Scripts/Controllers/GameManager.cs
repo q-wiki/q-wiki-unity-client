@@ -28,7 +28,8 @@ namespace Controllers {
 
         private const string IS_WAITING_FOR_OPPONENT = "IS_WAITING_FOR_OPPONENT";
         private const string CURRENT_GAME_BLOCK_TURN_UPDATE = "CURRENT_GAME_BLOCK_TURN_UPDATE";
-        private const string REMAINING_ACTION_POINTS = "REMAINING_ACTION_POINTS";
+
+        public static TutorialController tutorialController;
 
         /// <summary>
         ///     When game controller is enabled, an event handler to handle scene changes is registered.
@@ -142,7 +143,7 @@ namespace Controllers {
 
             ActionPointHandler.SetGameId(_game.Id);
             ActionPointHandler.RebuildActionPointsFromPrefs();
-            if (PlayerPrefs.GetInt($"{_game.Id}/{REMAINING_ACTION_POINTS}", -1) == 0)
+            if (PlayerPrefs.GetInt($"{_game.Id}/{ActionPointHandler.PLAYERPREFS_REMAINING_ACTION_POINTS}", -1) == 0)
                 ActionPointHandler.UpdateState(PlayerId(), _game.NextMovePlayerId, true);
             ActionPointHandler.Show();
 
@@ -158,6 +159,20 @@ namespace Controllers {
              */
 
             _gridController.ShowPossibleMoves(PlayerId());
+
+
+            /*
+             * If the tutorial setting is active (checked in tutorialController, not here) and the first tutorial panel has not been shown yet, the tutorialController shows the first tutorial page.
+             * This happens only if the currently running game is the tutorial game
+             */
+            if (tutorialController != null) {
+                if(TutorialController.pageCounter == 0 && _game.Id == TutorialController.tutorialID) {
+                    tutorialController.ShowAppropriateTutorialPanel();
+                }
+            }
+            else {
+                Debug.LogError("Tutorial Controller is null");
+            }
         }
 
         /// <summary>
@@ -311,7 +326,7 @@ namespace Controllers {
                 if (_game.Opponent.Id == "ffffffff-ffff-ffff-ffff-ffffffffffff")
                 {
                     if (isNewTurn == false 
-                        && PlayerPrefs.GetInt($"{_game.Id}/{REMAINING_ACTION_POINTS}", -1) == 1 &&
+                        && PlayerPrefs.GetInt($"{_game.Id}/{ActionPointHandler.PLAYERPREFS_REMAINING_ACTION_POINTS}", -1) == 1 &&
                         _game.NextMovePlayerId == _game.Me.Id)
                     {
                         isNewTurn = true;
@@ -425,6 +440,7 @@ namespace Controllers {
             }
             else {
                 Debug.Log($"Trying to delete game {_game.Id}.");
+                AccountController.PostScore(ScoreHandler.Instance.playerScore);
                 await Communicator.AbortCurrentGame();
                 Debug.Log("Game was successfully deleted.");
             }
@@ -581,6 +597,13 @@ namespace Controllers {
         /// <returns>the current GridController</returns>
         public GridController GridController() {
             return _gridController;
+        }
+
+        internal string GetGameID() {
+            if(_game == null) {
+                return null;
+            }
+            return _game.Id;
         }
 
 

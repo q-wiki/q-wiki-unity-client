@@ -14,7 +14,7 @@ public class ActionPointHandler : Singleton<ActionPointHandler>
      */
 
     private const int TOTAL_ACTION_POINTS = 3;
-    private const string REMAINING_ACTION_POINTS = "REMAINING_ACTION_POINTS";
+    internal const string PLAYERPREFS_REMAINING_ACTION_POINTS = "REMAINING_ACTION_POINTS";
 
     /**
      * private fields
@@ -68,7 +68,7 @@ public class ActionPointHandler : Singleton<ActionPointHandler>
 
         actionPoints[_remainingActionPoints - 1].SetActive(false);
         _remainingActionPoints--;
-        PlayerPrefs.SetInt($"{_gameId}/{REMAINING_ACTION_POINTS}", _remainingActionPoints);
+        PlayerPrefs.SetInt($"{_gameId}/{PLAYERPREFS_REMAINING_ACTION_POINTS}", _remainingActionPoints);
     }
 
     /// <summary>
@@ -78,7 +78,7 @@ public class ActionPointHandler : Singleton<ActionPointHandler>
     {
         foreach (var actionPoint in actionPoints) actionPoint.SetActive(true);
         _remainingActionPoints = 3;
-        PlayerPrefs.SetInt($"{_gameId}/{REMAINING_ACTION_POINTS}", _remainingActionPoints);
+        PlayerPrefs.SetInt($"{_gameId}/{PLAYERPREFS_REMAINING_ACTION_POINTS}", _remainingActionPoints);
     }
 
     /// <summary>
@@ -87,7 +87,7 @@ public class ActionPointHandler : Singleton<ActionPointHandler>
     /// </summary>
     private void Reset()
     {
-        var fetchedPoints = PlayerPrefs.GetInt($"{_gameId}/{REMAINING_ACTION_POINTS}", -1);
+        var fetchedPoints = PlayerPrefs.GetInt($"{_gameId}/{PLAYERPREFS_REMAINING_ACTION_POINTS}", -1);
 
         // if fetched points are not found, use default setting
         if (fetchedPoints == -1)
@@ -149,7 +149,7 @@ public class ActionPointHandler : Singleton<ActionPointHandler>
     /// </summary>
     public void DeleteKey()
     {
-        PlayerPrefs.DeleteKey($"{_gameId}/{REMAINING_ACTION_POINTS}");
+        PlayerPrefs.DeleteKey($"{_gameId}/{PLAYERPREFS_REMAINING_ACTION_POINTS}");
     }
 
     /// <summary>

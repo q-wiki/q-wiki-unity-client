@@ -162,7 +162,7 @@ public class AccountController : MonoBehaviour
     }
 
     /// <summary>
-    /// Used to call the RetrieveFriends Function from Unity Editor Button Component
+    /// Used to call the RetrieveFriends Function via the Unity UI
     /// </summary>
     public async void RetrieveFriendsVoid() {
         await RetrieveFriends();
@@ -472,8 +472,11 @@ public class AccountController : MonoBehaviour
         updatedPlayerprefs = updatedPlayerprefs.Substring(0, updatedPlayerprefs.Length - 1);
         PlayerPrefs.SetString(PLAYERPREFS_GAMEHISTORY, updatedPlayerprefs);
     }
-
 }
+
+
+
+
 
 internal class FinishedGame {
     internal string OpponentName { get; }

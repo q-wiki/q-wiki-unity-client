@@ -32,6 +32,7 @@ namespace Controllers.UI {
         [SerializeField] private Button runningGamesTab;
         [SerializeField] private Button gameHistoryTab;
         [SerializeField] private Button refreshRunningGamesButton;
+        [SerializeField] private Button tutorialButton;
 
         [SerializeField] private Sprite cancelIcon;
         [SerializeField] private Sprite findGameIcon;
@@ -297,6 +298,22 @@ namespace Controllers.UI {
         ///     This function is used to display the settings panel.
         /// </summary>
         public void DisplaySettingsView() {
+            int tutorialInt = PlayerPrefs.GetInt(TutorialController.PLAYERPREFS_TUTORIAL);
+            bool tutorialEnabled = Convert.ToBoolean(tutorialInt);
+
+            Text buttonText = tutorialButton.transform.Find("Text").GetComponent<Text>();
+
+            tutorialButton.onClick.RemoveAllListeners();
+            if (tutorialEnabled) {
+                buttonText.text = "Disable Tutorial";
+                tutorialButton.onClick.AddListener(delegate{ TutorialController.DismissTutorial(); });
+            }
+            else {
+                buttonText.text = "Enable Tutorial";
+                tutorialButton.onClick.AddListener(delegate { TutorialController.ActivateTutorial(); });
+            }
+
+
             DisplayView(settingsPanel, settingsViewButton);
         }
 

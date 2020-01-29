@@ -1,5 +1,6 @@
 ﻿using Controllers;
 using System;
+using Controllers.Map;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -108,7 +109,11 @@ public class TutorialController : MonoBehaviour {
         }
 
         //The first time you've spent all action points and your opponent has taken their turn, show panel 4
-        if (displayTutorial && tutorialPage4NotDisplayedYet && ActionPointHandler.actionPointsRemaining == 3 && ScoreHandler.turnsPlayed == 2 && pageCounter == 3) {
+        if (displayTutorial && 
+            tutorialPage4NotDisplayedYet && 
+            ActionPointHandler.actionPointsRemaining == 3 && 
+            ScoreHandler.turnsPlayed == 2 && pageCounter == 3 && 
+            !InteractionController.Instance.HasActiveMinigamePanel()) {
             ShowNextTutorialPanel();
         }
     }

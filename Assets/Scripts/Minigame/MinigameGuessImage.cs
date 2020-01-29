@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Controllers;
 using Handlers;
+using Minigame.Helpers;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -108,7 +109,11 @@ namespace Minigame
         /// </summary>
         public void Close()
         {
-            GameManager.Instance.RefreshGameState(false);
+            if (!MinigameHelpers.IsNextUpdateBlocked()) 
+                GameManager.Instance.RefreshGameState(false);
+            else MinigameHelpers.UnblockUpdates();
+            CameraBehaviour.Instance.Toggle();
+            
             CameraBehaviour.Instance.Toggle();
             
             transform.Find("BlockPanel").GetComponentInChildren<CanvasGroup>().blocksRaycasts = false;

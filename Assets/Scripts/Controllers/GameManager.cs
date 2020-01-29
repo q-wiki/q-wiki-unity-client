@@ -7,6 +7,7 @@ using Controllers.Authentication;
 using Controllers.Map;
 using Controllers.UI;
 using Handlers;
+using Minigame.Helpers;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using WikidataGame.Models;
@@ -113,7 +114,7 @@ namespace Controllers {
 
             /* when in gamescene, check game over state */
 
-            HandleGameFinishedState();
+            FinishGame();
 
             /**
              * generate grid by reading tiles from game object
@@ -151,8 +152,15 @@ namespace Controllers {
              * update turn UI when it is the player's move directly after opening the app
              */
 
+#if UNITY_EDITOR
             if (PlayerPrefs.GetInt($"{_game.Id}/{CURRENT_GAME_BLOCK_TURN_UPDATE}", 0) == 0)
                 ScoreHandler.UpdateTurns();
+#endif
+            
+#if UNITY_ANDROID
+            if(!PlayerPrefs.HasKey($"{_game.Id}/CURRENT_GAME_TURNS_PLAYED"))
+                ScoreHandler.UpdateTurns();
+#endif
 
             /*
              * highlight possible moves for current player
@@ -272,7 +280,7 @@ namespace Controllers {
             /**
              * check if game is over
              */
-            HandleGameFinishedState();
+            FinishGame();
 
             if (_game.NextMovePlayerId == _game.Me.Id) {
                 gameUiController.Unblock();
@@ -291,110 +299,131 @@ namespace Controllers {
         /// <param name="isNewTurn">Indicates if a new turn started.</param>
         public async void RefreshGameState(bool isNewTurn)
         {
-            while (true)
+            
+            /*
+            * this is called whenever something happens (MiniGame finished, player made a turn, etc.)
+            */
+
+            _game = await Communicator.GetCurrentGameState();
+
+            
+            Debug.Log($"isNewTurn:{isNewTurn}");
+
+            /*
+            * redraw the grid
+            */
+
+            foreach (Transform child in _gridController.transform) Destroy(child.gameObject);
+            _gridController.GenerateGrid(_game.Tiles);
+
+            /**
+             * adjust UI to new score
+            */
+
+            ScoreHandler.SetGameId(_game.Id);
+            ScoreHandler.Show();
+            ScoreHandler.UpdatePoints(_game.Tiles, PlayerId(), _game.Opponent.Id);
+
+
+            /*
+            * only for AI bot: if actions points are zero, but client has the next move, manual update
+            */
+
+            if (_game.Opponent.Id == "ffffffff-ffff-ffff-ffff-ffffffffffff")
             {
-                Debug.Log($"isNewTurn:{isNewTurn}");
-
-                /*
-                * this is called whenever something happens (MiniGame finished, player made a turn, etc.)
-                */
-
-                _game = await Communicator.GetCurrentGameState();
-
-                /*
-                * redraw the grid
-                */
-
-                foreach (Transform child in _gridController.transform) Destroy(child.gameObject);
-                _gridController.GenerateGrid(_game.Tiles);
-
-                /**
-                 * adjust UI to new score
-                */
-
-                ScoreHandler.SetGameId(_game.Id);
-                ScoreHandler.Show();
-                ScoreHandler.UpdatePoints(_game.Tiles, PlayerId(), _game.Opponent.Id);
-
-
-                /*
-                * only for AI bot: if actions points are zero, but client has the next move, manual update
-                */
-
-                if (_game.Opponent.Id == "ffffffff-ffff-ffff-ffff-ffffffffffff")
+                if (isNewTurn == false 
+                    && PlayerPrefs.GetInt($"{_game.Id}/{ActionPointHandler.PLAYERPREFS_REMAINING_ACTION_POINTS}", -1) == 1 &&
+                    _game.NextMovePlayerId == _game.Me.Id)
                 {
-                    if (isNewTurn == false 
-                        && PlayerPrefs.GetInt($"{_game.Id}/{ActionPointHandler.PLAYERPREFS_REMAINING_ACTION_POINTS}", -1) == 1 &&
-                        _game.NextMovePlayerId == _game.Me.Id)
-                    {
-                        isNewTurn = true;
-                        continue;
-                    }
+                    isNewTurn = true;
                 }
-
-                /**
-                * if current update happens in a new turn, update turn count
-                */
-
-                if (isNewTurn) ScoreHandler.UpdateTurns();
-
-
-                /**
-                * simple function to update action points in game controller
-                */
-
-                ActionPointHandler.SetGameId(_game.Id);
-                ActionPointHandler.RebuildActionPointsFromPrefs();
-                ActionPointHandler.Instance.UpdateState(PlayerId(), _game.NextMovePlayerId, isNewTurn);
-
-                /**
-                * check for game over
-                */
-
-                HandleGameFinishedState();
-
-                /*
-                * highlight possible moves for current player
-                * */
-
-                _gridController.ShowPossibleMoves(PlayerId());
-
-
-                /*
-                * if current player is not me, go to loop / block interaction
-                */
-
-                if (_game.NextMovePlayerId != _game.Me.Id) _isWaitingState = true;
-                break;
             }
+
+            /**
+            * if current update happens in a new turn, update turn count
+            */
+
+#if UNITY_EDITOR
+            if (isNewTurn) ScoreHandler.UpdateTurns();
+#endif
+
+
+            /**
+            * simple function to update action points in game controller
+            */
+
+            ActionPointHandler.SetGameId(_game.Id);
+            ActionPointHandler.RebuildActionPointsFromPrefs();
+            ActionPointHandler.Instance.UpdateState(PlayerId(), _game.NextMovePlayerId, isNewTurn);
+
+            /**
+            * check for game over
+            */
+
+            FinishGame();
+
+            /*
+            * highlight possible moves for current player
+            * */
+
+            _gridController.ShowPossibleMoves(PlayerId());
+
+
+            /*
+            * if current player is not me, go to loop / block interaction
+            */
+
+            if (_game.NextMovePlayerId != _game.Me.Id)
+                _isWaitingState = true;
+        
         }
 
         /// <summary>
         ///     This function is used to handle the end of the game.
         ///     An appropriate message is shown to the user depending on the outcome.
         /// </summary>
-        private void HandleGameFinishedState() {
+        private void FinishGame() {
             if ( _game.WinningPlayerIds == null || _game.WinningPlayerIds.Count <= 0) return;
             
             Debug.Log("Checking state of the finished game...");
 
             short state;
 
-            if (_game.WinningPlayerIds.Count == 1 && _game.WinningPlayerIds.Contains(_game.Me.Id))
-                state = 0;
-            else if (_game.WinningPlayerIds.Count == 1 && _game.WinningPlayerIds.Contains(_game.Opponent.Id))
-                state = 1;
-            else if (_game.WinningPlayerIds.Count == 2 && _game.WinningPlayerIds.Contains(_game.Opponent.Id) &&
-                     _game.WinningPlayerIds.Contains(_game.Me.Id))
-                state = 2;
-            else throw new Exception("This game state is illegal.");
+            switch (_game.WinningPlayerIds.Count)
+            {
+                case 1 when _game.WinningPlayerIds.Contains(_game.Me.Id) 
+                            && !_game.WinningPlayerIds.Contains(_game.Opponent.Id):
+                    state = 0;
+                    break;
+                case 1 when _game.WinningPlayerIds.Contains(_game.Opponent.Id) 
+                            && !_game.WinningPlayerIds.Contains(_game.Me.Id):
+                    state = 1;
+                    break;
+                case 2 when _game.WinningPlayerIds.Contains(_game.Opponent.Id) 
+                            && _game.WinningPlayerIds.Contains(_game.Me.Id):
+                    state = 2;
+                    break;
+                default:
+                    throw new Exception("This game state is illegal.");
+            }
 
+            HandleGameFinishedState(state);
+        }
+
+        /// <summary>
+        /// This function is used to post scores of the finished game to the account.
+        /// It also calls the UI controller to show the result of the game to the user.
+        /// </summary>
+        /// <param name="state"></param>
+        private void HandleGameFinishedState(short state)
+        {
+            
             AccountController.PostScore(ScoreHandler.Instance.playerScore);
             AccountController.AddGameToHistory(_game.Opponent, (int)ScoreHandler.Instance.playerScore, (int)ScoreHandler.Instance.opponentScore);
+
             if ((int)ScoreHandler.Instance.opponentScore == 0) {
                 AccountController.UnlockDominatorAchievement();
             }
-
             _uiController.HandleGameFinished(state);
         }
 
@@ -543,6 +572,7 @@ namespace Controllers {
         /// This is used to report a user.
         /// </summary>
         /// <param name="userId">ID of the user</param>
+        /// <param name="userName">Name of the user</param>
         public void ReportUser(string userId, string userName)
         {
             Debug.Log($"Reporting user {userId} with user name {userName} to the organization.");
@@ -629,11 +659,24 @@ namespace Controllers {
         /// </summary>
         public void Android_RefreshGame(string gameId) 
         {
+            
+            Debug.Log($"Refreshing game state of game with id {gameId}");
+            
+            /* update played turns */
+            var playedTurns = PlayerPrefs.GetInt($"{gameId}/CURRENT_GAME_TURNS_PLAYED", 0);
+            PlayerPrefs.SetInt($"{gameId}/CURRENT_GAME_TURNS_PLAYED", playedTurns+1);
+            if(_currentScene.name == "GameScene")
+                ScoreHandler.ShowCountInUI(gameId, playedTurns+1);
+
             if (_game != null && _game.Id == gameId)
             {
-                Debug.Log($"Refreshing game state of game with id {gameId}");
                 RefreshGameState(true);
+                if(_game.Opponent.Id == "ffffffff-ffff-ffff-ffff-ffffffffffff" && 
+                   _currentScene.name == "GameScene" &&
+                   InteractionController.Instance.HasActiveMinigamePanel())
+                    MinigameHelpers.BlockNextMiniGameUpdate();
             }
+
         }
 
         /// <summary>
@@ -649,6 +692,7 @@ namespace Controllers {
                 AccountController.AddGameToHistory(_game.Opponent, (int)ScoreHandler.Instance.playerScore, (int)ScoreHandler.Instance.opponentScore);
                 AccountController.UnlockExplorerAchievement();
                 _uiController.HandleGameFinished(0);
+                HandleGameFinishedState(0);
             }
         }
         
@@ -661,7 +705,7 @@ namespace Controllers {
             if (_game != null && _game.Id == gameId)
             {
                 Debug.Log($"Handling draw game with id {gameId}");
-                _uiController.HandleGameFinished(1);
+                HandleGameFinishedState(2);
             }
         }
         
@@ -674,9 +718,7 @@ namespace Controllers {
             if (_game != null && _game.Id == gameId)
             {
                 Debug.Log($"Handling lost game with id {gameId}");
-                AccountController.PostScore(ScoreHandler.Instance.playerScore);
-                AccountController.AddGameToHistory(_game.Opponent, (int)ScoreHandler.Instance.playerScore, (int)ScoreHandler.Instance.opponentScore);
-                _uiController.HandleGameFinished(2);
+                HandleGameFinishedState(1);
             }
         }
 
@@ -693,8 +735,14 @@ namespace Controllers {
         ///     Reset turn update values when application is shut down.
         ///     If application is quit while user is searching for an opponent, keep on searching.
         /// </summary>
-        public void OnApplicationPause() {
-            CheckTurnStatusForScoreHandler();
+        public void OnApplicationPause(bool pauseStatus) {
+
+            Debug.Log($"Game Paused: {pauseStatus}");
+            
+            if (pauseStatus)
+            {
+                CheckTurnStatusForScoreHandler();
+            }
         }
 #endif
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Controllers;
+using Minigame.Helpers;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -97,8 +98,11 @@ namespace Minigame
         /// </summary>
         public void Close()
         {
-            GameManager.Instance.RefreshGameState(false);
-            CameraBehaviour.Instance.Toggle();
+
+            if (!MinigameHelpers.IsNextUpdateBlocked()) 
+                GameManager.Instance.RefreshGameState(false);
+            else MinigameHelpers.UnblockUpdates();
+                CameraBehaviour.Instance.Toggle();
             
             transform.Find("BlockPanel").GetComponentInChildren<CanvasGroup>().blocksRaycasts = false;
             gameObject.SetActive(false);

@@ -166,7 +166,7 @@ namespace Controllers {
              * This happens only if the currently running game is the tutorial game
              */
             if (tutorialController != null) {
-                if(TutorialController.pageCounter == 0 && _game.Id == TutorialController.tutorialID) {
+                if(ScoreHandler.turnsPlayed == 0 && TutorialController.pageCounter == 0 && _game.Id == TutorialController.tutorialID) {
                     tutorialController.ShowAppropriateTutorialPanel();
                 }
             }

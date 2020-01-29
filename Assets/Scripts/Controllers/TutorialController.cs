@@ -18,7 +18,13 @@ public class TutorialController : MonoBehaviour {
     private static bool tutorialIdNotSet = true;
     internal static int pageCounter { get; private set; }
     internal static bool displayTutorial { get; private set; }
-    internal static string tutorialID;
+    internal static string tutorialID { 
+        get { return tutorialID; } 
+        private set { 
+            tutorialID = value;
+            tutorialIdNotSet = false;
+        }
+    }
 
     private const string TUT_00_MESSAGE = "a";
     private const string TUT_01_MESSAGE = "b";
@@ -33,13 +39,14 @@ public class TutorialController : MonoBehaviour {
 
     private static GameManager GameManager => GameManager.Instance;
     private static ActionPointHandler ActionPointHandler => ActionPointHandler.Instance;
+    private static ScoreHandler ScoreHandler => ScoreHandler.Instance;
 
     // Start is called before the first frame update
     void Start() {
 
         //if the player opens the game for the first time, the tutorial is active by default, otherwise it checks if the tutorial has been dismissed/finished yet
         int? displayTutorialPlayerprefs = PlayerPrefs.GetInt(PLAYERPREFS_TUTORIAL, -1);
-        if(displayTutorialPlayerprefs == -1) {
+        if(displayTutorialPlayerprefs == -1  && ScoreHandler.turnsPlayed == 0) {
             ActivateTutorial();
         }
         else {
@@ -49,7 +56,7 @@ public class TutorialController : MonoBehaviour {
         //if the player aleady has a tutorial started, it continues with the next page, otherwise it starts from the beginning
         int? tutorialPage = PlayerPrefs.GetInt(PLAYERPREFS_TUTORIAL_PAGE, -1);
         if (tutorialPage == -1) {
-            tutorialPage = 0;
+            pageCounter = 0;
         }
         else {
             pageCounter = (int)tutorialPage;
@@ -79,7 +86,7 @@ public class TutorialController : MonoBehaviour {
         }
 
         //show Tutorial panels only if the currently running game is the tutorial game
-        if (GameManager.GetGameID() != tutorialID) return;
+        if (tutorialID == null || GameManager.GetGameID() != tutorialID) return;
 
         //if no tutorial panel has been shown yet, show the first page
         if(pageCounter == 0) {

@@ -224,6 +224,7 @@ namespace Controllers.Authentication {
                 _uiController.anonAuthButtonText.text = (IsLoggedInAnon) ?
                     SIGNED_IN_TEXT_ANON : SIGNED_OUT_TEXT_ANON;
                 _uiController.signInAnonButton.gameObject.SetActive(false);
+                _uiController.termsOfService.SetActive(false);
                 _uiController.sidebar.SetActive(true);
                 _uiController.DisplayGameView();
                 _uiController.HighscoreButtonSetActiveState(false);
@@ -312,6 +313,7 @@ namespace Controllers.Authentication {
                 _uiController.googleAuthButtonText.text = (IsLoggedInGoogle) ?
                     SIGNED_IN_TEXT_GOOGLE : SIGNED_OUT_TEXT_GOOGLE;
                 _uiController.signInAnonButton.gameObject.SetActive(false);
+                _uiController.termsOfService.SetActive(false);
                 _uiController.sidebar.SetActive(true);
                 _uiController.DisplayGameView();
                 _uiController.HighscoreButtonSetActiveState(true);
@@ -322,27 +324,47 @@ namespace Controllers.Authentication {
             }
         }
 
+
+        public void LogOut() {
+            bool googleAccount = Social.localUser.authenticated;
+            string headline = googleAccount ? "Sign Out" : "Delete Account";
+            string action = googleAccount ? "Sign Out of Google Play" : "delete your account";
+            string consequence = googleAccount ? "You'll have to reauthenticate to continue playing." : "All progress will be lost. You'll have to Sign In again to continue playing.";
+            string message = $"Are you sure you want to {action}? {consequence}";
+            _uiController.OpenConfirmDialog(headline, message, delegate { LogOutConfirm(); });
+        }
+
+        private void LogOutConfirm() {
+            if (Social.localUser.authenticated) {
+                SignOut();
+            }
+            else {
+                SignOutAnon();
+            }
+        }
+
         /// <summary>
         /// Use this to sign out a user.
         /// </summary>
         private void SignOut() {
-            // sign out
             Debug.Log("Signing out of Google Play");
             PlayGamesPlatform.Instance.SignOut();
             PlayerPrefs.SetString(Communicator.PLAYERPREFS_SIGNIN_METHOD, METHOD_NONE);
             IsLoggedInGoogle = false;
+            _uiController.termsOfService.SetActive(true);
             ForceLogin();
 
         }
 
         /// <summary>
-        /// Use this to sign out an anonymous user. This is usually only called, if an anonymously authenticated user decides to switch to a Google account
+        /// Use this to sign out an anonymous user. The account won't be accessible again for the user, but the username will remain taken. This effectively means: Delete account
         /// </summary>
         public void SignOutAnon() {
             // sign out
             PlayerPrefs.SetString(Communicator.PLAYERPREFS_SIGNIN_METHOD, METHOD_NONE);
             _uiController.anonAuthButtonText.text = (IsLoggedInAnon) ? SIGNED_IN_TEXT_ANON : SIGNED_OUT_TEXT_ANON;
             _uiController.signInAnonButton.gameObject.SetActive(true);
+            _uiController.termsOfService.SetActive(true);
             IsLoggedInAnon = false;
             Debug.Log("Signing out");
 

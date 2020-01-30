@@ -91,6 +91,7 @@ namespace Controllers {
             {
                 startUiController.InitializeGame(false);
             }
+            startUiController.DisplayGameView();
         }
 
         /// <summary>
@@ -415,11 +416,11 @@ namespace Controllers {
         /// It also calls the UI controller to show the result of the game to the user.
         /// </summary>
         /// <param name="state"></param>
-        private void HandleGameFinishedState(short state)
-        {
-            
-            AccountController.PostScore(ScoreHandler.Instance.playerScore);
+        private void HandleGameFinishedState(short state){
+
+#if UNITY_EDITOR
             AccountController.AddGameToHistory(_game.Opponent, (int)ScoreHandler.Instance.playerScore, (int)ScoreHandler.Instance.opponentScore);
+#endif
 
             if ((int)ScoreHandler.Instance.opponentScore == 0) {
                 AccountController.UnlockDominatorAchievement();
@@ -704,6 +705,8 @@ namespace Controllers {
         {
             if (_game != null && _game.Id == gameId)
             {
+                AccountController.PostScore(ScoreHandler.Instance.playerScore);
+                AccountController.AddGameToHistory(_game.Opponent, (int)ScoreHandler.Instance.playerScore, (int)ScoreHandler.Instance.opponentScore);
                 Debug.Log($"Handling draw game with id {gameId}");
                 HandleGameFinishedState(2);
             }
@@ -717,6 +720,8 @@ namespace Controllers {
         {
             if (_game != null && _game.Id == gameId)
             {
+                AccountController.PostScore(ScoreHandler.Instance.playerScore);
+                AccountController.AddGameToHistory(_game.Opponent, (int)ScoreHandler.Instance.playerScore, (int)ScoreHandler.Instance.opponentScore);
                 Debug.Log($"Handling lost game with id {gameId}");
                 HandleGameFinishedState(1);
             }

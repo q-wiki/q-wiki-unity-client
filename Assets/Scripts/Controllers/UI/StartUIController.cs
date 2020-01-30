@@ -54,6 +54,8 @@ namespace Controllers.UI {
         public Text invalidCharactersMessage;
         public Text usernameTooShortMessage;
         public GameObject sidebar;
+        [SerializeField] internal GameObject termsOfService;
+        [SerializeField] private Text logoutButtonText;
         private const string USERSEARCH_SCROLLVIEW_TEXT = "Searching for users";
         private const string FRIENDSLIST_SCROLLVIEW_TEXT = "Friends";
 
@@ -179,6 +181,8 @@ namespace Controllers.UI {
         /// </summary>
 
         public void DisplayLoginStart() {
+            termsOfService.transform.Find("AcceptTOSToggle").GetComponent<Toggle>().isOn = true;
+            termsOfService.SetActive(false);
             DisplayView(loginPanel, settingsViewButton);
         }
 
@@ -313,6 +317,8 @@ namespace Controllers.UI {
                 buttonText.text = "Enable Tutorial";
                 tutorialButton.onClick.AddListener(delegate { TutorialController.ActivateTutorial(); DisplaySettingsView(); });
             }
+
+            logoutButtonText.text = Social.localUser.authenticated ? "Sign Out of Google Play" : "Delete Account";
 
 
             DisplayView(settingsPanel, settingsViewButton);
